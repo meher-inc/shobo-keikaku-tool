@@ -1,0 +1,163 @@
+{
+  "schema_version": "1.0",
+  "fire_dept_id": "tokyo_tfd",
+  "fire_dept_name": "東京消防庁",
+  "fire_dept_contact": {
+    "address": "東京都千代田区大手町一丁目3番5号",
+    "phone": "03-3212-2111",
+    "source_url": "https://www.tfd.metro.tokyo.lg.jp/drs/ss_jirei.html"
+  },
+  "jurisdiction": {
+    "prefecture": "東京都",
+    "coverage": "東京都全域（稲城市・島嶼部を除く）"
+  },
+  "unique_requirements": {
+    "kitaku_konnan": "帰宅困難者対策の記載が必須（H24告示改正）",
+    "jishu_bousai": "東京都震災対策条例第10条に基づく事業所防災計画",
+    "kasai_yobou_jourei": "火災予防条例第55条の4に基づく自衛消防対策",
+    "bousai_center": "防災センターがある場合の追加要件",
+    "bouka_kanri_ginousha": "防火管理技能者に関する規定"
+  },
+  "template_types": [
+    {
+      "template_id": "tokyo_large",
+      "template_name": "大規模用",
+      "target_scale": "大規模防火対象物",
+      "files": {"pdf": "000003292.pdf", "word": "000003293.doc", "guide": "000003294.pdf"}
+    },
+    {
+      "template_id": "tokyo_medium",
+      "template_name": "中規模用",
+      "target_scale": "中規模防火対象物",
+      "files": {"pdf": "000003295.pdf", "word": "000003296.doc", "guide": "000003297.pdf"},
+      "sections": [
+        {"section_id": "t_sec01", "num": "第1", "title": "目的及び適用範囲等", "legal": "◎",
+          "subsections": ["目的", "適用範囲", "防火・防災管理業務の一部委託について(▲)"],
+          "kyoto_diff": "東京は防災管理業務も含む。委託チェック表（別表2）が追加",
+          "vars": ["management_scope", "has_outsourced", "outsource_company"]},
+        {"section_id": "t_sec02", "num": "第2", "title": "管理権原者の責任及び防火管理者の業務", "legal": "◎",
+          "subsections": ["管理権原者", "資格管理", "自衛消防組織の設置と管理権原者等の責務(▲)", "防火管理者の業務"],
+          "kyoto_diff": "東京は「資格管理」が独立項目。防火管理者業務が表形式で5カテゴリに分類（点検監督/教育訓練/管理/点検立会/提案報告）",
+          "vars": ["manager_name", "manager_qualification"]},
+        {"section_id": "t_sec03", "num": "第3", "title": "火災予防のための点検・検査", "legal": "◎",
+          "subsections": ["日常の火災予防のための任務分担", "自主的に行う点検・検査", "防火対象物の法定点検(▲)", "防災管理の法定点検(▲※)", "消防用設備等の法定点検", "報告等", "その他(▲)"],
+          "kyoto_diff": "東京は防災管理点検が追加。テナント固有の設備点検責任にも言及",
+          "vars": ["daily_checker", "periodic_months", "inspection_company"]},
+        {"section_id": "t_sec04", "num": "第4", "title": "守らなければならないこと", "legal": "◎",
+          "subsections": ["従業員が守るべき事項（避難施設/火気管理/放火防止）", "防火管理者等が守るべき事項（収容人員/工事安全/火気制限/臨時火気/放火防止/避難経路周知）"],
+          "kyoto_diff": "東京は「臨時の火気使用」「避難経路等の周知」が追加項目",
+          "vars": []},
+        {"section_id": "t_sec05", "num": "第5", "title": "防火・防災教育", "legal": "◎",
+          "subsections": ["防火・防災教育の実施時期等", "自衛消防隊員等の育成"],
+          "kyoto_diff": "京都の「第9 防災教育」に相当。東京は防災も含む名称",
+          "vars": ["education_schedule"]},
+        {"section_id": "t_sec06", "num": "第6", "title": "消防機関との連絡等", "legal": "◎",
+          "subsections": ["消防機関へ連絡等する事項", "防火管理維持台帳の作成・整備・保管"],
+          "kyoto_diff": "京都の「第3」に相当。セクション順が異なる",
+          "vars": ["report_frequency"]},
+        {"section_id": "t_sec07", "num": "第7", "title": "自衛消防隊等", "legal": "◎",
+          "subsections": ["A:事業所自衛消防隊の編成/活動範囲/権限/火災時活動/営業時間外(▲)", "B:防火対象物自衛消防隊の編成/活動範囲/権限/火災時活動/営業時間外(▲)"],
+          "kyoto_diff": "★東京最大の差異★ A（事業所単位）とB（建物全体）の2パターンあり。京都にはない区分",
+          "llm_generation": true,
+          "vars": ["team_type", "team_leader", "num_members", "roles"]},
+        {"section_id": "t_sec08", "num": "第8", "title": "訓練", "legal": "◎",
+          "subsections": ["訓練の実施時期等", "訓練時の安全対策", "訓練の実施結果"],
+          "kyoto_diff": "京都の「第10」に相当。内容はほぼ同一",
+          "vars": ["drill_schedule"]},
+        {"section_id": "t_sec09", "num": "第9", "title": "震災対策", "legal": "○",
+          "subsections": ["震災に備えての事前計画", "震災時の活動計画", "施設再開までの復旧計画"],
+          "kyoto_diff": "★東京独自★ 「復旧計画」が追加。東京都震災対策条例に基づく要件",
+          "llm_generation": true,
+          "vars": ["stockpile_items", "evacuation_site", "recovery_plan"]},
+        {"section_id": "t_sec10", "num": "第10", "title": "その他の災害対策", "legal": "●",
+          "subsections": ["大規模テロ等に伴う災害(●※)", "大雨・強風等に係る対策(●)", "受傷事故等の対策(●)", "その他(●)"],
+          "kyoto_diff": "★東京独自★ テロ対策・風水害対策・受傷事故対策。京都にはない",
+          "llm_generation": true,
+          "vars": []},
+        {"section_id": "t_sec11", "num": "第11", "title": "その他", "legal": "▲",
+          "subsections": ["消防計画概要"],
+          "kyoto_diff": "概要版を別添えとして作成する要件",
+          "vars": []}
+      ],
+      "appendix_tables": [
+        {"id": "t_beppyo1", "title": "防火・防災管理業務の一部委託状況表", "condition": "▲"},
+        {"id": "t_beppyo2", "title": "防火・防災管理業務一部委託契約書等の内容チェック表", "condition": "▲", "kyoto_diff": "★東京独自★"},
+        {"id": "t_beppyo3", "title": "日常の火災予防の担当者と日常の注意事項", "condition": "◎"},
+        {"id": "t_beppyo4_1", "title": "自主検査チェック表（火気関係）", "condition": "◎"},
+        {"id": "t_beppyo4_2", "title": "自主検査チェック表（閉鎖障害等）", "condition": "◎"},
+        {"id": "t_beppyo5", "title": "自主検査チェック表（定期）", "condition": "◎"},
+        {"id": "t_beppyo6", "title": "自主点検チェック表（消防用設備等）", "condition": "◎"},
+        {"id": "t_beppyo7", "title": "自衛消防隊の編成と任務（A/B）", "condition": "◎"},
+        {"id": "t_beppyo8", "title": "家具等の転倒・落下・移動防止対策チェック表", "condition": "○", "kyoto_diff": "★東京独自★"},
+        {"id": "t_beppyo9", "title": "一斉帰宅抑制における従業員等のための備蓄", "condition": "○", "kyoto_diff": "★東京独自★ 帰宅困難者対策"},
+        {"id": "t_beppyo10", "title": "震災時における時差退社計画", "condition": "○", "kyoto_diff": "★東京独自★"},
+        {"id": "t_beppyo11", "title": "施設の安全点検のためのチェックリスト", "condition": "○", "kyoto_diff": "★東京独自★"},
+        {"id": "t_betsuz", "title": "避難経路図", "condition": "◎"},
+        {"id": "t_betsuzoe", "title": "消防計画概要", "condition": "▲"}
+      ],
+      "supplementary_materials": [
+        {"id": "ref1", "title": "防火管理業務実施計画書"},
+        {"id": "ref2", "title": "防火管理業務範囲表"},
+        {"id": "ref3", "title": "防火対象物実態把握表"},
+        {"id": "ref4", "title": "事業所防災計画表"},
+        {"id": "ref5", "title": "放送文例"},
+        {"id": "ref6", "title": "ガス漏れ事故防止対策"},
+        {"id": "ref7", "title": "停電発生時の出火防止対策"},
+        {"id": "ref8", "title": "集客施設におけるパニック防止7つのポイント"},
+        {"id": "ref12", "title": "高層建築物等における歩行困難者等の避難安全対策"},
+        {"id": "ref14", "title": "グリス除去装置等の清掃時期の判断要領"}
+      ]
+    },
+    {
+      "template_id": "tokyo_small",
+      "template_name": "小規模用",
+      "target_scale": "小規模防火対象物",
+      "files": {"pdf": "000003298.pdf", "word": "000003299.doc", "guide": "000003300.pdf"}
+    },
+    {
+      "template_id": "tokyo_small_tenant",
+      "template_name": "小規模テナント用",
+      "target_scale": "小規模テナント",
+      "source_url": "https://www.tfd.metro.tokyo.lg.jp/drs/new_rei.html"
+    },
+    {
+      "template_id": "tokyo_apartment",
+      "template_name": "共同住宅用",
+      "target_scale": "共同住宅",
+      "files": {"pdf": "000003301.pdf", "word": "000003302.doc", "guide": "000003303.pdf"}
+    },
+    {
+      "template_id": "tokyo_temporary",
+      "template_name": "一時使用店舗等",
+      "target_scale": "一時使用店舗",
+      "files": {"pdf": "000003304.pdf", "word": "000003305.docx"}
+    }
+  ],
+  "legal_symbol_legend": {
+    "◎": "消防法第8条第1項（防火管理）必須",
+    "○": "東京都震災対策条例第10条（事業所防災計画）必須",
+    "●": "火災予防条例第55条の4（自衛消防対策）",
+    "▲": "該当する場合に定める項目",
+    "★": "統括防火管理義務対象物の場合",
+    "※": "消防法第36条第1項（防災管理）"
+  },
+  "kyoto_comparison_summary": {
+    "common_sections": "約70% — 目的/適用範囲、管理権原者/防火管理者、点検検査、厳守事項、教育、消防機関連絡、自衛消防隊、訓練は共通",
+    "tokyo_unique": [
+      "第10 その他の災害対策（テロ・風水害・受傷事故）",
+      "帰宅困難者対策（別表9-10）",
+      "自衛消防隊のA/B区分（事業所/防火対象物）",
+      "震災対策の復旧計画",
+      "防災センター関連要件",
+      "防火管理技能者",
+      "委託契約チェック表（別表2）",
+      "転倒落下移動防止チェック表（別表8）",
+      "施設安全点検チェックリスト（別表11）"
+    ],
+    "kyoto_unique": [
+      "南海トラフ地震に関する記載免除の明記",
+      "京都市特有の歴史的建造物への配慮"
+    ],
+    "section_order_diff": "東京は教育→消防機関連絡→自衛消防隊→訓練→震災。京都は消防機関連絡→点検→厳守→自衛消防隊→夜間体制→地震→教育→訓練"
+  }
+}

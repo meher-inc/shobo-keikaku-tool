@@ -1,0 +1,613 @@
+{
+  "schema_version": "1.0",
+  "fire_dept_id": "kyoto_city",
+  "fire_dept_name": "京都市消防局",
+  "fire_dept_contact": {
+    "address": "京都市中京区押小路通河原町西入榎木町450の2",
+    "phone": "075-231-5311",
+    "prevention_division": "075-212-6672",
+    "source_url": "https://www.city.kyoto.lg.jp/shobo/page/0000330168.html"
+  },
+  "jurisdiction": {
+    "prefecture": "京都府",
+    "city": "京都市",
+    "wards": ["北区","上京区","左京区","中京区","東山区","山科区","下京区","南区","右京区","西京区","伏見区"]
+  },
+  "submission": {
+    "method": ["窓口（所轄消防署）","電子申請（マイナポータル ぴったりサービス）","京都府・市町村共同電子システム"],
+    "required_documents": [
+      "消防計画作成（変更）届出書（表紙）",
+      "消防計画（本文）"
+    ],
+    "notes": "副本が必要な場合は窓口提出"
+  },
+  "regional_notes": {
+    "nankai_trough": "京都市は津波被害の想定なし。南海トラフ地震に関する計画の記載義務なし。",
+    "special_considerations": ["歴史的建造物が多いエリア特有の注意"]
+  },
+  "template_types": [
+    {
+      "template_id": "kyoto_medium",
+      "template_name": "中規模用",
+      "target_scale": "中規模防火対象物",
+      "files": {
+        "checklist": "01keikkauchek.docx",
+        "main_template": "02keikakuhinagata.docx",
+        "appendix_tables": "03keikakuhyou.docx",
+        "sample_filled": "04keikakurei.pdf"
+      },
+      "sections": [
+        {
+          "section_id": "sec01",
+          "section_number": "第1",
+          "title": "目的及びその適用範囲等",
+          "subsections": [
+            {
+              "id": "sec01_1",
+              "title": "目的",
+              "content_type": "static_with_variables",
+              "template_text": "この計画は、{legal_basis}に基づき、管理権原の及ぶ範囲における防火管理についての必要事項を定め、火災、地震、その他の災害の予防と人命の安全、被害の軽減を図ることを目的とする。",
+              "variables": [
+                {
+                  "key": "legal_basis",
+                  "label": "法的根拠",
+                  "type": "select",
+                  "options": [
+                    {"value": "消防法第8条第1項", "label": "消防法第8条第1項（単独管理権原）"},
+                    {"value": "消防法第8条の2第1項", "label": "消防法第8条の2第1項（統括防火管理）"}
+                  ],
+                  "required": true
+                }
+              ]
+            },
+            {
+              "id": "sec01_2",
+              "title": "適用範囲",
+              "content_type": "static_with_variables",
+              "variables": [
+                {"key": "management_scope", "label": "管理権原の及ぶ範囲", "type": "text", "placeholder": "○○ビルの建物全体", "required": true},
+                {"key": "is_partial", "label": "部分管理か", "type": "boolean", "default": false},
+                {"key": "outsource_company", "label": "防火管理業務受託者", "type": "text", "placeholder": "○○警備株式会社", "required": false}
+              ]
+            },
+            {
+              "id": "sec01_3",
+              "title": "防火管理業務の一部委託について",
+              "content_type": "conditional",
+              "condition": "has_outsourced_management",
+              "variables": [
+                {"key": "has_outsourced_management", "label": "業務委託の有無", "type": "boolean", "required": true}
+              ],
+              "appendix_ref": "別表1（防火管理業務の一部委託状況表）"
+            }
+          ]
+        },
+        {
+          "section_id": "sec02",
+          "section_number": "第2",
+          "title": "管理権原者及び防火管理者の業務と権限",
+          "subsections": [
+            {
+              "id": "sec02_1",
+              "title": "管理権原者",
+              "content_type": "static",
+              "items": [
+                "管理権原の及ぶ範囲の防火管理業務について全ての責任を持つ",
+                "防火管理者を選任して防火管理業務を行わせる",
+                "消防計画作成（変更）時に必要な指示を与える",
+                "防火上の不備・欠陥の速やかな改修"
+              ],
+              "conditional_items": [
+                {
+                  "condition": "is_unified_management",
+                  "item": "統括防火管理者が全体についての防火管理上必要な業務を適切に遂行できるように協力する"
+                }
+              ]
+            },
+            {
+              "id": "sec02_2",
+              "title": "防火管理者",
+              "content_type": "static",
+              "items": [
+                "消防計画の作成（変更）",
+                "消火、通報、避難誘導などの訓練の実施",
+                "火災予防上の自主検査の実施と監督",
+                "防火対象物の法定点検の立会い",
+                "消防用設備等の法定点検・整備及び立会い",
+                "改装工事など工事中の立会い及び安全対策の策定",
+                "火気の使用、取扱いの指導、監督",
+                "収容人員の適正管理",
+                "全従業員等に対する防災教育の実施",
+                "防火管理業務従事者に対する指導、監督",
+                "管理権原者への提案や報告",
+                "放火防止対策の推進"
+              ]
+            },
+            {
+              "id": "sec02_3",
+              "title": "自衛消防組織の設置と管理権原者の責務",
+              "content_type": "conditional",
+              "condition": "requires_jieisobo_organization",
+              "note": "消防法第8条の2の5により自衛消防組織の設置が義務付けられる場合"
+            }
+          ]
+        },
+        {
+          "section_id": "sec03",
+          "section_number": "第3",
+          "title": "消防機関との連絡等",
+          "subsections": [
+            {
+              "id": "sec03_1",
+              "title": "消防機関へ報告、連絡する事項",
+              "content_type": "table",
+              "table_columns": ["種別", "届出等の時期", "届出者等"],
+              "rows": [
+                {"type": "防火管理者選任（解任）届出", "timing": "防火管理者を定めたとき、又はこれを解任したとき", "who": "管理権原者"},
+                {"type": "消防計画作成（変更）届出", "timing": "消防計画を作成したとき、又は変更したとき", "who": "防火管理者"},
+                {"type": "訓練実施の通知", "timing": "消防訓練を実施する前", "who": "防火管理者"},
+                {"type": "消防用設備等点検結果報告", "timing": "variable:inspection_report_frequency", "who": "防火管理者の確認を受けた後に報告"},
+                {"type": "防火対象物定期点検結果報告", "timing": "variable:building_inspection_frequency", "who": "管理権原者"}
+              ],
+              "variables": [
+                {
+                  "key": "inspection_report_frequency",
+                  "label": "消防用設備等点検結果報告頻度",
+                  "type": "select",
+                  "options": [
+                    {"value": "1年に1回", "condition": "is_specific_use"},
+                    {"value": "3年に1回", "condition": "is_non_specific_use"}
+                  ],
+                  "auto_select_from": "building_use_category"
+                },
+                {
+                  "key": "building_inspection_frequency",
+                  "label": "防火対象物定期点検",
+                  "type": "select",
+                  "options": [
+                    {"value": "1年に1回", "condition": "capacity >= 300 AND is_specific_use"},
+                    {"value": "報告対象非該当", "condition": "default"}
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "sec03_2",
+              "title": "防火管理維持台帳の作成、整備及び保管",
+              "content_type": "static"
+            }
+          ]
+        },
+        {
+          "section_id": "sec04",
+          "section_number": "第4",
+          "title": "火災予防上の点検・検査",
+          "subsections": [
+            {
+              "id": "sec04_1",
+              "title": "日常の火災予防",
+              "content_type": "static_with_variables",
+              "appendix_ref": "別表2（日常の火災予防の担当者と日常の注意事項）",
+              "variables": [
+                {"key": "daily_inspector", "label": "日常検査実施者", "type": "text", "placeholder": "防火管理者", "required": true}
+              ]
+            },
+            {
+              "id": "sec04_2",
+              "title": "自主的に行う検査・点検",
+              "content_type": "static_with_variables",
+              "appendix_refs": [
+                "別表3（自主検査チェック表（日常）「火気関係」）",
+                "別表4（自主検査チェック表（日常）「閉鎖障害等」）",
+                "別表5（自主検査チェック表（定期））",
+                "別表6（消防用設備等自主点検チェック表）"
+              ],
+              "variables": [
+                {"key": "daily_check_timing", "label": "日常検査時期", "type": "text", "default": "毎日終業時"},
+                {"key": "periodic_check_months", "label": "定期検査実施月", "type": "text", "default": "4月と10月"},
+                {"key": "self_check_months", "label": "自主点検実施月", "type": "text", "default": "1月と7月"},
+                {"key": "daily_checker", "label": "日常検査チェック者", "type": "text", "default": "防火管理者"},
+                {"key": "periodic_checker", "label": "定期検査チェック者", "type": "text", "default": "火元責任者"}
+              ]
+            },
+            {
+              "id": "sec04_3",
+              "title": "法定点検",
+              "content_type": "static_with_variables",
+              "appendix_ref": "別表7",
+              "variables": [
+                {"key": "inspection_company", "label": "点検委託先", "type": "text", "placeholder": "○○防災設備株式会社"}
+              ]
+            }
+          ]
+        },
+        {
+          "section_id": "sec05",
+          "section_number": "第5",
+          "title": "厳守事項",
+          "subsections": [
+            {
+              "id": "sec05_1",
+              "title": "従業員等が守るべき事項",
+              "content_type": "static_with_optional",
+              "categories": [
+                {
+                  "category": "避難施設の管理",
+                  "items": [
+                    "階段、廊下、通路には、物品を置かない",
+                    "階段等への出入口の扉の開閉を妨げる物品の除去",
+                    "防火シャッターの降下位置付近の物品除去"
+                  ]
+                },
+                {
+                  "category": "火気管理等",
+                  "items": [
+                    "喫煙管理",
+                    "指定場所での喫煙",
+                    "火気使用設備器具の使用前後の点検",
+                    "可燃物への接近使用禁止",
+                    "危険物品の持込禁止"
+                  ]
+                },
+                {
+                  "category": "放火防止対策",
+                  "items": [
+                    "死角部分に可燃物を置かない",
+                    "空室等の施錠",
+                    "建物内外の整理整頓",
+                    "巡視の実施",
+                    "最終帰宅者による火気・施錠確認"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "sec05_2",
+              "title": "防火管理者等が守るべき事項",
+              "content_type": "static_with_optional",
+              "categories": [
+                {"category": "収容人員の管理", "items": ["収容能力の把握と過剰人員管理"]},
+                {"category": "工事中の安全対策の策定", "items": [
+                  "工事中の安全対策策定",
+                  "仮使用申請時の消防機関への相談",
+                  "工事人の遵守事項周知"
+                ]},
+                {"category": "火気の使用制限", "items": [
+                  "喫煙場所・禁止場所の指定",
+                  "火気使用設備器具の使用場所指定",
+                  "危険物の貯蔵・取扱い場所指定"
+                ]}
+              ]
+            }
+          ]
+        },
+        {
+          "section_id": "sec06",
+          "section_number": "第6",
+          "title": "自衛消防隊等",
+          "subsections": [
+            {
+              "id": "sec06_1",
+              "title": "隊の編成",
+              "content_type": "dynamic_table",
+              "appendix_ref": "別表8",
+              "llm_generation": true,
+              "variables": [
+                {"key": "team_leader", "label": "自衛消防隊長", "type": "text", "required": true},
+                {"key": "num_members", "label": "隊員数", "type": "number", "required": true},
+                {"key": "roles", "label": "役割分担", "type": "array", "items": ["通報連絡担当", "初期消火担当", "避難誘導担当", "安全防護担当", "応急救護担当"]}
+              ]
+            },
+            {
+              "id": "sec06_2",
+              "title": "自衛消防活動",
+              "content_type": "static_with_optional",
+              "categories": [
+                {"category": "通報・連絡", "items": ["119番通報", "防災センター等への連絡", "管理権原者・防火管理者への連絡"]},
+                {"category": "初期消火", "items": ["出火場所への急行", "消火器・屋内消火栓等の使用"]},
+                {"category": "避難誘導", "items": ["避難経路図に基づく誘導", "拡声器等の使用", "逃げ遅れた者の確認・報告"]},
+                {"category": "安全防護", "items": ["防火戸・シャッターの閉鎖"]},
+                {"category": "応急救護", "items": ["負傷者の応急手当", "負傷者情報の記録"]},
+                {"category": "救出・救護", "items": ["地震時の倒壊現場対応", "救出優先順位の判断"]}
+              ]
+            }
+          ]
+        },
+        {
+          "section_id": "sec07",
+          "section_number": "第7",
+          "title": "休日、夜間の防火管理体制",
+          "subsections": [
+            {
+              "id": "sec07_1",
+              "title": "緊急連絡先",
+              "content_type": "variable_only",
+              "variables": [
+                {"key": "emergency_contact_phone", "label": "緊急連絡先TEL", "type": "tel", "required": true},
+                {"key": "emergency_contact_name", "label": "緊急連絡先氏名", "type": "text", "required": true}
+              ]
+            },
+            {
+              "id": "sec07_2",
+              "title": "休日・夜間に在館者がいる場合",
+              "content_type": "static_with_optional",
+              "condition": "has_night_occupants"
+            },
+            {
+              "id": "sec07_3",
+              "title": "休日・夜間に無人となる場合",
+              "content_type": "static_with_variables",
+              "condition": "is_unmanned_at_night",
+              "variables": [
+                {"key": "security_company", "label": "警備会社名", "type": "text", "placeholder": "○○警備株式会社"}
+              ]
+            }
+          ]
+        },
+        {
+          "section_id": "sec08",
+          "section_number": "第8",
+          "title": "地震対策",
+          "subsections": [
+            {
+              "id": "sec08_1",
+              "title": "日常の地震対策",
+              "content_type": "static_with_variables",
+              "items": [
+                "ロッカー、自動販売機等の転倒・移動防止措置",
+                "窓ガラスの飛散防止措置",
+                "火気使用設備器具等からの出火防止措置",
+                "危険物等の流出・漏えい防止措置"
+              ],
+              "variables": [
+                {
+                  "key": "stockpile_items",
+                  "label": "備蓄品目・備蓄場所",
+                  "type": "table",
+                  "columns": ["備蓄品目", "備蓄場所"],
+                  "required": false
+                }
+              ]
+            },
+            {
+              "id": "sec08_2",
+              "title": "地震後の安全措置",
+              "content_type": "static"
+            },
+            {
+              "id": "sec08_3",
+              "title": "地震時の活動",
+              "content_type": "static_with_variables",
+              "llm_generation": true,
+              "variables": [
+                {"key": "wide_area_evacuation_site", "label": "広域避難場所", "type": "text", "placeholder": "京都市○○区○○町 ○○公園", "required": true},
+                {"key": "temporary_assembly_point", "label": "一時集合場所", "type": "text", "required": false}
+              ]
+            }
+          ]
+        },
+        {
+          "section_id": "sec09",
+          "section_number": "第9",
+          "title": "防災教育",
+          "subsections": [
+            {
+              "id": "sec09_1",
+              "title": "防災教育の実施時期等",
+              "content_type": "dynamic_table",
+              "table_columns": ["対象者", "実施時期", "実施回数", "実施者"],
+              "variables": [
+                {"key": "education_schedule", "label": "教育スケジュール", "type": "table", "required": true}
+              ]
+            },
+            {
+              "id": "sec09_2",
+              "title": "自衛消防隊員等の育成",
+              "content_type": "static"
+            },
+            {
+              "id": "sec09_3",
+              "title": "防災教育の内容及び実施方法",
+              "content_type": "static_with_optional",
+              "default_items": [
+                "消防計画について（全従業員等が守るべき事項、火災発生時の対応及び地震時の対応）",
+                "その他火災予防上必要な事項"
+              ]
+            }
+          ]
+        },
+        {
+          "section_id": "sec10",
+          "section_number": "第10",
+          "title": "訓練",
+          "subsections": [
+            {
+              "id": "sec10_1",
+              "title": "訓練の実施時期等",
+              "content_type": "dynamic_table",
+              "table_columns": ["訓練の種別", "実施時期", "備考"],
+              "variables": [
+                {"key": "drill_schedule", "label": "訓練スケジュール", "type": "table", "required": true},
+                {
+                  "key": "drill_frequency_rule",
+                  "label": "訓練回数の法的要件",
+                  "type": "auto",
+                  "rules": [
+                    {"condition": "is_specific_use", "value": "消火訓練・避難訓練は年2回以上、通報訓練は消防計画に定めた回数"},
+                    {"condition": "is_non_specific_use", "value": "消火・避難・通報訓練いずれも消防計画に定めた回数（年1回以上推奨）"}
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "sec10_2",
+              "title": "訓練時の安全対策",
+              "content_type": "static"
+            },
+            {
+              "id": "sec10_3",
+              "title": "訓練の実施結果",
+              "content_type": "static",
+              "appendix_ref": "別表9（消防訓練実施結果表）"
+            }
+          ]
+        }
+      ],
+      "appendix_tables": [
+        {"id": "beppyo1", "title": "防火管理業務の一部委託状況表", "type": "form", "condition": "has_outsourced_management"},
+        {"id": "beppyo2", "title": "日常の火災予防の担当者と日常の注意事項", "type": "assignment_table"},
+        {"id": "beppyo3", "title": "自主検査チェック表（日常）「火気関係」", "type": "checklist"},
+        {"id": "beppyo4", "title": "自主検査チェック表（日常）「閉鎖障害等」", "type": "checklist"},
+        {"id": "beppyo5", "title": "自主検査チェック表（定期）", "type": "checklist"},
+        {"id": "beppyo6", "title": "消防用設備等・特殊消防用設備等自主点検チェック表", "type": "checklist"},
+        {"id": "beppyo7", "title": "消防用設備等の法定点検実施計画", "type": "schedule_table"},
+        {"id": "beppyo8", "title": "自衛消防隊編成表", "type": "organization_chart"},
+        {"id": "beppyo9", "title": "消防訓練実施結果表", "type": "record_table"}
+      ]
+    },
+    {
+      "template_id": "kyoto_small",
+      "template_name": "小規模・テナント用",
+      "target_scale": "小規模防火対象物・テナント",
+      "files": {
+        "main_template": "01syouboukeikaku.docx",
+        "appendix_tables": "02beppyou.docx",
+        "sample_filled": "03kinyuurei.pdf",
+        "appendix_sample": "04beppyoukinyuuurei.pdf"
+      },
+      "sections": [
+        {"section_id": "s_sec01", "section_number": "第1", "title": "目的と適用範囲", "content_type": "static_with_variables",
+          "variables": [
+            {"key": "building_name", "label": "建物名", "type": "text", "required": true},
+            {"key": "tenant_name", "label": "テナント名", "type": "text", "required": false},
+            {"key": "management_floor", "label": "管理権原の及ぶ階", "type": "text", "required": true}
+          ]
+        },
+        {"section_id": "s_sec02", "section_number": "第2", "title": "自衛消防隊の編成及び任務等", "content_type": "dynamic_table", "llm_generation": true,
+          "variables": [
+            {"key": "team_leader_title", "label": "自衛消防隊長（役職）", "type": "text", "default": "店長"},
+            {"key": "roles_assignment", "label": "役割分担", "type": "role_table",
+              "roles": [
+                {"role": "通報連絡担当", "fire_tasks": ["非常ベル", "119番通報", "消防隊への情報提供"], "earthquake_tasks": ["情報収集担当"]},
+                {"role": "初期消火担当", "fire_tasks": ["消火器等で初期消火", "天井延焼時は中止し避難"], "earthquake_tasks": ["点検担当"]},
+                {"role": "避難誘導担当", "fire_tasks": ["避難口開放", "避難経路図に従い誘導"], "earthquake_tasks": ["出入口配置", "避難誘導"]}
+              ]
+            }
+          ]
+        },
+        {"section_id": "s_sec03", "section_number": "第3", "title": "火災予防上の自主検査", "content_type": "static_with_variables",
+          "appendix_refs": ["別表1（自主検査表（日常））", "別表2（自主検査表（定期））"],
+          "variables": [
+            {"key": "daily_inspector", "label": "日常検査実施者", "type": "text", "default": "店長"},
+            {"key": "periodic_months", "label": "定期検査実施月", "type": "text", "default": "4月・10月"}
+          ]
+        },
+        {"section_id": "s_sec04", "section_number": "第4", "title": "従業員等の守るべき事項", "content_type": "static"},
+        {"section_id": "s_sec05", "section_number": "第5", "title": "放火防止対策", "content_type": "static"},
+        {"section_id": "s_sec06", "section_number": "第6", "title": "防火対象物及び消防用設備等の点検", "content_type": "static_with_variables",
+          "variables": [
+            {"key": "equipment_list", "label": "設備名", "type": "text", "placeholder": "消火器、誘導灯"},
+            {"key": "inspection_company", "label": "点検実施者", "type": "text"},
+            {"key": "inspection_months", "label": "機器点検月", "type": "text"},
+            {"key": "comprehensive_month", "label": "総合点検月", "type": "text"}
+          ]
+        },
+        {"section_id": "s_sec07", "section_number": "第7", "title": "地震対策", "content_type": "static_with_variables",
+          "variables": [
+            {"key": "temporary_assembly", "label": "一時集合場所", "type": "text", "required": true},
+            {"key": "wide_area_evacuation", "label": "広域避難場所", "type": "text", "required": true}
+          ]
+        },
+        {"section_id": "s_sec08", "section_number": "第8", "title": "工事における安全対策", "content_type": "static"},
+        {"section_id": "s_sec09", "section_number": "第9", "title": "消防機関への連絡、報告", "content_type": "static_with_variables",
+          "variables": [
+            {"key": "report_frequency", "label": "点検結果報告頻度", "type": "select",
+              "options": [
+                {"value": "1年に1回", "label": "特定防火対象物"},
+                {"value": "3年に1回", "label": "非特定防火対象物"}
+              ]
+            }
+          ]
+        },
+        {"section_id": "s_sec10", "section_number": "第10", "title": "統括防火管理者への報告", "content_type": "conditional",
+          "condition": "is_unified_management"
+        },
+        {"section_id": "s_sec11", "section_number": "第11", "title": "防火管理業務の一部委託", "content_type": "conditional",
+          "condition": "has_outsourced_management",
+          "appendix_ref": "別表3（防火管理業務の一部委託状況表）"
+        },
+        {"section_id": "s_sec12", "section_number": "第12", "title": "防災教育", "content_type": "dynamic_table",
+          "variables": [
+            {"key": "education_schedule", "label": "教育スケジュール", "type": "table"}
+          ]
+        },
+        {"section_id": "s_sec13", "section_number": "第13", "title": "訓練", "content_type": "dynamic_table",
+          "variables": [
+            {"key": "drill_schedule", "label": "訓練スケジュール", "type": "table"}
+          ]
+        },
+        {"section_id": "s_sec14", "section_number": "第14", "title": "その他", "content_type": "freetext"}
+      ],
+      "appendix_tables": [
+        {"id": "s_beppyo1", "title": "自主検査表（日常）", "type": "daily_checklist",
+          "columns": ["日", "曜日", "火気使用場所周囲の整理整頓状況", "終業時の火気の確認", "吸い殻の処理", "ガス元栓の閉栓・器具のホース等の劣化損傷の有無", "電気器具の配線の接続状況・劣化損傷の有無", "避難通路・階段等に避難上支障となる物品の有無", "消火器の設置位置の確認・誘導灯等の点灯状況の確認", "可燃物等の放置の有無・倉庫等の施錠の有無の確認"]
+        },
+        {"id": "s_beppyo2", "title": "自主検査表（定期）", "type": "periodic_checklist",
+          "categories": [
+            {"category": "建物構造", "items": ["柱・はり・壁・床", "天井", "窓枠・サッシ・ガラス", "外壁・ひさし・パラペット"]},
+            {"category": "避難施設", "items": ["避難通路", "階段", "避難階の避難口"]},
+            {"category": "火気使用設備器具", "items": ["厨房・給湯設備", "ストーブ"]},
+            {"category": "電気設備", "items": ["電気器具"]},
+            {"category": "その他", "items": ["危険物（灯油等）"]}
+          ]
+        },
+        {"id": "s_beppyo3", "title": "防火・防災管理業務の一部委託状況表", "type": "form",
+          "methods": ["常駐方式", "巡回方式", "遠隔移報方式"]
+        }
+      ]
+    }
+  ],
+  "required_input_fields": {
+    "building_info": [
+      {"key": "building_name", "label": "建物名称", "type": "text", "required": true},
+      {"key": "building_address", "label": "所在地", "type": "address", "required": true},
+      {"key": "building_use", "label": "用途（令別表第一）", "type": "select", "required": true},
+      {"key": "is_specific_use", "label": "特定防火対象物か", "type": "auto", "derived_from": "building_use"},
+      {"key": "total_area", "label": "延べ面積（㎡）", "type": "number", "required": true},
+      {"key": "num_floors", "label": "階数", "type": "number", "required": true},
+      {"key": "structure", "label": "構造", "type": "select", "options": ["耐火造", "準耐火造", "その他"]},
+      {"key": "capacity", "label": "収容人員", "type": "number", "required": true}
+    ],
+    "management_info": [
+      {"key": "owner_name", "label": "管理権原者氏名", "type": "text", "required": true},
+      {"key": "manager_name", "label": "防火管理者氏名", "type": "text", "required": true},
+      {"key": "manager_qualification", "label": "防火管理者資格種別", "type": "select", "options": ["甲種", "乙種"], "required": true},
+      {"key": "manager_appointment_date", "label": "選任年月日", "type": "date", "required": true},
+      {"key": "manager_contact", "label": "連絡先", "type": "tel", "required": true}
+    ],
+    "equipment_info": [
+      {"key": "fire_equipment", "label": "消防用設備等", "type": "multi_select", "options": [
+        "消火器", "屋内消火栓", "スプリンクラー設備", "自動火災報知設備",
+        "漏電火災警報器", "非常警報設備", "避難器具", "誘導灯",
+        "連結散水設備", "連結送水管", "非常コンセント設備", "排煙設備"
+      ]},
+      {"key": "inspection_company", "label": "点検委託先", "type": "text"},
+      {"key": "security_company", "label": "警備会社", "type": "text"}
+    ]
+  },
+  "template_selection_logic": {
+    "rules": [
+      {
+        "condition": "total_area <= 500 OR is_tenant",
+        "template": "kyoto_small",
+        "label": "小規模・テナント用"
+      },
+      {
+        "condition": "total_area > 500",
+        "template": "kyoto_medium",
+        "label": "中規模用"
+      }
+    ],
+    "note": "大規模用テンプレートは京都市消防局では現在未公開。大規模物件は個別対応推奨。"
+  }
+}
