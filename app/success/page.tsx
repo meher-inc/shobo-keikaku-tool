@@ -108,10 +108,9 @@ function SuccessContent() {
               {/* 記入ガイドPDF（スタンダード・プレミアム） */}
               {showGuide && (
                 <a href="/guide.pdf" download style={{
-                  display: "block", width: "100%", padding: 14, borderRadius: 14, border: "none",
-                  background: "#f0faf0", color: "#0d5e0d", fontSize: 15, fontWeight: 600,
-                  textDecoration: "none", marginBottom: 12, textAlign: "center",
-                  border: "1px solid #b8e6b8",
+                  display: "block", width: "100%", padding: 14, borderRadius: 14, background: "#f0faf0", color: "#0d5e0d", fontSize: 15, fontWeight: 600,
+textDecoration: "none", marginBottom: 12, textAlign: "center",
+border: "1px solid #b8e6b8",
                 }}>
                   📘 記入ガイドPDFをダウンロード
                 </a>
