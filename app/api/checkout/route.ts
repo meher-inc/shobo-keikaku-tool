@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${request.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${request.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`,
       cancel_url: `${request.nextUrl.origin}/?canceled=true`,
       metadata,
     });
