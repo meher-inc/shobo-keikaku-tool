@@ -3,9 +3,17 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
+const PLAN_NAMES: Record<string, string> = {
+  light: "ライト",
+  standard: "スタンダード",
+  premium: "プレミアム",
+};
+
 function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const plan = searchParams.get("plan") || "standard";
+  const planName = PLAN_NAMES[plan] || "スタンダード";
   const [status, setStatus] = useState<"loading" | "ready" | "downloading" | "done" | "error">("loading");
 
   useEffect(() => {
@@ -33,6 +41,9 @@ function SuccessContent() {
     }
   }
 
+  const showGuide = plan === "standard" || plan === "premium";
+  const showPremiumInfo = plan === "premium";
+
   return (
     <>
       <style jsx global>{`
@@ -56,8 +67,11 @@ function SuccessContent() {
           {status === "ready" && (
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-              <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>お支払い完了</h1>
-              <p style={{ fontSize: 15, color: "#86868b", marginBottom: 32, lineHeight: 1.6 }}>
+              <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>お支払い完了</h1>
+              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#e8f4fd", color: "#0071e3", marginBottom: 12 }}>
+                {planName}プラン
+              </div>
+              <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24, lineHeight: 1.6 }}>
                 ありがとうございます。<br />
                 下のボタンから消防計画をダウンロードしてください。
               </p>
@@ -82,11 +96,58 @@ function SuccessContent() {
           {status === "done" && (
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-              <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>ダウンロード完了</h1>
-              <p style={{ fontSize: 15, color: "#86868b", marginBottom: 32, lineHeight: 1.6 }}>
+              <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>ダウンロード完了</h1>
+              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#e8f4fd", color: "#0071e3", marginBottom: 16 }}>
+                {planName}プラン
+              </div>
+              <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24, lineHeight: 1.6 }}>
                 消防計画のWordファイルがダウンロードされました。<br />
                 内容をご確認のうえ、所轄の消防署に届け出てください。
               </p>
+
+              {/* 記入ガイドPDF（スタンダード・プレミアム） */}
+              {showGuide && (
+                <a href="/guide.pdf" download style={{
+                  display: "block", width: "100%", padding: 14, borderRadius: 14, border: "none",
+                  background: "#f0faf0", color: "#0d5e0d", fontSize: 15, fontWeight: 600,
+                  textDecoration: "none", marginBottom: 12, textAlign: "center",
+                  border: "1px solid #b8e6b8",
+                }}>
+                  📘 記入ガイドPDFをダウンロード
+                </a>
+              )}
+
+              {/* プレミアム：内容チェック案内 */}
+              {showPremiumInfo && (
+                <div style={{
+                  padding: "20px 24px", borderRadius: 16, marginBottom: 16,
+                  background: "#f0f5ff", border: "1px solid #b8d4ff", textAlign: "left",
+                }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#0051a8", marginBottom: 10 }}>
+                    🔍 内容チェック＋修正1回（プレミアム特典）
+                  </div>
+                  <p style={{ fontSize: 13, color: "#1d1d1f", lineHeight: 1.8, margin: 0, marginBottom: 12 }}>
+                    元消防士のスタッフが、生成された消防計画の内容を確認し、
+                    消防署に提出できる状態に仕上げます。
+                  </p>
+                  <div style={{
+                    padding: "14px 16px", borderRadius: 12, background: "#fff",
+                    fontSize: 13, color: "#1d1d1f", lineHeight: 1.8,
+                  }}>
+                    <div style={{ fontWeight: 600, marginBottom: 6 }}>依頼方法</div>
+                    <div>1. ダウンロードしたWordファイルを確認</div>
+                    <div>2. 下記メールアドレスにファイルを送付</div>
+                    <div style={{
+                      margin: "8px 0", padding: "10px 14px", borderRadius: 10,
+                      background: "#f5f5f7", fontWeight: 600, fontSize: 14, textAlign: "center",
+                    }}>
+                      📧 plan@todokede.jp
+                    </div>
+                    <div>3. 3営業日以内にチェック済みファイルを返送</div>
+                  </div>
+                </div>
+              )}
+
               <button onClick={handleDownload} style={{
                 width: "100%", padding: 14, borderRadius: 14, border: "none",
                 background: "#e8e8ed", color: "#1d1d1f", fontSize: 15, fontWeight: 600,
