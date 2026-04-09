@@ -6,12 +6,34 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
 });
 
+const PLAN_CONFIG: Record<string, { price: number; name: string; description: string }> = {
+  light: {
+    price: 4980,
+    name: "消防計画 自動作成（ライト）",
+    description: "消防計画Word出力",
+  },
+  standard: {
+    price: 9800,
+    name: "消防計画 自動作成（スタンダード）",
+    description: "消防計画＋別表すべて＋記入ガイドPDF付き",
+  },
+  premium: {
+    price: 29800,
+    name: "消防計画 自動作成（プレミアム）",
+    description: "消防計画＋別表＋記入ガイド＋元消防士による内容チェック＋修正1回",
+  },
+};
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.json();
 
+    const planId = formData.plan || "standard";
+    const plan = PLAN_CONFIG[planId] || PLAN_CONFIG.standard;
+
     // Save form data in Stripe metadata (max 500 chars per key, 50 keys)
     const metadata: Record<string, string> = {
+      plan: planId,
       building_name: formData.building_name || "",
       prefecture: formData.prefecture || "",
       city: formData.city || "",
@@ -46,10 +68,10 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: "jpy",
             product_data: {
-              name: "消防計画 自動作成",
-              description: `${formData.building_name} の消防計画をWordファイルで生成`,
+              name: plan.name,
+              description: `${formData.building_name} — ${plan.description}`,
             },
-            unit_amount: 2980,
+            unit_amount: plan.price,
           },
           quantity: 1,
         },
