@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
     const planId = formData.plan || "standard";
     const plan = PLAN_CONFIG[planId] || PLAN_CONFIG.standard;
 
-    // Save form data in Stripe metadata (max 500 chars per key, 50 keys)
     const metadata: Record<string, string> = {
       plan: planId,
       building_name: formData.building_name || "",
