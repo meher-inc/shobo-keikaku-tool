@@ -36,6 +36,37 @@ const STEPS = [
   { id: "confirm", title: "生成", icon: "✅" },
 ];
 
+const PLANS = [
+  {
+    id: "light",
+    name: "ライト",
+    price: 4980,
+    priceLabel: "¥4,980",
+    description: "消防計画のみ",
+    features: ["消防計画Word出力", "所轄消防本部の様式に準拠"],
+    missing: ["別表", "記入ガイド", "内容チェック"],
+  },
+  {
+    id: "standard",
+    name: "スタンダード",
+    price: 9800,
+    priceLabel: "¥9,800",
+    description: "計画＋別表＋ガイド",
+    badge: "おすすめ",
+    features: ["消防計画Word出力", "所轄消防本部の様式に準拠", "別表すべて出力", "記入ガイドPDF付き"],
+    missing: ["内容チェック"],
+  },
+  {
+    id: "premium",
+    name: "プレミアム",
+    price: 29800,
+    priceLabel: "¥29,800",
+    description: "チェック＋修正付き",
+    features: ["消防計画Word出力", "所轄消防本部の様式に準拠", "別表すべて出力", "記入ガイドPDF付き", "元消防士による内容チェック", "修正1回対応"],
+    missing: [],
+  },
+];
+
 function Field({ label, value, onChange, placeholder, type = "text", required = false }: any) {
   return (
     <div style={{ marginBottom: 20 }}>
@@ -51,6 +82,7 @@ function Field({ label, value, onChange, placeholder, type = "text", required = 
 export default function Home() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState("standard");
   const [form, setForm] = useState({
     prefecture: "京都府", city: "京都市", ward: "", address_detail: "",
     building_name: "", use_category: "", total_area: "", num_floors: "", capacity: "",
@@ -80,13 +112,15 @@ export default function Home() {
   if (form.equipment.length === 0) missing.push("消防用設備");
   if (!form.evacuation_site) missing.push("避難場所");
 
+  const currentPlan = PLANS.find(p => p.id === selectedPlan)!;
+
   async function handleGenerate() {
     setLoading(true);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, plan: selectedPlan }),
       });
       const data = await res.json();
       if (data.url) {
@@ -225,17 +259,81 @@ export default function Home() {
 
         {step === 5 && (
           <div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>生成</h2>
-            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>内容を確認して消防計画を生成します</p>
-            <div style={{ textAlign: "center", marginBottom: 24 }}>
-              <div style={{ position: "relative", display: "inline-block", width: 100, height: 100 }}>
-                <svg width="100" height="100" style={{ transform: "rotate(-90deg)" }}>
-                  <circle cx="50" cy="50" r="42" fill="none" stroke="#f5f5f7" strokeWidth="6" />
-                  <circle cx="50" cy="50" r="42" fill="none" stroke={completeness === 100 ? "#34c759" : "#ff9500"} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${completeness * 2.64} 264`} />
-                </svg>
-                <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", fontSize: 24, fontWeight: 700, color: completeness === 100 ? "#34c759" : "#ff9500" }}>{completeness}%</div>
-              </div>
+            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>プランを選択</h2>
+            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24 }}>内容を確認してプランを選んでください</p>
+
+            {/* Plan selector */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+              {PLANS.map(plan => {
+                const isSelected = selectedPlan === plan.id;
+                return (
+                  <button
+                    key={plan.id}
+                    onClick={() => setSelectedPlan(plan.id)}
+                    style={{
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 14,
+                      padding: "18px 20px",
+                      borderRadius: 16,
+                      border: "none",
+                      cursor: "pointer",
+                      background: isSelected ? "#f0f5ff" : "#f5f5f7",
+                      outline: isSelected ? "2.5px solid #0071e3" : "1.5px solid transparent",
+                      textAlign: "left" as const,
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    {/* Radio indicator */}
+                    <div style={{
+                      width: 22, height: 22, borderRadius: 11, flexShrink: 0, marginTop: 2,
+                      background: isSelected ? "#0071e3" : "#fff",
+                      border: isSelected ? "none" : "2px solid #d2d2d7",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      {isSelected && (
+                        <div style={{ width: 8, height: 8, borderRadius: 4, background: "#fff" }} />
+                      )}
+                    </div>
+
+                    {/* Plan info */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontSize: 16, fontWeight: 700, color: "#1d1d1f" }}>{plan.name}</span>
+                        {plan.badge && (
+                          <span style={{
+                            fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10,
+                            background: "#0071e3", color: "#fff", letterSpacing: "0.02em",
+                          }}>{plan.badge}</span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 13, color: "#86868b", marginBottom: 8 }}>{plan.description}</div>
+                      <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
+                        {plan.features.map(f => (
+                          <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "#dce8ff" : "#e8e8ed", color: isSelected ? "#0051a8" : "#6e6e73" }}>
+                            ✓ {f}
+                          </span>
+                        ))}
+                        {plan.missing.map(m => (
+                          <span key={m} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: "#f5f5f7", color: "#c7c7cc", textDecoration: "line-through" }}>
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Price */}
+                    <div style={{ flexShrink: 0, textAlign: "right" as const }}>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "#0071e3" : "#1d1d1f", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
+                      <div style={{ fontSize: 11, color: "#86868b" }}>税込</div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
+
+            {/* Missing items warning */}
             {missing.length > 0 && (
               <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: "#fffbf0", border: "1px solid #ffd9a0" }}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: "#af6800", marginBottom: 8 }}>不足している項目</div>
@@ -244,6 +342,8 @@ export default function Home() {
                 </div>
               </div>
             )}
+
+            {/* Summary */}
             <div style={{ padding: 20, borderRadius: 14, background: "#f5f5f7", fontSize: 14, lineHeight: 2.2, marginBottom: 24 }}>
               <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>所轄</span>{deptName || "—"}</div>
               <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>建物</span>{form.building_name || "—"}</div>
@@ -252,14 +352,22 @@ export default function Home() {
               <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>防火管理者</span>{form.manager_name || "—"}（{form.manager_qual}）</div>
               <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "—"}</div>
             </div>
+
+            {/* CTA button */}
             <button onClick={handleGenerate} disabled={completeness < 100 || loading} style={{
               width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
               cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
               background: completeness === 100 && !loading ? "#0071e3" : "#d2d2d7", color: "#fff",
             }}>
-              {loading ? "決済画面に移動中..." : "¥2,980 で生成する"}
+              {loading ? "決済画面に移動中..." : `${currentPlan.priceLabel} で生成する`}
             </button>
             {completeness < 100 && <p style={{ fontSize: 13, color: "#86868b", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
+
+            {/* Trust badges */}
+            <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "#86868b" }}>
+              <span>🔒 SSL暗号化通信</span>
+              <span>💳 Stripe安全決済</span>
+            </div>
           </div>
         )}
       </div>
