@@ -106,7 +106,7 @@ function SuccessContent() {
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
               <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>お支払い完了</h1>
-              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#e8f4fd", color: "#0071e3", marginBottom: 12 }}>
+              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#FDECEA", color: "#E8332A", marginBottom: 12 }}>
                 {planName}プラン
               </div>
               <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24, lineHeight: 1.6 }}>
@@ -115,7 +115,7 @@ function SuccessContent() {
               </p>
               <button onClick={handleDownload} style={{
                 width: "100%", padding: 16, borderRadius: 14, border: "none",
-                background: "#0071e3", color: "#fff", fontSize: 17, fontWeight: 600,
+                background: "#E8332A", color: "#fff", fontSize: 17, fontWeight: 600,
                 cursor: "pointer", boxShadow: "0 4px 16px rgba(0,113,227,0.25)",
               }}>
                 📄 消防計画をダウンロード
@@ -135,7 +135,7 @@ function SuccessContent() {
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
               <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>ダウンロード完了</h1>
-              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#e8f4fd", color: "#0071e3", marginBottom: 16 }}>
+              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#FDECEA", color: "#E8332A", marginBottom: 16 }}>
                 {planName}プラン
               </div>
               <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24, lineHeight: 1.6 }}>
@@ -156,9 +156,9 @@ function SuccessContent() {
               {showPremiumInfo && (
                 <div style={{
                   padding: "20px 24px", borderRadius: 16, marginBottom: 16,
-                  background: "#f0f5ff", border: "1px solid #b8d4ff", textAlign: "left",
+                  background: "#FDECEA", border: "1px solid #b8d4ff", textAlign: "left",
                 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#0051a8", marginBottom: 10 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#C8261E", marginBottom: 10 }}>
                     🔍 内容チェック＋修正1回（プレミアム特典）
                   </div>
 
@@ -207,7 +207,7 @@ function SuccessContent() {
               </button>
               <a href="/" style={{
                 display: "block", padding: 14, borderRadius: 14,
-                background: "#f5f5f7", color: "#0071e3", fontSize: 15, fontWeight: 600,
+                background: "#f5f5f7", color: "#E8332A", fontSize: 15, fontWeight: 600,
                 textDecoration: "none",
               }}>
                 トップに戻る
@@ -225,7 +225,7 @@ function SuccessContent() {
               </p>
               <a href="/" style={{
                 display: "block", padding: 14, borderRadius: 14,
-                background: "#0071e3", color: "#fff", fontSize: 15, fontWeight: 600,
+                background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600,
                 textDecoration: "none",
               }}>
                 トップに戻る
@@ -236,7 +236,7 @@ function SuccessContent() {
 
         <div style={{ marginTop: 32, fontSize: 12, color: "#86868b" }}>
           <p>届出でお困りの場合は代行サービスもご利用いただけます</p>
-          <a href="https://todokede.jp" style={{ color: "#0071e3", fontWeight: 600, textDecoration: "none" }}>
+          <a href="https://todokede.jp" style={{ color: "#E8332A", fontWeight: 600, textDecoration: "none" }}>
             トドケデ代行サービス →
           </a>
         </div>

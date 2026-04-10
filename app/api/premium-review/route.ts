@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     const customerHtml = `
       <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
-        <h2 style="color:#0071e3;">チェック依頼を受け付けました</h2>
+        <h2 style="color:#E8332A;">チェック依頼を受け付けました</h2>
         <p>この度はプレミアムプランをご購入いただきありがとうございます。</p>
         <p>元京都市消防局・10年勤務の担当者が、消防計画の内容をチェックいたします。</p>
         <div style="background:#f5f5f7;padding:20px;border-radius:12px;margin:24px 0;">

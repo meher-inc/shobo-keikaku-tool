@@ -139,7 +139,6 @@ export default function Home() {
     <div style={{ maxWidth: 640, margin: "0 auto", padding: "20px 16px 40px" }}>
 
       <div style={{ textAlign: "center", padding: "48px 24px 40px" }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🔥</div>
         <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 8 }}>消防計画を、自動作成。</h1>
         <p style={{ fontSize: 17, color: "#86868b", fontWeight: 400 }}>建物情報を入力するだけ。所轄消防本部の様式に準拠した計画書をWordで生成します。</p>
       </div>
@@ -229,10 +228,10 @@ export default function Home() {
                 return (
                   <button key={e} onClick={() => toggleEquip(e)} style={{
                     display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, border: "none", cursor: "pointer",
-                    background: active ? "#e8f4fd" : "#f5f5f7", outline: active ? "2px solid #0071e3" : "1px solid transparent",
+                    background: active ? "#FDECEA" : "#f5f5f7", outline: active ? "2px solid #E8332A" : "1px solid transparent",
                     fontSize: 14, fontWeight: 500, textAlign: "left" as const,
                   }}>
-                    <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: active ? "#0071e3" : "#fff", border: active ? "none" : "2px solid #d2d2d7", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: active ? "#E8332A" : "#fff", border: active ? "none" : "2px solid #d2d2d7", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {active && <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>✓</span>}
                     </div>
                     {e}
@@ -279,8 +278,8 @@ export default function Home() {
                       borderRadius: 16,
                       border: "none",
                       cursor: "pointer",
-                      background: isSelected ? "#f0f5ff" : "#f5f5f7",
-                      outline: isSelected ? "2.5px solid #0071e3" : "1.5px solid transparent",
+                      background: isSelected ? "#FDECEA" : "#f5f5f7",
+                      outline: isSelected ? "2.5px solid #E8332A" : "1.5px solid transparent",
                       textAlign: "left" as const,
                       transition: "all 0.15s ease",
                     }}
@@ -288,7 +287,7 @@ export default function Home() {
                     {/* Radio indicator */}
                     <div style={{
                       width: 22, height: 22, borderRadius: 11, flexShrink: 0, marginTop: 2,
-                      background: isSelected ? "#0071e3" : "#fff",
+                      background: isSelected ? "#E8332A" : "#fff",
                       border: isSelected ? "none" : "2px solid #d2d2d7",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
@@ -304,14 +303,14 @@ export default function Home() {
                         {plan.badge && (
                           <span style={{
                             fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10,
-                            background: "#0071e3", color: "#fff", letterSpacing: "0.02em",
+                            background: "#E8332A", color: "#fff", letterSpacing: "0.02em",
                           }}>{plan.badge}</span>
                         )}
                       </div>
                       <div style={{ fontSize: 13, color: "#86868b", marginBottom: 8 }}>{plan.description}</div>
                       <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
                         {plan.features.map(f => (
-                          <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "#dce8ff" : "#e8e8ed", color: isSelected ? "#0051a8" : "#6e6e73" }}>
+                          <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "#FADAD6" : "#e8e8ed", color: isSelected ? "#C8261E" : "#6e6e73" }}>
                             ✓ {f}
                           </span>
                         ))}
@@ -325,7 +324,7 @@ export default function Home() {
 
                     {/* Price */}
                     <div style={{ flexShrink: 0, textAlign: "right" as const }}>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "#0071e3" : "#1d1d1f", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "#E8332A" : "#1d1d1f", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
                       <div style={{ fontSize: 11, color: "#86868b" }}>税込</div>
                     </div>
                   </button>
@@ -357,7 +356,7 @@ export default function Home() {
             <button onClick={handleGenerate} disabled={completeness < 100 || loading} style={{
               width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
               cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
-              background: completeness === 100 && !loading ? "#0071e3" : "#d2d2d7", color: "#fff",
+              background: completeness === 100 && !loading ? "#E8332A" : "#d2d2d7", color: "#fff",
             }}>
               {loading ? "決済画面に移動中..." : `${currentPlan.priceLabel} で生成する`}
             </button>
@@ -374,13 +373,10 @@ export default function Home() {
 
       <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
         {step > 0 && <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#e8e8ed", color: "#1d1d1f", fontSize: 15, fontWeight: 600 }}>← 戻る</button>}
-        {step < STEPS.length - 1 && <button onClick={() => setStep(step + 1)} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#0071e3", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
+        {step < STEPS.length - 1 && <button onClick={() => setStep(step + 1)} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
       </div>
 
-      <div style={{ marginTop: 32, textAlign: "center" }}>
-        <p style={{ fontSize: 12, color: "#86868b" }}>作成が難しい場合は <a href="https://todokede.jp" style={{ color: "#0071e3", fontWeight: 600, textDecoration: "none" }}>トドケデ代行サービス</a> にご相談ください</p>
-        <p style={{ fontSize: 11, color: "#d2d2d7", marginTop: 8 }}>© 2026 MeHer株式会社</p>
-      </div>
+
     </div>
   );
 }
