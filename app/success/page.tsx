@@ -15,11 +15,45 @@ function SuccessContent() {
   const plan = searchParams.get("plan") || "standard";
   const planName = PLAN_NAMES[plan] || "スタンダード";
   const [status, setStatus] = useState<"loading" | "ready" | "downloading" | "done" | "error">("loading");
+  const [reviewStatus, setReviewStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
 
   useEffect(() => {
     if (sessionId) setStatus("ready");
     else setStatus("error");
   }, [sessionId]);
+
+  async function sendPremiumReview(blob: Blob) {
+    try {
+      setReviewStatus("sending");
+      const sessionRes = await fetch(`/api/get-session?session_id=${sessionId}`);
+      const { customerEmail } = await sessionRes.json();
+      if (!customerEmail) throw new Error("顧客メールが取得できません");
+
+      const arrayBuffer = await blob.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      let binary = "";
+      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+      const docxBase64 = btoa(binary);
+
+      const res = await fetch("/api/premium-review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerEmail,
+          planId: "premium",
+          formData: { session_id: sessionId },
+          docxBase64,
+          fileName: "shobo_keikaku.docx",
+          sessionId,
+        }),
+      });
+      if (!res.ok) throw new Error("送信失敗");
+      setReviewStatus("sent");
+    } catch (e) {
+      console.error(e);
+      setReviewStatus("failed");
+    }
+  }
 
   async function handleDownload() {
     setStatus("downloading");
@@ -36,6 +70,10 @@ function SuccessContent() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       setStatus("done");
+
+      if (plan === "premium" && reviewStatus === "idle") {
+        sendPremiumReview(blob);
+      }
     } catch {
       setStatus("error");
     }
@@ -105,18 +143,16 @@ function SuccessContent() {
                 内容をご確認のうえ、所轄の消防署に届け出てください。
               </p>
 
-              {/* 記入ガイドPDF（スタンダード・プレミアム） */}
               {showGuide && (
                 <a href="/guide.pdf" download style={{
                   display: "block", width: "100%", padding: 14, borderRadius: 14, background: "#f0faf0", color: "#0d5e0d", fontSize: 15, fontWeight: 600,
-textDecoration: "none", marginBottom: 12, textAlign: "center",
-border: "1px solid #b8e6b8",
+                  textDecoration: "none", marginBottom: 12, textAlign: "center",
+                  border: "1px solid #b8e6b8",
                 }}>
                   📘 記入ガイドPDFをダウンロード
                 </a>
               )}
 
-              {/* プレミアム：内容チェック案内 */}
               {showPremiumInfo && (
                 <div style={{
                   padding: "20px 24px", borderRadius: 16, marginBottom: 16,
@@ -125,25 +161,40 @@ border: "1px solid #b8e6b8",
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#0051a8", marginBottom: 10 }}>
                     🔍 内容チェック＋修正1回（プレミアム特典）
                   </div>
-                  <p style={{ fontSize: 13, color: "#1d1d1f", lineHeight: 1.8, margin: 0, marginBottom: 12 }}>
-                    元消防士のスタッフが、生成された消防計画の内容を確認し、
-                    消防署に提出できる状態に仕上げます。
-                  </p>
-                  <div style={{
-                    padding: "14px 16px", borderRadius: 12, background: "#fff",
-                    fontSize: 13, color: "#1d1d1f", lineHeight: 1.8,
-                  }}>
-                    <div style={{ fontWeight: 600, marginBottom: 6 }}>依頼方法</div>
-                    <div>1. ダウンロードしたWordファイルを確認</div>
-                    <div>2. 下記メールアドレスにファイルを送付</div>
+
+                  {reviewStatus === "sending" && (
+                    <p style={{ fontSize: 13, color: "#1d1d1f", lineHeight: 1.8, margin: 0 }}>
+                      ⏳ チェック依頼を送信中...
+                    </p>
+                  )}
+
+                  {reviewStatus === "sent" && (
+                    <>
+                      <p style={{ fontSize: 13, color: "#1d1d1f", lineHeight: 1.8, margin: 0, marginBottom: 8 }}>
+                        ✅ <strong>チェック依頼を自動で送信しました</strong>
+                      </p>
+                      <p style={{ fontSize: 13, color: "#1d1d1f", lineHeight: 1.8, margin: 0 }}>
+                        ご登録のメール宛に受付確認メールをお送りしました。元消防士の担当者が <strong>3営業日以内</strong> に修正版のWordをご返送いたします。
+                      </p>
+                    </>
+                  )}
+
+                  {reviewStatus === "failed" && (
                     <div style={{
-                      margin: "8px 0", padding: "10px 14px", borderRadius: 10,
-                      background: "#f5f5f7", fontWeight: 600, fontSize: 14, textAlign: "center",
+                      padding: "14px 16px", borderRadius: 12, background: "#fff",
+                      fontSize: 13, color: "#1d1d1f", lineHeight: 1.8,
                     }}>
-                      📧 plan@todokede.jp
+                      <div style={{ fontWeight: 600, marginBottom: 6, color: "#c00" }}>⚠️ 自動送信に失敗しました</div>
+                      <div>お手数ですが、ダウンロードしたWordを下記まで送付してください。</div>
+                      <div style={{
+                        margin: "8px 0", padding: "10px 14px", borderRadius: 10,
+                        background: "#f5f5f7", fontWeight: 600, fontSize: 14, textAlign: "center",
+                      }}>
+                        📧 plan@todokede.jp
+                      </div>
+                      <div>3営業日以内にチェック済みファイルを返送いたします。</div>
                     </div>
-                    <div>3. 3営業日以内にチェック済みファイルを返送</div>
-                  </div>
+                  )}
                 </div>
               )}
 
