@@ -82,7 +82,8 @@ function Field({ label, value, onChange, placeholder, type = "text", required = 
 export default function Home() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState("standard");
+const [selectedPlan, setSelectedPlan] = useState("standard");
+const [showSample, setShowSample] = useState(false);  // ← これを追加
   const [form, setForm] = useState({
     prefecture: "京都府", city: "京都市", ward: "", address_detail: "",
     building_name: "", use_category: "", total_area: "", num_floors: "", capacity: "",
@@ -331,7 +332,27 @@ export default function Home() {
                 );
               })}
             </div>
-
+{/* Sample preview button */}
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <button
+                onClick={() => setShowSample(true)}
+                style={{
+                  background: "#fff",
+                  border: "2px solid #E8332A",
+                  color: "#E8332A",
+                  padding: "12px 28px",
+                  borderRadius: 12,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                📄 サンプルを見る(スタンダードプラン)
+              </button>
+              <p style={{ fontSize: 12, color: "#86868b", marginTop: 8 }}>
+                架空の飲食店で生成した実物をそのままご覧いただけます
+              </p>
+            </div>
             {/* Missing items warning */}
             {missing.length > 0 && (
               <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: "#fffbf0", border: "1px solid #ffd9a0" }}>
