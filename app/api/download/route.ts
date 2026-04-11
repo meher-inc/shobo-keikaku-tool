@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
     // Reconstruct form data from metadata
     const meta = session.metadata || {};
     const formData = {
+      plan: meta.plan,
       building_name: meta.building_name,
       prefecture: meta.prefecture,
       city: meta.city,
