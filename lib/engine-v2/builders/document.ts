@@ -1,14 +1,15 @@
 import { Document, HeadingLevel, Paragraph, Table, TextRun } from "docx";
 import type { TemplatePack } from "../types/template-pack";
 import type { RenderData } from "../helpers/placeholder";
-import { buildParagraphs } from "./paragraph";
+import { buildSectionBody, buildSectionHeading } from "./paragraph";
 
 /**
- * A section-level override: given the current RenderData, return
- * the docx children (paragraphs and/or tables) to emit in place of
- * the section's JSON body. Used by dept-specific adapters to swap
- * in TS-built tables (e.g. kyoto ch3-reports) while keeping the
- * surrounding chapter structure in the JSON pack.
+ * A section-level body override: given the current RenderData,
+ * return the docx children (paragraphs and/or tables) to emit as
+ * the section's body. The section heading from the JSON pack is
+ * ALWAYS emitted by buildChildrenFromPack — the override only
+ * replaces body content, so a TS table builder does not need to
+ * also emit the heading.
  */
 export type SectionOverride = (data: RenderData) => (Paragraph | Table)[];
 
@@ -19,8 +20,10 @@ export type SectionOverride = (data: RenderData) => (Paragraph | Table)[];
  * finalising the Document.
  *
  * Section-level overrides let an adapter substitute a TS builder
- * for a specific JSON section, keyed by section.id. Sections not in
- * the override map fall through to the normal buildParagraphs path.
+ * for the body of a specific JSON section, keyed by section.id.
+ * The section's heading is still emitted from the JSON pack, so
+ * callers only need to supply the body content. Sections not in
+ * the override map fall through to the normal JSON body rendering.
  * Unknown override keys are silently ignored — they simply never
  * match a section and so have no effect.
  */
@@ -40,12 +43,15 @@ export function buildChildrenFromPack(
     );
 
     for (const section of chapter.sections) {
+      // Heading always comes from the JSON pack.
+      out.push(buildSectionHeading(section));
+
       const override = overrides?.[section.id];
       if (override) {
         out.push(...override(data));
         continue;
       }
-      out.push(...buildParagraphs(section, data));
+      out.push(...buildSectionBody(section, data));
     }
   }
 
