@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { supabaseAdmin } from "../../../lib/supabase";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
@@ -31,7 +32,33 @@ export async function POST(request: NextRequest) {
     const planId = formData.plan || "standard";
     const plan = PLAN_CONFIG[planId] || PLAN_CONFIG.standard;
 
+    // Insert a pending order row in Supabase BEFORE creating the Stripe session.
+    // The Stripe webhook later flips this row to status='paid'.
+    // The existing metadata-based flow is preserved as a fallback.
+    const { data: orderRow, error: insertError } = await supabaseAdmin
+      .from("orders")
+      .insert({
+        plan_id: planId,
+        amount: plan.price,
+        currency: "jpy",
+        form_data: formData,
+        status: "pending",
+      })
+      .select("id")
+      .single();
+
+    if (insertError || !orderRow) {
+      console.error("[checkout] supabase insert error:", insertError);
+      return NextResponse.json(
+        { error: "注文の作成に失敗しました" },
+        { status: 500 }
+      );
+    }
+
+    const orderId = orderRow.id;
+
     const metadata: Record<string, string> = {
+      order_id: orderId,
       plan: planId,
       building_name: formData.building_name || "",
       prefecture: formData.prefecture || "",
@@ -80,6 +107,16 @@ export async function POST(request: NextRequest) {
       cancel_url: `${request.nextUrl.origin}/?canceled=true`,
       metadata,
     });
+
+    // Persist the Stripe session id back onto the order for later lookup.
+    // Failure here is non-fatal: the webhook can still match via metadata.order_id.
+    const { error: updateError } = await supabaseAdmin
+      .from("orders")
+      .update({ stripe_session_id: session.id })
+      .eq("id", orderId);
+    if (updateError) {
+      console.error("[checkout] supabase update stripe_session_id failed:", updateError);
+    }
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
