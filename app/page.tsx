@@ -144,6 +144,29 @@ const [showSample, setShowSample] = useState(false);  // ← これを追加
         <p style={{ fontSize: 17, color: "#86868b", fontWeight: 400 }}>建物情報を入力するだけ。所轄消防本部の様式に準拠した計画書をWordで生成します。</p>
       </div>
 
+      {/* Hero Sample CTA */}
+      <div style={{ textAlign: "center", marginBottom: 32, marginTop: -16 }}>
+        <button
+          onClick={() => setShowSample(true)}
+          style={{
+            background: "#fff",
+            border: "2px solid #E8332A",
+            color: "#E8332A",
+            padding: "14px 32px",
+            borderRadius: 12,
+            fontSize: 15,
+            fontWeight: 700,
+            cursor: "pointer",
+            boxShadow: "0 2px 8px rgba(232, 51, 42, 0.12)",
+          }}
+        >
+          📄 まずはサンプルを見る
+        </button>
+        <p style={{ fontSize: 12, color: "#86868b", marginTop: 10 }}>
+          実際に生成される消防計画(飲食店320㎡・別表付き)をご確認いただけます
+        </p>
+      </div>
+
       <div style={{ display: "flex", gap: 4, marginBottom: 24, padding: 4, background: "#e8e8ed", borderRadius: 12 }}>
         {STEPS.map((s, i) => (
           <button key={s.id} onClick={() => setStep(i)} style={{
@@ -347,10 +370,10 @@ const [showSample, setShowSample] = useState(false);  // ← これを追加
                   cursor: "pointer",
                 }}
               >
-                📄 サンプルを見る(スタンダードプラン)
+                📄 サンプルをもう一度見る
               </button>
               <p style={{ fontSize: 12, color: "#86868b", marginTop: 8 }}>
-                架空の飲食店で生成した実物をそのままご覧いただけます
+                スタンダードプランで生成される内容のサンプルです
               </p>
             </div>
             {/* Missing items warning */}
@@ -396,7 +419,72 @@ const [showSample, setShowSample] = useState(false);  // ← これを追加
         {step > 0 && <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#e8e8ed", color: "#1d1d1f", fontSize: 15, fontWeight: 600 }}>← 戻る</button>}
         {step < STEPS.length - 1 && <button onClick={() => setStep(step + 1)} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
       </div>
-
+{/* Sample preview modal */}
+      {showSample && (
+        <div
+          onClick={() => setShowSample(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.75)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: 16,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff",
+              borderRadius: 16,
+              width: "100%",
+              maxWidth: 900,
+              height: "90vh",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
+          >
+            <div style={{
+              padding: "14px 20px",
+              borderBottom: "1px solid #e5e5e5",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#1d1d1f" }}>
+                  消防計画サンプル
+                </div>
+                <div style={{ fontSize: 12, color: "#86868b" }}>
+                  京都市・飲食店320㎡(架空事業者)
+                </div>
+              </div>
+              <button
+                onClick={() => setShowSample(false)}
+                style={{
+                  background: "#f5f5f7",
+                  border: "none",
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
+                  fontSize: 16,
+                  cursor: "pointer",
+                  color: "#1d1d1f",
+                }}
+              >
+                ✕
+              </button>
+            </div>
+            <iframe
+              src="/samples/sample-kyoto-standard.pdf"
+              style={{ flex: 1, border: "none", background: "#f5f5f7" }}
+            />
+          </div>
+        </div>
+      )}
 
     </div>
   );
