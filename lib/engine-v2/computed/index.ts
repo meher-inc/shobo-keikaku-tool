@@ -63,9 +63,30 @@ function sumArea(areas: string | undefined): string {
   return String(total);
 }
 
+/**
+ * Join a comma-separated list into a single string using the
+ * given separator (default: 全角句読点「、」). Empty tokens are
+ * dropped so a trailing comma doesn't leave a dangling separator.
+ * Example: joinArray("消火器, 誘導灯, ") => "消火器、誘導灯"
+ *
+ * Used by kyoto ch6 (自衛消防 初期消火 subitem イ) for the
+ * fire_equipment list — v1 does `d.fire_equipment.join("、")`
+ * inline at lib/generate_kyoto_full.js:369.
+ */
+function joinArray(csv: string | undefined, separator: string | undefined): string {
+  if (!csv) return "";
+  const sep = separator && separator.length > 0 ? separator : "\u3001";
+  return csv
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0)
+    .join(sep);
+}
+
 export const computedRegistry: Record<ComputedFnName, ComputedFn> = {
   eraDate: (iso) => eraDate(iso),
   joinAddress: (pref, city, street, building) =>
     joinAddress(pref, city, street, building),
   sumArea: (areas) => sumArea(areas),
+  joinArray: (csv, sep) => joinArray(csv, sep),
 };
