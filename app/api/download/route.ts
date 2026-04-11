@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { supabaseAdmin } from "../../../lib/supabase";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
@@ -62,6 +63,31 @@ export async function GET(request: NextRequest) {
 
     const buffer = await generateRes.arrayBuffer();
     const filename = encodeURIComponent(`消防計画_${meta.building_name}.docx`);
+
+    // Best-effort download tracking. Failure must never block the DL.
+    try {
+      const { data: orderRow, error: fetchErr } = await supabaseAdmin
+        .from("orders")
+        .select("id, download_count")
+        .eq("stripe_session_id", sessionId)
+        .maybeSingle();
+      if (fetchErr) {
+        console.error("[download] supabase lookup error:", fetchErr);
+      } else if (orderRow) {
+        const { error: updateErr } = await supabaseAdmin
+          .from("orders")
+          .update({
+            download_count: (orderRow.download_count || 0) + 1,
+            last_downloaded_at: new Date().toISOString(),
+          })
+          .eq("id", orderRow.id);
+        if (updateErr) {
+          console.error("[download] supabase update error:", updateErr);
+        }
+      }
+    } catch (trackErr) {
+      console.error("[download] tracking error:", trackErr);
+    }
 
     return new NextResponse(buffer, {
       headers: {
