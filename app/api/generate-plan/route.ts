@@ -9,7 +9,22 @@ const SPECIFIC_USES = new Set([
 
 export async function POST(request: NextRequest) {
   try {
+    const url = new URL(request.url);
+    const engine = url.searchParams.get("engine");
     const form = await request.json();
+
+    // v2 experimental path — 完全に隔離。クエリなし時は1行も到達しない。
+    if (engine === "v2") {
+      const { runV2Adapter } = await import("../../../lib/engine-v2/adapters/generate-plan");
+      const buffer = await runV2Adapter(form);
+      return new NextResponse(buffer, {
+        headers: {
+          "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(`消防計画_v2sample_${form.building_name || "untitled"}.docx`)}`,
+        },
+      });
+    }
+
     const plan = form.plan || "standard";
 
     // Map form fields → generator input format
