@@ -15,12 +15,14 @@ export async function POST(request: NextRequest) {
 
     // v2 experimental path — 完全に隔離。クエリなし時は1行も到達しない。
     if (engine === "v2") {
+      const packParam = url.searchParams.get("pack");
       const { runV2Adapter } = await import("../../../lib/engine-v2/adapters/generate-plan");
-      const buffer = await runV2Adapter(form);
+      const buffer = await runV2Adapter(form, packParam === "full" ? { pack: "full" } : {});
+      const filePrefix = packParam === "full" ? "v2full" : "v2sample";
       return new NextResponse(buffer, {
         headers: {
           "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(`消防計画_v2sample_${form.building_name || "untitled"}.docx`)}`,
+          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(`消防計画_${filePrefix}_${form.building_name || "untitled"}.docx`)}`,
         },
       });
     }
