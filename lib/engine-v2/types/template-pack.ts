@@ -25,9 +25,23 @@ export const PlaceholderNodeSchema = z.object({
 });
 export type PlaceholderNode = z.infer<typeof PlaceholderNodeSchema>;
 
+// Registry of known computed functions. Kept in sync with
+// lib/engine-v2/computed/index.ts — unknown fn names are rejected
+// at loadPack time via z.enum below.
+export const COMPUTED_FN_NAMES = ["eraDate", "joinAddress", "sumArea"] as const;
+export type ComputedFnName = typeof COMPUTED_FN_NAMES[number];
+
+export const ComputedNodeSchema = z.object({
+  type: z.literal("computed"),
+  fn: z.enum(COMPUTED_FN_NAMES),
+  args: z.array(z.string()),
+});
+export type ComputedNode = z.infer<typeof ComputedNodeSchema>;
+
 export const BodyNodeSchema = z.discriminatedUnion("type", [
   TextNodeSchema,
   PlaceholderNodeSchema,
+  ComputedNodeSchema,
 ]);
 export type BodyNode = z.infer<typeof BodyNodeSchema>;
 

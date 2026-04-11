@@ -1,4 +1,5 @@
 import type { BodyNode } from "../types/template-pack";
+import { computedRegistry } from "../computed";
 
 /**
  * Input data map passed to the renderer. Keys match PlaceholderNode.key.
@@ -14,19 +15,27 @@ export type RenderData = Record<string, string | undefined>;
  *   An empty-string value in data is treated the same as undefined
  *   (i.e. falls through to fallback) so callers can pass "" without
  *   accidentally erasing a meaningful fallback.
+ * - computed nodes look up the fn in the computedRegistry and invoke
+ *   it with args resolved from the RenderData map.
  */
 export function resolveNode(node: BodyNode, data: RenderData): string {
   if (node.type === "text") {
     return node.value;
   }
-  const supplied = data[node.key];
-  if (supplied !== undefined && supplied !== "") {
-    return supplied;
+  if (node.type === "placeholder") {
+    const supplied = data[node.key];
+    if (supplied !== undefined && supplied !== "") {
+      return supplied;
+    }
+    if (node.fallback !== undefined) {
+      return node.fallback;
+    }
+    return "";
   }
-  if (node.fallback !== undefined) {
-    return node.fallback;
-  }
-  return "";
+  // computed
+  const fn = computedRegistry[node.fn];
+  const args = node.args.map((key) => data[key]);
+  return fn(...args);
 }
 
 /**
