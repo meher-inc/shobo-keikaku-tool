@@ -36,6 +36,62 @@ const STEPS = [
   { id: "confirm", title: "生成", icon: "✅" },
 ];
 
+const FAQ_ITEMS = [
+  {
+    q: "出力された消防計画はそのまま消防署に提出できますか?",
+    a: "はい。京都市消防局・東京消防庁の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。",
+  },
+  {
+    q: "対応している消防本部を教えてください。",
+    a: "現在は京都市消防局・東京消防庁に正式対応しています。それ以外のエリアは標準様式(京都ベース)で出力されますので、ご利用前に管轄消防署の様式と照合することをお勧めします。大阪・名古屋・横浜・福岡は順次対応予定です。",
+  },
+  {
+    q: "どのプランを選べばいいかわかりません。",
+    a: "迷ったらスタンダード(¥9,800)がおすすめです。消防計画本体に加えて別表すべてと記入ガイドPDFが付くので、初めて作成する方でも安心です。プレミアム(¥29,800)は「絶対に一発で通したい」「元消防士に直接見てほしい」方向けです。",
+  },
+  {
+    q: "入力した情報は保存されますか?",
+    a: "いいえ、フォームに入力された情報は決済と書類生成のためだけに使用され、サーバーに保存されません。個人情報保護の観点から、安心してご利用いただけます。",
+  },
+  {
+    q: "決済後にダウンロードし忘れました。再ダウンロードできますか?",
+    a: "決済完了メールに記載されたURLから再度アクセスできます。万一リンクが無効になっている場合は、決済時のメールアドレスを添えて plan@todokede.jp までご連絡ください。",
+  },
+  {
+    q: "防火管理者の資格がなくても消防計画を作成できますか?",
+    a: "消防計画の作成自体は誰でもできますが、提出には防火管理者の選任が必要です(特定用途で収容30人以上、延床300㎡以上の場合は甲種、それ以外は乙種)。資格取得は1〜2日の講習で可能です。お近くの消防署または日本防火・防災協会のサイトで受講できます。",
+  },
+  {
+    q: "出力形式はWordですか?PDFですか?",
+    a: "Word形式(.docx)で出力されます。消防署に提出する前に建物固有の情報を追記・修正したい場合にそのまま編集できます。印刷するだけの方は、Wordで開いてPDF保存してください。",
+  },
+  {
+    q: "領収書は発行できますか?",
+    a: "Stripe決済完了時にStripeから自動で領収書が発行されます。会社名が必要な場合は、決済画面で入力いただけます。別途MeHer株式会社発行の領収書が必要な場合は plan@todokede.jp までご連絡ください。",
+  },
+  {
+    q: "返金は可能ですか?",
+    a: "出力された消防計画の内容に不備があった場合は、内容確認のうえ返金または再発行で対応いたします。「出力してみたけど使わなかった」という理由での返金はお断りしています。",
+  },
+  {
+    q: "法人として複数物件分まとめて購入できますか?",
+    a: (
+      <>
+        現在は1件ずつの購入となっております。管理会社様・フランチャイズ本部様などで複数物件の一括対応をご希望の場合は、
+        <a
+          href="https://todokede.jp"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#E8332A", textDecoration: "underline" }}
+        >
+          トドケデ本体の代行サービス
+        </a>
+        (¥50,000〜)をご検討ください。
+      </>
+    ),
+  },
+];
+
 const PLANS = [
   {
     id: "light",
@@ -84,6 +140,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 const [selectedPlan, setSelectedPlan] = useState("standard");
 const [showSample, setShowSample] = useState(false);  // ← これを追加
+const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [form, setForm] = useState({
     prefecture: "京都府", city: "京都市", ward: "", address_detail: "",
     building_name: "", use_category: "", total_area: "", num_floors: "", capacity: "",
@@ -137,6 +194,7 @@ const [showSample, setShowSample] = useState(false);  // ← これを追加
   }
 
   return (
+    <>
     <div style={{ maxWidth: 640, margin: "0 auto", padding: "20px 16px 40px" }}>
 
       <div style={{ textAlign: "center", padding: "48px 24px 40px" }}>
@@ -487,5 +545,124 @@ const [showSample, setShowSample] = useState(false);  // ← これを追加
       )}
 
     </div>
+
+    {/* FAQ Section */}
+    <section
+      style={{
+        maxWidth: 1080,
+        margin: "0 auto",
+        padding: "clamp(64px, 10vw, 96px) clamp(16px, 4vw, 24px)",
+      }}
+    >
+      <h2
+        style={{
+          fontSize: "clamp(24px, 5vw, 32px)",
+          fontWeight: 900,
+          textAlign: "center",
+          marginBottom: 48,
+          color: "#1a1a1a",
+        }}
+      >
+        よくあるご質問
+      </h2>
+      <div>
+        {FAQ_ITEMS.map((item, i) => {
+          const isOpen = faqOpen === i;
+          return (
+            <div
+              key={i}
+              onClick={() => setFaqOpen(isOpen ? null : i)}
+              style={{
+                borderBottom: "1px solid #e5e5e5",
+                padding: "20px 0",
+                cursor: "pointer",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 16,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 900,
+                      color: "#E8332A",
+                      flexShrink: 0,
+                    }}
+                  >
+                    Q.
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "clamp(14px, 3.5vw, 16px)",
+                      fontWeight: 700,
+                      color: "#1a1a1a",
+                    }}
+                  >
+                    {item.q}
+                  </span>
+                </div>
+                <span
+                  style={{
+                    fontSize: 24,
+                    color: "#666",
+                    flexShrink: 0,
+                    lineHeight: 1,
+                  }}
+                >
+                  {isOpen ? "−" : "+"}
+                </span>
+              </div>
+              {isOpen && (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    marginTop: 16,
+                    padding: "clamp(14px, 4vw, 20px)",
+                    background: "#FDECEA",
+                    borderRadius: 8,
+                    display: "flex",
+                    gap: 10,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontWeight: 900,
+                      color: "#1a1a1a",
+                      flexShrink: 0,
+                    }}
+                  >
+                    A.
+                  </span>
+                  <div
+                    style={{
+                      fontSize: "clamp(13px, 3.5vw, 15px)",
+                      lineHeight: 1.8,
+                      color: "#1a1a1a",
+                    }}
+                  >
+                    {item.a}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+    </>
   );
 }
