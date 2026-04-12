@@ -1,13 +1,13 @@
 import type { Paragraph, Table } from "docx";
 import type { RenderData } from "../../helpers/placeholder";
-import { kyotoTable } from "./table-helpers";
+import { kyotoTable } from "../shared/table-helpers";
 import {
   appendixHeading,
   pageBreak,
   plainText,
   sectionHeading,
   spacerParagraph,
-} from "./paragraph-helpers";
+} from "../shared/paragraph-helpers";
 import { applicableLabel, reportFrequencyPhrase } from "./logic";
 
 /**

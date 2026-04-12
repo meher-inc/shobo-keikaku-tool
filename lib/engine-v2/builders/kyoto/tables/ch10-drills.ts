@@ -1,6 +1,6 @@
 import type { Paragraph, Table } from "docx";
 import type { RenderData } from "../../../helpers/placeholder";
-import { kyotoTable } from "../table-helpers";
+import { kyotoTable } from "../../shared/table-helpers";
 import { drillRequirement } from "../logic";
 
 /**

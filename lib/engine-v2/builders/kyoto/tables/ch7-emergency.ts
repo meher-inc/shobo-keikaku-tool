@@ -1,6 +1,6 @@
 import type { Paragraph, Table } from "docx";
 import type { RenderData } from "../../../helpers/placeholder";
-import { kyotoTable } from "../table-helpers";
+import { kyotoTable } from "../../shared/table-helpers";
 
 /**
  * 第7章 (休日、夜間の防火管理体制) 冒頭の緊急連絡先テーブル。
