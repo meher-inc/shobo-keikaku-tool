@@ -119,4 +119,25 @@ describe("kyoto full-pack v2 smoke tests", () => {
     const xml = await renderAndExtractXml({ security_company: "" });
     expect(xml).not.toContain("休日、夜間に無人となる場合");
   });
+
+  // K1: outsourced=true → 別表1 appendix page included
+  it("includes 別表1 appendix page when outsourced", async () => {
+    const xml = await renderAndExtractXml({
+      has_outsourced_management: true,
+      has_outsource: true,
+    });
+    // The heading "別表１　title" is a single TextRun only present
+    // in the appendix page, not in the 別表一覧 index table (which
+    // has "別表１" and title in separate cells).
+    expect(xml).toContain("別表１\u3000防火管理業務の一部委託状況表");
+  });
+
+  // K2: outsourced=false → 別表1 appendix page skipped
+  it("excludes 別表1 appendix page when not outsourced", async () => {
+    const xml = await renderAndExtractXml({
+      has_outsourced_management: false,
+      has_outsource: false,
+    });
+    expect(xml).not.toContain("別表１\u3000防火管理業務の一部委託状況表");
+  });
 });

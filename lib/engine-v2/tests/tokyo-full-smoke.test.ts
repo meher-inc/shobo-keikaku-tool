@@ -146,4 +146,25 @@ describe("tokyo full-pack v2 smoke tests", () => {
     expect(xml).toContain("一斉帰宅の抑制");
     expect(xml).toContain("施設再開までの復旧計画");
   });
+
+  // T1: outsourced=true → 別表1+2 appendix pages included
+  it("includes 別表1+2 appendix pages when outsourced", async () => {
+    const xml = await renderAndExtractXml({
+      has_outsourced_management: true,
+      has_outsource: true,
+    });
+    // Heading TextRun "別表N　title" is unique to appendix pages.
+    expect(xml).toContain("別表１\u3000防火・防災管理業務の一部委託状況表");
+    expect(xml).toContain("別表２\u3000委託契約書等の内容チェック表");
+  });
+
+  // T2: outsourced=false → 別表1+2 appendix pages skipped
+  it("excludes 別表1+2 appendix pages when not outsourced", async () => {
+    const xml = await renderAndExtractXml({
+      has_outsourced_management: false,
+      has_outsource: false,
+    });
+    expect(xml).not.toContain("別表１\u3000防火・防災管理業務の一部委託状況表");
+    expect(xml).not.toContain("別表２\u3000委託契約書等の内容チェック表");
+  });
 });
