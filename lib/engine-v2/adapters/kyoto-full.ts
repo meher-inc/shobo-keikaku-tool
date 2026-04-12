@@ -78,12 +78,27 @@ export async function buildKyotoFull(form: any): Promise<Buffer> {
   // and JSON free of conditional nodes.
   const filteredPack = filterPack(loaded, data);
 
-  // ── section overrides (TS table builders) ─────────────────
+  // ── section overrides (TS table builders + styled text) ────
   const overrides: Record<string, SectionOverride> = {
     "ch3-reports": (d) => buildCh3ReportsTable(d),
     "ch7-emergency-contacts": (d) => buildCh7EmergencyTable(d),
     "ch9-education-schedule": (d) => buildCh9EducationTable(d),
     "ch10-schedule": (d) => buildCh10DrillsTable(d),
+    // ch8 tsunami footer — italic + gray to match v1 L431.
+    "ch8-tsunami-note": () => [
+      new Paragraph({
+        spacing: { after: 60 },
+        children: [
+          new TextRun({
+            text: "※京都市は津波による被害が想定されていないため、南海トラフ地震に関する計画の記載義務はありません。",
+            italics: true,
+            color: "666666",
+            size: 18,
+            font: "游明朝",
+          }),
+        ],
+      }),
+    ],
   };
 
   // ── cover page ─────────────────────────────────────────────
