@@ -17,18 +17,18 @@ Step 5 完了時点で v1 に未実装のため移植できなかった項目。
 
 ## 別表 gating（京都・東京共通）
 
-- **状況**: Step 4b / Step 5 では常に全別表出力。v1 は `has_outsourced_management` で別表1(+東京の別表2)を gate し、`include_appendix` (plan=light) で全別表を gate する。
-- **必要な入力**: SHUN の消防実務レビュー（gating ルールの正確な仕様確認、plan 別の出力制御設計）
-- **影響範囲**: adapter の appendix dispatcher に filter 追加。JSON / builder の変更は不要（gating は adapter-level）。
-- **備考**: Step 4d として独立設計予定。
+- **フェーズ1 完了** (Step 4d, 2026-04-12): `has_outsourced_management` による
+  委託関連別表の gating を実装。京都 別表1、東京 別表1+2 が outsourced=false 時に
+  スキップされる。v1 挙動と同等。
+- **フェーズ2 残**: `include_appendix` (plan=light) による全別表 gating、
+  延床面積・用途・設備有無に基づく新規 gating 条件の設計。
+  SHUN の消防実務レビューが必要。
 
-## v2 Tokyo 別表過剰出力（Step 4d で解消）
+## ~~v2 Tokyo 別表過剰出力~~ (Closed)
 
-現 adapter は has_outsourced_management=false でも別表1・2を常に出力する。
-v1 では L233 if(has_outsourced_management) で gating されていた挙動で、
-v2 化で一時的に過剰出力になっている。顧客影響は「不要な別表が2本付く」のみで
-消防計画としては許容されるが、Step 4d の別表 gating 実装時に v1 と同等まで戻す。
+Step 4d Phase 1 で解消。commit `6ddc531` にて京都/東京の appendix dispatcher に
+outsourced gating を追加。本番疎通で table count の増減を XML レベルで確認済み。
 
 ---
 
-最終更新: 2026-04-12 (Step 5 Task 7)
+最終更新: 2026-04-12 (Step 4d Phase 1)
