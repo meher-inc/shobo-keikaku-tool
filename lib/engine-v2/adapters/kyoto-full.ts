@@ -3,6 +3,7 @@ import { loadPack } from "../engine";
 import type { RenderData } from "../helpers/placeholder";
 import type { TemplatePack, Chapter, Section } from "../types/template-pack";
 import { buildChildrenFromPack, type SectionOverride } from "../builders/document";
+import { buildCoverPage } from "../builders/shared/cover-page";
 import { toRenderData } from "./to-render-data";
 import kyotoCityFull from "../templates/kyoto-city.full.json";
 
@@ -76,12 +77,19 @@ export async function buildKyotoFull(form: any): Promise<Buffer> {
     "ch10-schedule": (d) => buildCh10DrillsTable(d),
   };
 
+  // ── cover page ─────────────────────────────────────────────
+  const isUnifiedLabel = applicableLabel(isUnified);
+  const coverChildren = buildCoverPage(data, {
+    subtitle: `統括防火管理〔${isUnifiedLabel}〕`,
+  });
+
   // ── assemble ──────────────────────────────────────────────
   const packChildren = buildChildrenFromPack(filteredPack, data, overrides);
   const appendixListChildren = buildKyotoAppendixList(data);
   const appendixChildren = buildKyotoAppendices(data);
 
   const allChildren: (Paragraph | Table)[] = [
+    ...coverChildren,
     ...packChildren,
     ...appendixListChildren,
     ...appendixChildren,

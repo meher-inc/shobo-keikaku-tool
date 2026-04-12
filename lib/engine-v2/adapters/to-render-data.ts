@@ -77,8 +77,10 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
     // Chapter 10: drills
     drillMonths: str(form.drill_months),
 
-    // Creation date (ISO or already-formatted). eraDate computed fn
-    // accepts either a real ISO string or undefined (=> "now").
+    // Creation date — v1 passes the pre-formatted string (e.g.
+    // "令和7年4月1日") in creation_date. creationDateIso is the ISO
+    // form for the eraDate computed fn in 附則.
+    creationDate: str(form.creation_date),
     creationDateIso: str(form.creation_date_iso),
   };
 }

@@ -3,6 +3,7 @@ import { loadPack } from "../engine";
 import type { RenderData } from "../helpers/placeholder";
 import type { TemplatePack, Chapter, Section } from "../types/template-pack";
 import { buildChildrenFromPack, type SectionOverride } from "../builders/document";
+import { buildCoverPage } from "../builders/shared/cover-page";
 import { toRenderData } from "./to-render-data";
 import tokyoTfdFull from "../templates/tokyo-tfd.full.json";
 
@@ -50,12 +51,20 @@ export async function buildTokyoFull(form: any): Promise<Buffer> {
     "ch8-drill-schedule": (d) => buildCh8DrillsTable(d),
   };
 
+  // ── cover page ─────────────────────────────────────────────
+  const coverChildren = buildCoverPage(data, {
+    subtitle: "【中規模用】",
+    subtitleColor: "C41E3A",
+    subtitleSize: 24,
+  });
+
   // ── assemble ──────────────────────────────────────────────
   const packChildren = buildChildrenFromPack(filteredPack, data, overrides);
   const appendixListChildren = buildTokyoAppendixList();
   const appendixChildren = buildTokyoAppendices(data);
 
   const allChildren: (Paragraph | Table)[] = [
+    ...coverChildren,
     ...packChildren,
     ...appendixListChildren,
     ...appendixChildren,
