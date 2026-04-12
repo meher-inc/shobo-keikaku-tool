@@ -22,6 +22,13 @@ Step 5 完了時点で v1 に未実装のため移植できなかった項目。
 - **影響範囲**: adapter の appendix dispatcher に filter 追加。JSON / builder の変更は不要（gating は adapter-level）。
 - **備考**: Step 4d として独立設計予定。
 
+## v2 Tokyo 別表過剰出力（Step 4d で解消）
+
+現 adapter は has_outsourced_management=false でも別表1・2を常に出力する。
+v1 では L233 if(has_outsourced_management) で gating されていた挙動で、
+v2 化で一時的に過剰出力になっている。顧客影響は「不要な別表が2本付く」のみで
+消防計画としては許容されるが、Step 4d の別表 gating 実装時に v1 と同等まで戻す。
+
 ---
 
 最終更新: 2026-04-12 (Step 5 Task 7)
