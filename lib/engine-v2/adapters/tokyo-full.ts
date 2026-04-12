@@ -46,6 +46,16 @@ export async function buildTokyoFull(form: any): Promise<Buffer> {
   if (!data.creationDateIso) {
     data.creationDateIso = new Date().toISOString();
   }
+  // Cover page needs a formatted date string. Derive from ISO if
+  // the pre-formatted creation_date wasn't supplied.
+  if (!data.creationDate && data.creationDateIso) {
+    const d = new Date(data.creationDateIso);
+    if (!Number.isNaN(d.getTime())) {
+      data.creationDate = d.toLocaleDateString("ja-JP-u-ca-japanese", {
+        era: "long", year: "numeric", month: "long", day: "numeric",
+      });
+    }
+  }
 
   // ── section filtering ─────────────────────────────────────
   // Tokyo has only 1 gatable JSON section (vs kyoto's 2).

@@ -70,6 +70,17 @@ export async function buildKyotoFull(form: any): Promise<Buffer> {
   if (!data.creationDateIso) {
     data.creationDateIso = new Date().toISOString();
   }
+  // Cover page needs a formatted date string. If the form only
+  // supplied creation_date_iso (not the pre-formatted creation_date),
+  // derive it here — same logic as v1 route.ts L69-71.
+  if (!data.creationDate && data.creationDateIso) {
+    const d = new Date(data.creationDateIso);
+    if (!Number.isNaN(d.getTime())) {
+      data.creationDate = d.toLocaleDateString("ja-JP-u-ca-japanese", {
+        era: "long", year: "numeric", month: "long", day: "numeric",
+      });
+    }
+  }
 
   // ── section filtering ─────────────────────────────────────
   // Some JSON sections are conditional: the adapter decides
