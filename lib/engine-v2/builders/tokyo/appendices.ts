@@ -1,5 +1,6 @@
 import type { Paragraph, Table } from "docx";
-import { tokyoTable } from "../shared/table-helpers";
+import type { RenderData } from "../../helpers/placeholder";
+import { tokyoTable, tokyoTheme } from "../shared/table-helpers";
 import {
   appendixHeading,
   pageBreak,
@@ -7,13 +8,19 @@ import {
   sectionHeading,
   spacerParagraph,
 } from "../shared/paragraph-helpers";
+import {
+  buildOutsourceStatus,
+  buildDailyPrevention,
+  buildFireCheck,
+  buildClosureCheck,
+  buildPeriodicCheck,
+  buildEquipmentCheck,
+  buildFireBrigade,
+} from "../shared/appendices";
 
 /**
- * Tokyo-exclusive appendix builders (別表2, 8-11) + 別表等一覧.
- *
- * Shared appendices (別表1, 3-7) are NOT here — they will be
- * extracted to shared/appendices/ in Task 5 and called from the
- * adapter dispatcher in Task 6.
+ * Tokyo appendix builders — exclusive (別表2, 8-11) + dispatcher
+ * that combines shared (別表1, 3-7) + exclusive + 別表等一覧.
  *
  * Step 5 scope: always output all appendices (no gating).
  */
@@ -157,5 +164,33 @@ export function buildTokyoAppendixList(): (Paragraph | Table)[] {
     ),
     spacerParagraph(),
     plainText("◎:消防法第8条 ○:東京都震災対策条例 ●:火災予防条例 ▲:該当時"),
+  ];
+}
+
+// ── All-appendices dispatcher ─────────────────────────────────
+
+/**
+ * Emit all Tokyo appendices in order: shared (別表1,3-7) +
+ * exclusive (別表2, 8-11). No gating — Step 5 scope outputs all.
+ */
+export function buildTokyoAppendices(data: RenderData): (Paragraph | Table)[] {
+  const t = tokyoTheme;
+  return [
+    ...buildOutsourceStatus(data, t, { num: "１", title: "防火・防災管理業務の一部委託状況表" }),
+    ...buildTokyoApp2(),
+    ...buildDailyPrevention(t, { num: "３", title: "日常の火災予防の担当者と注意事項" }),
+    ...buildFireCheck(data, t, { num: "４-１", title: "自主検査チェック表（火気関係）", timingDefault: "毎日" }),
+    ...buildClosureCheck(data, t, { num: "４-２", title: "自主検査チェック表（閉鎖障害等）", timingDefault: "毎日" }),
+    ...buildPeriodicCheck(data, t, { num: "５", title: "自主検査チェック表（定期）" }),
+    ...buildEquipmentCheck(data, t, { num: "６", title: "自主点検チェック表（消防用設備等）", showTiming: false }),
+    ...buildFireBrigade(data, t, {
+      num: "７",
+      title: "自衛消防隊の編成と任務",
+      extraLeaderRows: [["副隊長", "(    )", "隊長の補佐、隊長不在時の代行"]],
+    }),
+    ...buildTokyoApp8(),
+    ...buildTokyoApp9(),
+    ...buildTokyoApp10(),
+    ...buildTokyoApp11(),
   ];
 }

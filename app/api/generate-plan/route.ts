@@ -17,8 +17,11 @@ export async function POST(request: NextRequest) {
     if (engine === "v2") {
       const packParam = url.searchParams.get("pack");
       const { runV2Adapter } = await import("../../../lib/engine-v2/adapters/generate-plan");
-      const buffer = await runV2Adapter(form, packParam === "full" ? { pack: "full" } : {});
-      const filePrefix = packParam === "full" ? "v2full" : "v2sample";
+      const packOpts = packParam === "full" || packParam === "tokyo-full"
+        ? { pack: packParam as "full" | "tokyo-full" }
+        : {};
+      const buffer = await runV2Adapter(form, packOpts);
+      const filePrefix = packParam === "full" ? "v2full" : packParam === "tokyo-full" ? "v2tokyo" : "v2sample";
       return new NextResponse(buffer, {
         headers: {
           "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
