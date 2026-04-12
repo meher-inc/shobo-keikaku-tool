@@ -1,4 +1,13 @@
-import { Document, Packer, Paragraph, Table } from "docx";
+import {
+  AlignmentType,
+  Document,
+  Footer,
+  Packer,
+  PageNumber,
+  Paragraph,
+  Table,
+  TextRun,
+} from "docx";
 import { loadPack } from "../engine";
 import type { RenderData } from "../helpers/placeholder";
 import type { TemplatePack, Chapter, Section } from "../types/template-pack";
@@ -71,7 +80,32 @@ export async function buildTokyoFull(form: any): Promise<Buffer> {
   ];
 
   const doc = new Document({
-    sections: [{ children: allChildren }],
+    sections: [
+      {
+        properties: {
+          titlePage: true,
+          page: {
+            size: { width: 11906, height: 16838 },
+            margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 },
+          },
+        },
+        footers: {
+          default: new Footer({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                  new TextRun({ children: [PageNumber.CURRENT], size: 18, font: "游ゴシック" }),
+                  new TextRun({ text: " / ", size: 18, font: "游ゴシック" }),
+                  new TextRun({ children: [PageNumber.TOTAL_PAGES], size: 18, font: "游ゴシック" }),
+                ],
+              }),
+            ],
+          }),
+        },
+        children: allChildren,
+      },
+    ],
   });
 
   return Packer.toBuffer(doc);
