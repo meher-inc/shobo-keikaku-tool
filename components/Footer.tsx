@@ -7,7 +7,7 @@ export default function Footer() {
         <p style={{ marginTop: 16 }}>
           <a href="https://todokede.jp" style={{ color: "#666", textDecoration: "none" }}>トドケデ本体</a>
           {" ・ "}
-          <a href="/" style={{ color: "#666", textDecoration: "none" }}>消防計画自動作成ツール</a>
+          <a href="/" style={{ color: "#666", textDecoration: "none" }}>トドケデ消防計画</a>
         </p>
         <p style={{ marginTop: 16 }}>© {new Date().getFullYear()} MeHer Inc.</p>
       </div>

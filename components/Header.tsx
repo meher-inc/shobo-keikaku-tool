@@ -6,7 +6,7 @@ export default function Header() {
           <span style={{ fontSize: 10, color: "#666", letterSpacing: "0.02em" }}>【元消防士が監修】</span>
           <span style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
             <span style={{ fontSize: 24, fontWeight: 900, color: "#E8332A", lineHeight: 1, letterSpacing: "0.05em" }}>トドケデ</span>
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a" }}>消防計画 自動作成ツール</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a" }}>トドケデ消防計画</span>
           </span>
         </a>
       </div>

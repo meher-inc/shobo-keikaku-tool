@@ -10,17 +10,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const PLAN_CONFIG: Record<string, { price: number; name: string; description: string }> = {
   light: {
     price: 4980,
-    name: "消防計画 自動作成（ライト）",
+    name: "トドケデ消防計画（ライト）",
     description: "消防計画Word出力",
   },
   standard: {
     price: 9800,
-    name: "消防計画 自動作成（スタンダード）",
+    name: "トドケデ消防計画（スタンダード）",
     description: "消防計画＋別表すべて＋記入ガイドPDF付き",
   },
   premium: {
     price: 29800,
-    name: "消防計画 自動作成（プレミアム）",
+    name: "トドケデ消防計画（プレミアム）",
     description: "消防計画＋別表＋記入ガイド＋元消防士による内容チェック＋修正1回",
   },
 };

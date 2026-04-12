@@ -9,7 +9,7 @@ const noto = Noto_Sans_JP({
 });
 
 export const metadata = {
-  title: "消防計画 自動作成ツール | plan.todokede.jp",
+  title: "トドケデ消防計画 | plan.todokede.jp",
   description: "元消防士が開発。消防計画を数分でWord出力。",
 };
 
