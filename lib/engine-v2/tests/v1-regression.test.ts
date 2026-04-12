@@ -3,10 +3,11 @@ import { describe, it, expect } from "vitest";
 // import it directly; the build() return is loosely-typed Promise<any>,
 // which is fine because we assert shape at runtime.
 import v1Kyoto from "../../generate_kyoto_full.js";
+import v1Tokyo from "../../generate_tokyo_full.js";
 
-const { build } = v1Kyoto as {
-  build: (input: Record<string, unknown>) => Promise<Buffer>;
-};
+type V1Build = (input: Record<string, unknown>) => Promise<Buffer>;
+const { build: buildKyoto } = v1Kyoto as { build: V1Build };
+const { build: buildTokyo } = v1Tokyo as { build: V1Build };
 
 /**
  * v1 regression smoke.
@@ -80,14 +81,47 @@ function assertValidDocxBuffer(buf: unknown): void {
   expect(b.length).toBeGreaterThan(5_000);
 }
 
+function baseTokyoForm(): Record<string, unknown> {
+  return {
+    building_name: "v1回帰テスト東京ビル",
+    building_address: "東京都千代田区テスト町1-2-3",
+    building_use: "事務所",
+    use_category: "3項ロ",
+    is_specific_use: true,
+    total_area: 800,
+    num_floors: 5,
+    capacity: 120,
+    management_scope: "建物全体",
+    is_unified_management: false,
+    has_outsourced_management: false,
+    outsource_company: "",
+    owner_name: "東京 太郎",
+    manager_name: "防火 花子",
+    manager_qualification: "甲種",
+    fire_equipment: ["消火器", "屋内消火栓", "自動火災報知設備", "誘導灯"],
+    inspection_company: "テスト防災",
+    security_company: "",
+    daily_checker: "防火管理者",
+    periodic_check_months: "5月と11月",
+    emergency_contact_name: "東京 太郎",
+    emergency_contact_phone: "03-0000-0000",
+    wide_area_evacuation_site: "テスト公園",
+    temporary_assembly_point: "駐車場",
+    drill_months: "5月・11月",
+    education_months: "4月・10月",
+    creation_date: "令和8年4月12日",
+    include_appendix: true,
+  };
+}
+
 describe("v1 generate_kyoto_full regression smoke", () => {
   it("builds a docx for specific-use / non-unified / non-outsourced medium", async () => {
-    const buf = await build(baseMediumForm());
+    const buf = await buildKyoto(baseMediumForm());
     assertValidDocxBuffer(buf);
   });
 
   it("builds a docx for non-specific / unified / outsourced medium", async () => {
-    const buf = await build({
+    const buf = await buildKyoto({
       ...baseMediumForm(),
       building_name: "v1回帰テスト統括管理ビル",
       use_category: "15", // non-specific
@@ -95,6 +129,27 @@ describe("v1 generate_kyoto_full regression smoke", () => {
       is_unified_management: true,
       has_outsourced_management: true,
       outsource_company: "テスト管理サービス株式会社",
+    });
+    assertValidDocxBuffer(buf);
+  });
+});
+
+describe("v1 generate_tokyo_full regression smoke", () => {
+  it("C: builds a docx for specific-use / non-unified / non-outsourced", async () => {
+    const buf = await buildTokyo(baseTokyoForm());
+    assertValidDocxBuffer(buf);
+  });
+
+  it("D: builds a docx for non-specific / unified / outsourced", async () => {
+    const buf = await buildTokyo({
+      ...baseTokyoForm(),
+      building_name: "v1回帰テスト統括管理東京ビル",
+      use_category: "15",
+      is_specific_use: false,
+      is_unified_management: true,
+      has_outsourced_management: true,
+      outsource_company: "テスト管理サービス株式会社",
+      security_company: "テスト警備株式会社",
     });
     assertValidDocxBuffer(buf);
   });
