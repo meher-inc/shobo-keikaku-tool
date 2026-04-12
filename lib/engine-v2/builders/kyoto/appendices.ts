@@ -103,8 +103,10 @@ export function buildKyotoAppendixList(data: RenderData): (Paragraph | Table)[] 
 
 export function buildKyotoAppendices(data: RenderData): (Paragraph | Table)[] {
   const t = kyotoTheme;
+  const outsourced = data.hasOutsourcedManagement === "true";
   return [
-    ...buildOutsourceStatus(data, t, { num: "１", title: "防火管理業務の一部委託状況表" }),
+    // 別表1: v1 L202 — only when has_outsourced_management is true.
+    ...(outsourced ? buildOutsourceStatus(data, t, { num: "１", title: "防火管理業務の一部委託状況表" }) : []),
     ...buildDailyPrevention(t, { num: "２", title: "日常の火災予防の担当者と日常の注意事項" }),
     ...buildFireCheck(data, t, { num: "３", title: "自主検査チェック表（日常）「火気関係」", timingDefault: "毎日終業時" }),
     ...buildClosureCheck(data, t, { num: "４", title: "自主検査チェック表（日常）「閉鎖障害等」", timingDefault: "毎日終業時" }),

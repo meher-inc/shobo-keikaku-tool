@@ -175,9 +175,11 @@ export function buildTokyoAppendixList(): (Paragraph | Table)[] {
  */
 export function buildTokyoAppendices(data: RenderData): (Paragraph | Table)[] {
   const t = tokyoTheme;
+  const outsourced = data.hasOutsourcedManagement === "true";
   return [
-    ...buildOutsourceStatus(data, t, { num: "１", title: "防火・防災管理業務の一部委託状況表" }),
-    ...buildTokyoApp2(),
+    // 別表1+2: v1 L233-236 — only when has_outsourced_management is true.
+    ...(outsourced ? buildOutsourceStatus(data, t, { num: "１", title: "防火・防災管理業務の一部委託状況表" }) : []),
+    ...(outsourced ? buildTokyoApp2() : []),
     ...buildDailyPrevention(t, { num: "３", title: "日常の火災予防の担当者と注意事項" }),
     ...buildFireCheck(data, t, { num: "４-１", title: "自主検査チェック表（火気関係）", timingDefault: "毎日" }),
     ...buildClosureCheck(data, t, { num: "４-２", title: "自主検査チェック表（閉鎖障害等）", timingDefault: "毎日" }),
