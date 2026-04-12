@@ -1,8 +1,7 @@
 import { loadPack, renderPack } from "../engine";
 import type { RenderData } from "../helpers/placeholder";
-import { toRenderData } from "./to-render-data";
 import kyotoCitySample from "../packs/kyoto-city.sample.json";
-import kyotoCityFull from "../templates/kyoto-city.full.json";
+import { buildKyotoFull } from "./kyoto-full";
 
 /**
  * v2 experimental adapter for /api/generate-plan.
@@ -15,16 +14,11 @@ import kyotoCityFull from "../templates/kyoto-city.full.json";
  *                           This is the Step 3 behaviour; used when
  *                           the route is called with ?engine=v2 and
  *                           no pack query param.
- *   - "full"              — kyoto-city.templates full.json, chapters
- *                           1-3 + 附則. Used when ?engine=v2&pack=full.
- *
- * TODO(step4b): restore as table node when table builder lands —
- * kyoto-city.full.json's ch3-reports section is a text-paragraph
- * degradation of the v1 第3章 table (種別/届出時期/届出者). The
- * text representation ships the same content line by line but
- * loses the table layout. Once engine-v2 grows a table BodyNode
- * and a matching builder, ch3-reports should be migrated back to
- * a table node to recover v1 fidelity.
+ *   - "full"              — Kyoto full adapter: chapters 1-10,
+ *                           附則, 別表等一覧, 別表 1-9. Uses a
+ *                           mix of JSON pack + TS table builders +
+ *                           dept logic. Called when the route is
+ *                           invoked with ?engine=v2&pack=full.
  */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,17 +33,7 @@ export async function runV2Adapter(
   const packName: V2Pack = opts.pack ?? "sample";
 
   if (packName === "full") {
-    const loaded = loadPack(kyotoCityFull);
-    const data = toRenderData((form ?? {}) as Record<string, unknown>);
-
-    // The 附則 section uses the eraDate computed fn, which reads
-    // creationDateIso. Default to "now" if the caller didn't
-    // supply one — v1's route.ts does the same thing.
-    if (!data.creationDateIso) {
-      data.creationDateIso = new Date().toISOString();
-    }
-
-    return renderPack(loaded, data);
+    return buildKyotoFull(form);
   }
 
   // sample path — unchanged from Step 3.

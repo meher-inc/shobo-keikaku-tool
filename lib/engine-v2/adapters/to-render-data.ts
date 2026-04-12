@@ -49,6 +49,34 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
 
     outsourceCompany: str(form.outsource_company),
 
+    // Chapter 4: inspection & checks
+    dailyChecker: str(form.daily_checker),
+    dailyCheckTiming: str(form.daily_check_timing),
+    periodicCheckMonths: str(form.periodic_check_months),
+    selfCheckMonths: str(form.self_check_months),
+    inspectionCompany: str(form.inspection_company),
+
+    // Chapter 6: fire equipment — serialise array to CSV so the
+    // resolveBody / joinArray computed fn can consume it.
+    fireEquipmentList: Array.isArray(form.fire_equipment)
+      ? (form.fire_equipment as string[]).join(",")
+      : str(form.fire_equipment),
+
+    // Chapter 7: emergency contacts
+    emergencyContactName: str(form.emergency_contact_name) ?? str(form.emergency_name),
+    emergencyContactPhone: str(form.emergency_contact_phone) ?? str(form.emergency_tel),
+    securityCompany: str(form.security_company),
+
+    // Chapter 8: evacuation
+    wideAreaEvacuationSite: str(form.wide_area_evacuation_site) ?? str(form.evacuation_site),
+    temporaryAssemblyPoint: str(form.temporary_assembly_point) ?? str(form.assembly_point),
+
+    // Chapter 9: education
+    educationMonths: str(form.education_months),
+
+    // Chapter 10: drills
+    drillMonths: str(form.drill_months),
+
     // Creation date (ISO or already-formatted). eraDate computed fn
     // accepts either a real ISO string or undefined (=> "now").
     creationDateIso: str(form.creation_date_iso),
