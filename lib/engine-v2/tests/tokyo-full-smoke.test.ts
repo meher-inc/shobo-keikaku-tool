@@ -147,6 +147,19 @@ describe("tokyo full-pack v2 smoke tests", () => {
     expect(xml).toContain("施設再開までの復旧計画");
   });
 
+  // plan=light → no appendices
+  it("excludes all appendices when plan=light", async () => {
+    const xml = await renderAndExtractXml({ plan: "light" });
+    expect(xml).not.toContain("別表等一覧");
+    expect(xml).not.toContain("別表３\u3000日常の火災予防");
+  });
+
+  // plan=standard → appendices present
+  it("includes appendices when plan=standard", async () => {
+    const xml = await renderAndExtractXml({ plan: "standard" });
+    expect(xml).toContain("別表等一覧");
+  });
+
   // T1: outsourced=true → 別表1+2 appendix pages included
   it("includes 別表1+2 appendix pages when outsourced", async () => {
     const xml = await renderAndExtractXml({

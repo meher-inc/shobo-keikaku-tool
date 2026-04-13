@@ -167,6 +167,19 @@ describe("kyoto full-pack v2 smoke tests", () => {
     expect(xml).not.toContain("防火管理業務の一部委託について〔該当〕");
   });
 
+  // plan=light → no appendices at all
+  it("excludes all appendices when plan=light", async () => {
+    const xml = await renderAndExtractXml({ plan: "light" });
+    expect(xml).not.toContain("別表等一覧");
+    expect(xml).not.toContain("別表２\u3000日常の火災予防");
+  });
+
+  // plan=standard → appendices present (default behavior)
+  it("includes appendices when plan=standard", async () => {
+    const xml = await renderAndExtractXml({ plan: "standard" });
+    expect(xml).toContain("別表等一覧");
+  });
+
   // K2: outsourced=false → 別表1 appendix page skipped
   it("excludes 別表1 appendix page when not outsourced", async () => {
     const xml = await renderAndExtractXml({

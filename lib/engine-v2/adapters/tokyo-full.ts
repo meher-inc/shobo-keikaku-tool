@@ -77,16 +77,19 @@ export async function buildTokyoFull(form: any): Promise<Buffer> {
     subtitleSize: 24,
   });
 
+  // ── plan-based appendix gating ─────────────────────────────
+  // v1 L508: if (d.include_appendix) { ... }
+  const plan = (form?.plan as string) || "standard";
+  const includeAppendix = plan !== "light";
+
   // ── assemble ──────────────────────────────────────────────
   const packChildren = buildChildrenFromPack(filteredPack, data, overrides);
-  const appendixListChildren = buildTokyoAppendixList();
-  const appendixChildren = buildTokyoAppendices(data);
 
   const allChildren: (Paragraph | Table)[] = [
     ...coverChildren,
     ...packChildren,
-    ...appendixListChildren,
-    ...appendixChildren,
+    ...(includeAppendix ? buildTokyoAppendixList() : []),
+    ...(includeAppendix ? buildTokyoAppendices(data) : []),
   ];
 
   const doc = new Document({

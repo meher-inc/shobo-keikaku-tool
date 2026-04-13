@@ -118,16 +118,19 @@ export async function buildKyotoFull(form: any): Promise<Buffer> {
     subtitle: `統括防火管理〔${isUnifiedLabel}〕`,
   });
 
+  // ── plan-based appendix gating ─────────────────────────────
+  // v1 L95: include_appendix = plan !== "light"
+  const plan = (form?.plan as string) || "standard";
+  const includeAppendix = plan !== "light";
+
   // ── assemble ──────────────────────────────────────────────
   const packChildren = buildChildrenFromPack(filteredPack, data, overrides);
-  const appendixListChildren = buildKyotoAppendixList(data);
-  const appendixChildren = buildKyotoAppendices(data);
 
   const allChildren: (Paragraph | Table)[] = [
     ...coverChildren,
     ...packChildren,
-    ...appendixListChildren,
-    ...appendixChildren,
+    ...(includeAppendix ? buildKyotoAppendixList(data) : []),
+    ...(includeAppendix ? buildKyotoAppendices(data) : []),
   ];
 
   const doc = new Document({
