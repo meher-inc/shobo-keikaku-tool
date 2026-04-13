@@ -692,34 +692,20 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           毎年の更新作業から解放されませんか？
         </h2>
         <p style={{ fontSize: 15, color: "#86868b", lineHeight: 1.7, marginBottom: 24 }}>
-          サブスクリプションプラン（年次更新ドラフト・法改正通知・点検リマインド）を
-          <strong style={{ color: "#1d1d1f" }}>2026年5月リリース予定</strong>。
-          事前登録者には初月無料クーポンを優先配布します。
+          サブスク事前登録受付中。機能のフルリリースは
+          <strong style={{ color: "#1d1d1f" }}>2026年5月予定</strong>です。
+          いま登録いただくと、リリース時から継続利用いただけます。
         </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
-          <a
-            href="https://lin.ee/MvnGLzW"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-block", padding: "14px 36px", borderRadius: 12,
-              background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600,
-              textDecoration: "none",
-            }}
-          >
-            🔔 リリース通知を受け取る（LINE登録）
-          </a>
-          <a
-            href="/pricing"
-            style={{
-              display: "inline-block", padding: "12px 28px", borderRadius: 12,
-              background: "transparent", color: "#E8332A", fontSize: 14, fontWeight: 600,
-              textDecoration: "none", border: "1px solid #E8332A",
-            }}
-          >
-            プラン詳細を見る
-          </a>
-        </div>
+        <a
+          href="/pricing"
+          style={{
+            display: "inline-block", padding: "14px 36px", borderRadius: 12,
+            background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600,
+            textDecoration: "none",
+          }}
+        >
+          サブスクプランを見る
+        </a>
       </div>
     </section>
     </>

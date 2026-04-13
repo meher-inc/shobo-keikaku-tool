@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 const PLANS = [
   {
@@ -34,6 +34,24 @@ const PLANS = [
 
 export default function PricingPage() {
   const [cycle, setCycle] = useState<"monthly" | "yearly">("yearly");
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = useCallback(async (planId: string) => {
+    setLoadingPlan(planId);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId, billingCycle: cycle, customerEmail: "" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "エラーが発生しました");
+      window.location.href = data.url;
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "エラーが発生しました");
+      setLoadingPlan(null);
+    }
+  }, [cycle]);
 
   return (
     <>
@@ -93,9 +111,9 @@ export default function PricingPage() {
           marginBottom: 32, borderRadius: 12, border: "1px solid #f6c244",
           background: "#FFFBEB", padding: "16px 20px", color: "#92400E",
         }}>
-          <p style={{ fontWeight: 600, margin: 0 }}>🚧 サブスクプランは2026年5月リリース予定です</p>
+          <p style={{ fontWeight: 600, margin: 0 }}>🎉 サブスク事前登録受付開始！生成機能のフルリリースは2026年5月予定です</p>
           <p style={{ fontSize: 14, margin: "6px 0 0" }}>
-            現在は単発購入のみ受付中。リリース時は事前登録者向けに優先案内・初月無料クーポンをお届けします。
+            今登録すると、機能リリース時から継続契約としてご利用いただけます。
           </p>
         </div>
 
@@ -147,22 +165,23 @@ export default function PricingPage() {
                   ))}
                 </ul>
 
-                <a
-                  href="https://lin.ee/MvnGLzW"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => handleSubscribe(plan.id)}
+                  disabled={loadingPlan !== null}
                   style={{
-                    display: "block", textAlign: "center", padding: "14px 0",
+                    display: "block", width: "100%", textAlign: "center", padding: "14px 0",
                     borderRadius: 12, fontWeight: 600, fontSize: 15,
-                    textDecoration: "none",
+                    border: "none", cursor: loadingPlan === plan.id ? "wait" : "pointer",
                     background: plan.highlighted ? "#E8332A" : "#1d1d1f",
                     color: "#fff",
+                    opacity: loadingPlan !== null ? 0.7 : 1,
                   }}
                 >
-                  🔔 リリース通知を受け取る（LINE登録）
-                </a>
+                  {loadingPlan === plan.id ? "処理中..." : "このプランで登録する"}
+                </button>
                 <p style={{ marginTop: 8, fontSize: 12, color: "#86868b", textAlign: "center" }}>
-                  LINE登録者には、リリース時に初月無料クーポンを優先配布予定
+                  いつでも解約可能（マイページから手続きいただけます）<br />
+                  生成機能は2026年5月以降の段階リリース
                 </p>
               </div>
             );
