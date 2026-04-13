@@ -6,8 +6,8 @@ const PLANS = [
     id: "minimum",
     name: "ミニマム",
     description: "消防計画の自動生成に特化",
-    monthly: 980,
-    yearly: 9800,
+    monthly: 4980,
+    yearly: 49800,
     features: [
       "消防計画書（Word形式）の自動生成",
       "年次更新ドラフト機能",
@@ -19,8 +19,8 @@ const PLANS = [
     id: "standard",
     name: "スタンダード",
     description: "別表・ガイド・通知をフル装備",
-    monthly: 2980,
-    yearly: 29800,
+    monthly: 9800,
+    yearly: 98000,
     features: [
       "ミニマムの全機能",
       "別表9種の自動生成",

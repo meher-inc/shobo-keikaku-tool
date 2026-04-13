@@ -32,8 +32,8 @@ export const PLANS: Plan[] = [
     name: "ミニマム",
     description: "消防計画の自動生成に特化したエントリープラン",
     prices: {
-      monthly: 980,
-      yearly: 9800,
+      monthly: 4980,
+      yearly: 49800,
     },
     priceIds: {
       monthly: process.env.STRIPE_PRICE_MINIMUM_MONTHLY ?? "",
@@ -50,8 +50,8 @@ export const PLANS: Plan[] = [
     name: "スタンダード",
     description: "別表・ガイド・通知機能をフル装備した推奨プラン",
     prices: {
-      monthly: 2980,
-      yearly: 29800,
+      monthly: 9800,
+      yearly: 98000,
     },
     priceIds: {
       monthly: process.env.STRIPE_PRICE_STANDARD_MONTHLY ?? "",
