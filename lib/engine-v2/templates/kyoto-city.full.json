@@ -18,6 +18,41 @@
             { "type": "placeholder", "key": "buildingName", "fallback": "当該防火対象物" },
             { "type": "text", "value": "における管理権原の及ぶ範囲の防火管理についての必要事項を定め、火災、地震、その他の災害の予防と人命の安全、被害の軽減を図ることを目的とする。" }
           ]
+        },
+        {
+          "id": "ch1-scope",
+          "heading": "２　適用範囲",
+          "body": [
+            { "type": "text", "value": "⑴　当該管理権原の及ぶ範囲は" },
+            { "type": "placeholder", "key": "buildingName", "fallback": "当該防火対象物" },
+            { "type": "text", "value": "の" },
+            { "type": "placeholder", "key": "managementScope", "fallback": "建物全体" },
+            { "type": "text", "value": "とする。\n⑵　この計画を適用する者の範囲は、管理権原者、防火管理者およびその他勤務する全ての者とする。" }
+          ]
+        },
+        {
+          "id": "ch1-scope-outsource",
+          "heading": "２　適用範囲",
+          "body": [
+            { "type": "text", "value": "⑴　当該管理権原の及ぶ範囲は" },
+            { "type": "placeholder", "key": "buildingName", "fallback": "当該防火対象物" },
+            { "type": "text", "value": "の" },
+            { "type": "placeholder", "key": "managementScope", "fallback": "建物全体" },
+            { "type": "text", "value": "とする。\n⑵　この計画を適用する者の範囲は、管理権原者、防火管理者およびその他勤務する全ての者とする。\n⑶　防火管理業務の一部を受託している者　" },
+            { "type": "placeholder", "key": "outsourceCompany", "fallback": "(未設定)" }
+          ]
+        },
+        {
+          "id": "ch1-outsource-not-applicable",
+          "heading": "３　防火管理業務の一部委託について〔非該当〕",
+          "body": []
+        },
+        {
+          "id": "ch1-outsource-applicable",
+          "heading": "３　防火管理業務の一部委託について〔該当〕",
+          "body": [
+            { "type": "text", "value": "⑴　委託を受けて防火管理業務に従事する者は、この計画に定めるところにより、管理権原者・防火管理者・自衛消防隊長等の指示・指揮命令の下に適正に業務を実施する。\n⑵　受託者は、受託した防火管理業務について、定期に防火管理者に報告する。\n⑶　防火管理業務の委託状況は、別表１「防火管理業務の一部委託状況表」のとおり。" }
+          ]
         }
       ]
     },

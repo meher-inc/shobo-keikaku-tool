@@ -170,6 +170,18 @@ export async function buildKyotoFull(form: any): Promise<Buffer> {
  */
 function sectionsToSkip(data: RenderData): Set<string> {
   const skip = new Set<string>();
+  const outsourced = data.hasOutsourcedManagement === "true";
+
+  // ch1 scope + outsource: keep ONE variant of each pair.
+  // v1 L241-253: section 2 has ⑶ only when outsourced;
+  // section 3 heading suffix and body differ by outsourced flag.
+  if (outsourced) {
+    skip.add("ch1-scope");                     // use outsource variant with ⑶
+    skip.add("ch1-outsource-not-applicable");   // use 〔該当〕 variant
+  } else {
+    skip.add("ch1-scope-outsource");            // use default variant without ⑶
+    skip.add("ch1-outsource-applicable");       // use 〔非該当〕 variant
+  }
 
   // ch7-security: only include when a security company is set.
   if (!data.securityCompany) {
