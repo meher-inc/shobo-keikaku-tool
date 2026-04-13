@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
 
 const USE_CATEGORIES = [
   { value: "1-イ", label: "1項イ 劇場等", specific: true },
@@ -536,10 +537,26 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                 ✕
               </button>
             </div>
+            {/* Desktop: PDF iframe */}
             <iframe
               src="/samples/sample-kyoto-standard.pdf"
-              style={{ flex: 1, border: "none", background: "#f5f5f7" }}
+              className="sample-desktop"
             />
+            {/* Mobile: page images */}
+            <div className="sample-mobile">
+              {Array.from({ length: SAMPLE_PAGES_COUNT }, (_, i) => {
+                const num = String(i + 1).padStart(2, "0");
+                return (
+                  <img
+                    key={num}
+                    src={`/samples/pages/page-${num}.png`}
+                    alt={`消防計画サンプル ${i + 1}ページ`}
+                    className="sample-mobile-page"
+                    loading={i < 3 ? "eager" : "lazy"}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

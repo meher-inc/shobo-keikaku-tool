@@ -9,3 +9,37 @@ body {
   background: #f5f5f7;
   color: #1d1d1f;
 }
+
+/* Sample preview: desktop iframe / mobile image list */
+.sample-desktop {
+  display: block;
+  flex: 1;
+  border: none;
+  background: #f5f5f7;
+}
+.sample-mobile {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #f5f5f7;
+  padding: 12px;
+}
+.sample-mobile-page {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+.sample-mobile-page + .sample-mobile-page {
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .sample-desktop {
+    display: none;
+  }
+  .sample-mobile {
+    display: block;
+  }
+}
