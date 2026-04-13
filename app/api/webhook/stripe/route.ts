@@ -1,21 +1,22 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { Resend } from "resend";
 import { supabaseAdmin } from "../../../../lib/supabase";
 import { sendPremiumReview } from "../../../../lib/sendPremiumReview";
+import { getPlanByPriceId } from "../../../../lib/plans";
 
 export const runtime = "nodejs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
 });
-
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_EMAIL = "plan.todokede.jp <noreply@todokede.jp>";
+const REVIEW_TO_EMAIL = process.env.REVIEW_TO_EMAIL || "plan@todokede.jp";
 
 export async function POST(req: NextRequest) {
-  // 1. Signature verification. This is the only path that returns 400:
-  //    everything after verification returns 200 to prevent Stripe retries
-  //    for downstream errors we should handle ourselves.
   const sig = req.headers.get("stripe-signature") || "";
   let rawBody: string;
   try {
@@ -30,29 +31,54 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err: any) {
     console.error("[webhook] signature verification failed:", err?.message);
-    return new NextResponse(`Webhook Error: ${err?.message || "invalid signature"}`, {
-      status: 400,
-    });
+    return new NextResponse(
+      `Webhook Error: ${err?.message || "invalid signature"}`,
+      { status: 400 }
+    );
   }
 
-  // 2. We only care about checkout.session.completed for now.
-  if (event.type !== "checkout.session.completed") {
-    return NextResponse.json({ received: true, ignored: event.type });
-  }
-
+  // Route to handler by event type. Every handler is wrapped in
+  // try-catch and always returns 200 to prevent Stripe retries.
   try {
-    await handleCheckoutCompleted(event);
+    switch (event.type) {
+      case "checkout.session.completed":
+        await handleCheckoutCompleted(event);
+        break;
+      case "customer.subscription.created":
+        await handleSubscriptionCreated(event);
+        break;
+      case "customer.subscription.updated":
+        await handleSubscriptionUpdated(event);
+        break;
+      case "customer.subscription.deleted":
+        await handleSubscriptionDeleted(event);
+        break;
+      case "invoice.payment_succeeded":
+        await handleInvoicePaymentSucceeded(event);
+        break;
+      case "invoice.payment_failed":
+        await handleInvoicePaymentFailed(event);
+        break;
+      default:
+        break;
+    }
   } catch (err: any) {
-    // Log and swallow: returning 200 keeps Stripe from retrying for
-    // failures that would just loop (e.g. Resend outages).
-    console.error("[webhook] handler error:", err?.message || err);
+    console.error(`[webhook] ${event.type} handler error:`, err?.message || err);
   }
 
   return NextResponse.json({ received: true });
 }
 
+// ── checkout.session.completed (existing single-purchase flow) ──
+
 async function handleCheckoutCompleted(event: Stripe.Event) {
   const session = event.data.object as Stripe.Checkout.Session;
+
+  // Subscription checkouts also fire checkout.session.completed,
+  // but the subscription-specific logic lives in
+  // customer.subscription.created. Skip if mode is subscription.
+  if (session.mode === "subscription") return;
+
   const orderId = session.metadata?.order_id;
   if (!orderId) {
     console.warn("[webhook] checkout.session.completed without order_id metadata", session.id);
@@ -73,8 +99,6 @@ async function handleCheckoutCompleted(event: Stripe.Event) {
     console.warn("[webhook] order not found:", orderId);
     return;
   }
-
-  // 3. Idempotency: if already paid, do nothing.
   if (order.status === "paid") {
     console.log("[webhook] order already paid, skipping:", orderId);
     return;
@@ -83,7 +107,6 @@ async function handleCheckoutCompleted(event: Stripe.Event) {
   const customerEmail =
     session.customer_details?.email || session.customer_email || order.customer_email || null;
 
-  // 4. Flip to paid.
   const { error: updateError } = await supabaseAdmin
     .from("orders")
     .update({
@@ -99,30 +122,23 @@ async function handleCheckoutCompleted(event: Stripe.Event) {
     return;
   }
 
-  // 5. Premium: generate the docx server-side and send the review emails.
   if (order.plan_id === "premium" && !order.premium_email_sent_at) {
     if (!customerEmail) {
       console.warn("[webhook] premium order has no customer email:", orderId);
       return;
     }
-
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const generateRes = await fetch(`${baseUrl}/api/generate-plan`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(order.form_data || {}),
     });
-
     if (!generateRes.ok) {
       const errText = await generateRes.text().catch(() => "");
-      throw new Error(
-        `generate-plan failed: ${generateRes.status} ${errText.slice(0, 200)}`
-      );
+      throw new Error(`generate-plan failed: ${generateRes.status} ${errText.slice(0, 200)}`);
     }
-
     const arrayBuffer = await generateRes.arrayBuffer();
     const docxBuffer = Buffer.from(arrayBuffer);
-
     await sendPremiumReview({
       customerEmail,
       formData: order.form_data || {},
@@ -130,7 +146,6 @@ async function handleCheckoutCompleted(event: Stripe.Event) {
       fileName: `消防計画_${(order.form_data && order.form_data.building_name) || "premium"}.docx`,
       sessionId: session.id,
     });
-
     const { error: markError } = await supabaseAdmin
       .from("orders")
       .update({ premium_email_sent_at: new Date().toISOString() })
@@ -139,4 +154,194 @@ async function handleCheckoutCompleted(event: Stripe.Event) {
       console.error("[webhook] failed to mark premium_email_sent_at:", markError);
     }
   }
+}
+
+// ── subscription events ─────────────────────────────────────────
+
+async function handleSubscriptionCreated(event: Stripe.Event) {
+  const sub = event.data.object as Stripe.Subscription;
+  const meta = sub.metadata || {};
+  const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
+  const priceId = sub.items.data[0]?.price?.id || "";
+
+  // Resolve plan/cycle from metadata first, fall back to price lookup.
+  const resolved = getPlanByPriceId(priceId);
+  const planId = meta.plan_id || resolved?.plan.id || "unknown";
+  const billingCycle = meta.billing_cycle || resolved?.cycle || "monthly";
+
+  // Customer email
+  let customerEmail = "";
+  try {
+    const customer = await stripe.customers.retrieve(customerId);
+    if (!customer.deleted) customerEmail = customer.email || "";
+  } catch { /* ignore */ }
+
+  const formData = meta.form_data ? JSON.parse(meta.form_data) : null;
+
+  const { error } = await supabaseAdmin.from("subscriptions").insert({
+    stripe_customer_id: customerId,
+    stripe_subscription_id: sub.id,
+    stripe_price_id: priceId,
+    customer_email: customerEmail,
+    plan_id: planId,
+    billing_cycle: billingCycle,
+    status: sub.status,
+    current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
+    current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+    cancel_at_period_end: sub.cancel_at_period_end,
+    initial_form_data: formData,
+  });
+
+  if (error) {
+    console.error("[webhook] subscriptions insert error:", error);
+    return;
+  }
+
+  // Welcome email
+  if (customerEmail) {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: customerEmail,
+      subject: "【トドケデ消防計画】サブスクリプション登録ありがとうございます",
+      html: `
+        <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
+          <h2 style="color:#E8332A;">ご登録ありがとうございます</h2>
+          <p>${planId === "standard" ? "スタンダード" : "ミニマム"}プラン（${billingCycle === "yearly" ? "年額" : "月額"}）でのご契約を承りました。</p>
+          <p>消防計画の Word ファイルは数分以内にメールでお送りいたします。</p>
+          <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
+          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+        </div>`,
+    });
+  }
+
+  console.log("[webhook] subscription created:", sub.id, planId, billingCycle);
+}
+
+async function handleSubscriptionUpdated(event: Stripe.Event) {
+  const sub = event.data.object as Stripe.Subscription;
+  const priceId = sub.items.data[0]?.price?.id || "";
+  const resolved = getPlanByPriceId(priceId);
+
+  const updateData: Record<string, unknown> = {
+    status: sub.status,
+    stripe_price_id: priceId,
+    current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
+    current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+    cancel_at_period_end: sub.cancel_at_period_end,
+    canceled_at: sub.canceled_at
+      ? new Date(sub.canceled_at * 1000).toISOString()
+      : null,
+  };
+
+  if (resolved) {
+    updateData.plan_id = resolved.plan.id;
+    updateData.billing_cycle = resolved.cycle;
+  }
+
+  const { error } = await supabaseAdmin
+    .from("subscriptions")
+    .update(updateData)
+    .eq("stripe_subscription_id", sub.id);
+
+  if (error) {
+    console.error("[webhook] subscriptions update error:", error);
+  }
+}
+
+async function handleSubscriptionDeleted(event: Stripe.Event) {
+  const sub = event.data.object as Stripe.Subscription;
+
+  const { data: row, error: selectErr } = await supabaseAdmin
+    .from("subscriptions")
+    .select("customer_email")
+    .eq("stripe_subscription_id", sub.id)
+    .maybeSingle();
+
+  const { error: updateErr } = await supabaseAdmin
+    .from("subscriptions")
+    .update({
+      status: "canceled",
+      canceled_at: new Date().toISOString(),
+    })
+    .eq("stripe_subscription_id", sub.id);
+
+  if (updateErr) {
+    console.error("[webhook] subscriptions cancel update error:", updateErr);
+  }
+
+  // Cancellation confirmation email
+  const email = row?.customer_email;
+  if (email) {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: "【トドケデ消防計画】サブスクリプション解約完了",
+      html: `
+        <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
+          <h2>解約が完了しました</h2>
+          <p>ご利用いただきありがとうございました。</p>
+          <p>再度ご契約いただく場合は <a href="https://plan.todokede.jp/pricing">こちら</a> からお手続きください。</p>
+          <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
+          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+        </div>`,
+    });
+  }
+
+  console.log("[webhook] subscription deleted:", sub.id);
+}
+
+async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
+  const invoice = event.data.object as Stripe.Invoice;
+
+  // Only send renewal notification for recurring cycles (not initial).
+  if (invoice.billing_reason !== "subscription_cycle") return;
+
+  const email = invoice.customer_email;
+  if (email) {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: "【トドケデ消防計画】お支払いが完了しました",
+      html: `
+        <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
+          <h2>更新お支払い完了</h2>
+          <p>今月分のお支払いが正常に処理されました。</p>
+          <p>契約内容の確認・変更は <a href="https://plan.todokede.jp/account">マイページ</a> から行えます。</p>
+          <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
+          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+        </div>`,
+    });
+  }
+}
+
+async function handleInvoicePaymentFailed(event: Stripe.Event) {
+  const invoice = event.data.object as Stripe.Invoice;
+  const email = invoice.customer_email;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://plan.todokede.jp";
+
+  // Notify customer
+  if (email) {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: "【トドケデ消防計画】お支払いに失敗しました",
+      html: `
+        <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
+          <h2 style="color:#E8332A;">お支払いに失敗しました</h2>
+          <p>クレジットカードの決済が完了できませんでした。</p>
+          <p>以下のリンクからカード情報を更新してください。</p>
+          <a href="${appUrl}/account" style="display:inline-block;padding:12px 24px;background:#E8332A;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">カード情報を更新する</a>
+          <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
+          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+        </div>`,
+    });
+  }
+
+  // Notify SHUN
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: REVIEW_TO_EMAIL,
+    subject: `【管理】決済失敗: ${email || "(unknown)"}`,
+    html: `<p>Invoice ${invoice.id} の決済が失敗しました。顧客: ${email || "(unknown)"}</p>`,
+  });
 }
