@@ -18,11 +18,13 @@ export async function POST(request: NextRequest) {
       billingCycle,
       customerEmail,
       formData,
+      coupon,
     }: {
       planId: string;
       billingCycle: string;
       customerEmail: string;
       formData?: Record<string, unknown>;
+      coupon?: string;
     } = body;
 
     // ── validation ────────────────────────────────────────────
@@ -78,15 +80,22 @@ export async function POST(request: NextRequest) {
 
     // ── create checkout session ───────────────────────────────
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customer.id,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
       subscription_data: { metadata },
       success_url: `${appUrl}/subscribe/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/pricing`,
-      allow_promotion_codes: true,
-    });
+    };
+
+    if (coupon) {
+      sessionParams.discounts = [{ coupon }];
+    } else {
+      sessionParams.allow_promotion_codes = true;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return NextResponse.json({ url: session.url });
   } catch (error: unknown) {
