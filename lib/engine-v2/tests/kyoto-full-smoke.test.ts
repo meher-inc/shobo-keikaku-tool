@@ -132,6 +132,41 @@ describe("kyoto full-pack v2 smoke tests", () => {
     expect(xml).toContain("別表１\u3000防火管理業務の一部委託状況表");
   });
 
+  // indent heuristic: w:ind w:left="420" appears for subitem lines
+  it("applies indent to subitem marker lines in document XML", async () => {
+    const xml = await renderAndExtractXml();
+    // The docx XML should contain indent attribute for ア/イ marker lines.
+    // Exact format: <w:ind w:left="420"/>
+    expect(xml).toContain('w:left="420"');
+  });
+
+  // ch1 section 2 (適用範囲) exists
+  it("contains ch1 section 2 (適用範囲) heading", async () => {
+    const xml = await renderAndExtractXml();
+    expect(xml).toContain("適用範囲");
+  });
+
+  // ch1 outsource variant gating (outsourced=true)
+  it("shows 委託〔該当〕 heading when outsourced", async () => {
+    const xml = await renderAndExtractXml({
+      has_outsourced_management: true,
+      has_outsource: true,
+    });
+    // Full heading string to avoid clash with cover page 統括防火管理〔非該当〕
+    expect(xml).toContain("防火管理業務の一部委託について〔該当〕");
+    expect(xml).not.toContain("防火管理業務の一部委託について〔非該当〕");
+  });
+
+  // ch1 outsource variant gating (outsourced=false)
+  it("shows 委託〔非該当〕 heading when not outsourced", async () => {
+    const xml = await renderAndExtractXml({
+      has_outsourced_management: false,
+      has_outsource: false,
+    });
+    expect(xml).toContain("防火管理業務の一部委託について〔非該当〕");
+    expect(xml).not.toContain("防火管理業務の一部委託について〔該当〕");
+  });
+
   // K2: outsourced=false → 別表1 appendix page skipped
   it("excludes 別表1 appendix page when not outsourced", async () => {
     const xml = await renderAndExtractXml({
