@@ -663,6 +663,33 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         })}
       </div>
     </section>
+
+    {/* Subscription CTA */}
+    <section style={{ maxWidth: 720, margin: "0 auto", padding: "64px 20px 0" }}>
+      <div style={{
+        background: "linear-gradient(135deg, #FFF5F5 0%, #FFF 100%)",
+        border: "1px solid #FDECEA",
+        borderRadius: 20, padding: "40px 32px", textAlign: "center",
+      }}>
+        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
+          毎年の更新作業から解放されませんか？
+        </h2>
+        <p style={{ fontSize: 15, color: "#86868b", lineHeight: 1.7, marginBottom: 24 }}>
+          サブスクリプションなら、年に一度の消防計画更新ドラフトを自動生成。<br />
+          法改正通知・点検リマインドも届くので、届出忘れの心配がありません。
+        </p>
+        <a
+          href="/pricing"
+          style={{
+            display: "inline-block", padding: "14px 36px", borderRadius: 12,
+            background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600,
+            textDecoration: "none",
+          }}
+        >
+          料金プランを見る
+        </a>
+      </div>
+    </section>
     </>
   );
 }
