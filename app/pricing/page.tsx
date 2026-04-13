@@ -88,6 +88,17 @@ export default function PricingPage() {
           </div>
         </div>
 
+        {/* Coming Soon banner */}
+        <div style={{
+          marginBottom: 32, borderRadius: 12, border: "1px solid #f6c244",
+          background: "#FFFBEB", padding: "16px 20px", color: "#92400E",
+        }}>
+          <p style={{ fontWeight: 600, margin: 0 }}>🚧 サブスクプランは2026年5月リリース予定です</p>
+          <p style={{ fontSize: 14, margin: "6px 0 0" }}>
+            現在は単発購入のみ受付中。リリース時は事前登録者向けに優先案内・初月無料クーポンをお届けします。
+          </p>
+        </div>
+
         {/* Plan cards */}
         <div style={{
           display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
@@ -137,7 +148,9 @@ export default function PricingPage() {
                 </ul>
 
                 <a
-                  href={`/?plan=${plan.id}&cycle=${cycle}`}
+                  href="https://lin.ee/MvnGLzW"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     display: "block", textAlign: "center", padding: "14px 0",
                     borderRadius: 12, fontWeight: 600, fontSize: 15,
@@ -146,8 +159,11 @@ export default function PricingPage() {
                     color: "#fff",
                   }}
                 >
-                  このプランで始める
+                  🔔 リリース通知を受け取る（LINE登録）
                 </a>
+                <p style={{ marginTop: 8, fontSize: 12, color: "#86868b", textAlign: "center" }}>
+                  LINE登録者には、リリース時に初月無料クーポンを優先配布予定
+                </p>
               </div>
             );
           })}
