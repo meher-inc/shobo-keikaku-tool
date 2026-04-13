@@ -9,8 +9,26 @@ const noto = Noto_Sans_JP({
 });
 
 export const metadata = {
-  title: "トドケデ消防計画 | plan.todokede.jp",
-  description: "元消防士が開発。消防計画を数分でWord出力。",
+  title: "トドケデ消防計画 | 元消防士が作った消防計画自動作成サービス",
+  description:
+    "元消防士が監修。所在地と建物情報を入力するだけで、所轄消防本部の様式に準拠した消防計画書をWord形式で自動生成します。",
+  openGraph: {
+    title: "トドケデ消防計画 | 元消防士が作った消防計画自動作成サービス",
+    description:
+      "所在地と建物情報を入力するだけで、所轄消防本部の様式に準拠した消防計画書をWordで自動生成。年額¥49,800〜。",
+    url: "https://plan.todokede.jp/",
+    siteName: "トドケデ消防計画",
+    images: ["https://plan.todokede.jp/og-image.png"],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "トドケデ消防計画 | 元消防士が作った消防計画自動作成サービス",
+    description:
+      "所在地と建物情報を入力するだけで、所轄消防本部の様式に準拠した消防計画書をWordで自動生成。年額¥49,800〜。",
+    images: ["https://plan.todokede.jp/og-image.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
