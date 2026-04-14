@@ -63,13 +63,70 @@ export async function upsertSubscriptionFromStripe(
     updated_at: new Date().toISOString(),
   };
 
+  // Check if a canonical row with this stripe_subscription_id already exists.
+  const { data: existingRow } = await supabaseAdmin
+    .from("subscriptions")
+    .select("id")
+    .eq("stripe_subscription_id", stripeSubscription.id)
+    .maybeSingle();
+
+  if (existingRow) {
+    // Update the existing canonical row in place.
+    const { error } = await supabaseAdmin
+      .from("subscriptions")
+      .update(row)
+      .eq("id", existingRow.id);
+
+    if (error) {
+      throw new Error(
+        `[subscriptions] update failed for ${stripeSubscription.id}: ${error.message}`
+      );
+    }
+    return;
+  }
+
+  // No canonical row yet. Look for a draft row (stripe_subscription_id IS NULL)
+  // created by the checkout endpoint, matching by subscription_draft_id in metadata.
+  const draftId = stripeSubscription.metadata?.subscription_draft_id;
+  if (draftId) {
+    const { data: draftRow } = await supabaseAdmin
+      .from("subscriptions")
+      .select("id")
+      .eq("id", draftId)
+      .is("stripe_subscription_id", null)
+      .maybeSingle();
+
+    if (draftRow) {
+      // Promote the draft row to canonical by filling in Stripe data.
+      const { error } = await supabaseAdmin
+        .from("subscriptions")
+        .update(row)
+        .eq("id", draftRow.id);
+
+      if (error) {
+        throw new Error(
+          `[subscriptions] draft promotion failed for ${stripeSubscription.id}: ${error.message}`
+        );
+      }
+      return;
+    }
+  }
+
+  // No existing row and no draft — insert fresh.
   const { error } = await supabaseAdmin
     .from("subscriptions")
-    .upsert(row, { onConflict: "stripe_subscription_id" });
+    .insert(row);
 
   if (error) {
+    // UNIQUE violation means another event just inserted it — safe to ignore.
+    if (error.code === "23505") {
+      console.log(
+        `[subscriptions] concurrent insert race for ${stripeSubscription.id}, ignoring`
+      );
+      return;
+    }
     throw new Error(
-      `[subscriptions] upsert failed for ${stripeSubscription.id}: ${error.message}`
+      `[subscriptions] insert failed for ${stripeSubscription.id}: ${error.message}`
     );
   }
 }

@@ -167,18 +167,59 @@ async function handleSubscriptionCheckoutCompleted(
     return;
   }
 
-  // Update the pending draft row with Stripe IDs.
-  const updateData: Record<string, unknown> = {};
-  if (stripeSubscriptionId) updateData.stripe_subscription_id = stripeSubscriptionId;
-  if (stripeCustomerId) updateData.stripe_customer_id = stripeCustomerId;
+  if (!stripeSubscriptionId) {
+    console.warn("[webhook] subscription checkout without subscription id", session.id);
+    return;
+  }
 
+  // Check if another row already owns this stripe_subscription_id
+  // (e.g. customer.subscription.created arrived first via upsert).
+  const { data: existing } = await supabaseAdmin
+    .from("subscriptions")
+    .select("id")
+    .eq("stripe_subscription_id", stripeSubscriptionId)
+    .maybeSingle();
+
+  if (existing) {
+    // The canonical row already exists. Delete the draft to avoid duplicates.
+    if (existing.id !== subscriptionDraftId) {
+      console.log(
+        "[webhook] draft row superseded by existing row, deleting draft:",
+        subscriptionDraftId
+      );
+      await supabaseAdmin
+        .from("subscriptions")
+        .delete()
+        .eq("id", subscriptionDraftId)
+        .is("stripe_subscription_id", null);
+    }
+    // Either way, the subscription is already tracked. Nothing more to do.
+    console.log("[webhook] subscription checkout completed (existing row):", stripeSubscriptionId);
+    return;
+  }
+
+  // No existing row — fill in the draft row with Stripe IDs.
   const { error } = await supabaseAdmin
     .from("subscriptions")
-    .update(updateData)
-    .eq("id", subscriptionDraftId);
+    .update({
+      stripe_subscription_id: stripeSubscriptionId,
+      stripe_customer_id: stripeCustomerId,
+    })
+    .eq("id", subscriptionDraftId)
+    .is("stripe_subscription_id", null);
 
   if (error) {
-    console.error("[webhook] subscription draft update error:", error);
+    // UNIQUE violation means another event just beat us — clean up the draft.
+    if (error.code === "23505") {
+      console.log("[webhook] UNIQUE race on draft, deleting draft:", subscriptionDraftId);
+      await supabaseAdmin
+        .from("subscriptions")
+        .delete()
+        .eq("id", subscriptionDraftId)
+        .is("stripe_subscription_id", null);
+    } else {
+      console.error("[webhook] subscription draft update error:", error);
+    }
   }
 
   console.log(
