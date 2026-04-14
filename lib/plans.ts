@@ -8,6 +8,19 @@
 export const PLAN_IDS = ["minimum", "standard"] as const;
 export type PlanId = (typeof PLAN_IDS)[number];
 
+/** Alias kept in sync with PlanId for clarity in subscription-specific code. */
+export type SubscriptionPlanId = PlanId;
+
+export type SubscriptionStatus =
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'trialing'
+  | 'active'
+  | 'past_due'
+  | 'canceled'
+  | 'unpaid'
+  | 'paused';
+
 export const BILLING_CYCLES = ["monthly", "yearly"] as const;
 export type BillingCycle = (typeof BILLING_CYCLES)[number];
 
@@ -96,4 +109,16 @@ export function getPlanByPriceId(
     }
   }
   return null;
+}
+
+/**
+ * Reverse-lookup returning planId string + cycle (lighter than getPlanByPriceId).
+ * Used by lib/subscriptions.ts for DB upsert.
+ */
+export function getPlanFromPriceId(
+  priceId: string
+): { planId: PlanId; cycle: BillingCycle } | null {
+  const result = getPlanByPriceId(priceId);
+  if (!result) return null;
+  return { planId: result.plan.id, cycle: result.cycle };
 }

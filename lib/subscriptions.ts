@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { supabaseAdmin } from "./supabase";
-import { getPlanFromPriceId } from "./stripe-plans";
+import { getPlanFromPriceId } from "./plans";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
