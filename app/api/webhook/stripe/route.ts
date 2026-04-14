@@ -198,13 +198,22 @@ async function handleSubscriptionCheckoutCompleted(
     return;
   }
 
-  // No existing row — fill in the draft row with Stripe IDs.
+  // Resolve customer email from Stripe session (collected at checkout).
+  const checkoutEmail =
+    session.customer_details?.email || session.customer_email || null;
+
+  // No existing row — fill in the draft row with Stripe IDs + real email.
+  const draftUpdate: Record<string, unknown> = {
+    stripe_subscription_id: stripeSubscriptionId,
+    stripe_customer_id: stripeCustomerId,
+  };
+  if (checkoutEmail) {
+    draftUpdate.customer_email = checkoutEmail;
+  }
+
   const { error } = await supabaseAdmin
     .from("subscriptions")
-    .update({
-      stripe_subscription_id: stripeSubscriptionId,
-      stripe_customer_id: stripeCustomerId,
-    })
+    .update(draftUpdate)
     .eq("id", subscriptionDraftId)
     .is("stripe_subscription_id", null);
 

@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }: {
       planId: string;
       billingCycle: string;
-      customerEmail: string;
+      customerEmail?: string;
       formData?: Record<string, unknown>;
       coupon?: string;
     } = body;
@@ -41,40 +41,41 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    if (!customerEmail) {
-      return NextResponse.json(
-        { error: "customerEmail is required" },
-        { status: 400 }
-      );
-    }
+
+    // customerEmail is optional — if omitted, Stripe Checkout collects it.
+    const hasEmail = customerEmail && customerEmail.trim() !== "";
 
     const priceId = getPriceId(
       planId as PlanId,
       billingCycle as BillingCycle
     );
 
-    // ── find or create Stripe Customer ────────────────────────
-    const existingCustomers = await stripe.customers.list({
-      email: customerEmail,
-      limit: 1,
-    });
-    let customer: Stripe.Customer;
-    if (existingCustomers.data.length > 0) {
-      customer = existingCustomers.data[0]!;
-    } else {
-      customer = await stripe.customers.create({ email: customerEmail });
+    // ── find or create Stripe Customer (only if email provided) ──
+    let customerId: string | undefined;
+    if (hasEmail) {
+      const existingCustomers = await stripe.customers.list({
+        email: customerEmail,
+        limit: 1,
+      });
+      if (existingCustomers.data.length > 0) {
+        customerId = existingCustomers.data[0]!.id;
+      } else {
+        const created = await stripe.customers.create({ email: customerEmail });
+        customerId = created.id;
+      }
     }
 
     // ── insert pending row in Supabase ──────────────────────
+    const draftId = crypto.randomUUID();
     const { data: draft, error: insertError } = await supabaseAdmin
       .from("subscriptions")
       .insert({
         status: "incomplete",
         plan_id: planId,
         billing_cycle: billingCycle,
-        customer_email: customerEmail,
+        customer_email: hasEmail ? customerEmail : `pending_${draftId}`,
         stripe_price_id: priceId,
-        stripe_customer_id: customer.id,
+        stripe_customer_id: customerId || null,
         stripe_subscription_id: null,
         cancel_at_period_end: false,
         initial_form_data: formData || null,
@@ -110,7 +111,6 @@ export async function POST(request: NextRequest) {
     // ── create checkout session ───────────────────────────────
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
-      customer: customer.id,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
       metadata,
@@ -118,6 +118,13 @@ export async function POST(request: NextRequest) {
       success_url: `${appUrl}/subscribe/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/pricing`,
     };
+
+    if (customerId) {
+      sessionParams.customer = customerId;
+    } else {
+      // No email provided — let Stripe Checkout collect it and create a Customer.
+      sessionParams.customer_creation = "always";
+    }
 
     if (coupon) {
       sessionParams.discounts = [{ coupon }];
