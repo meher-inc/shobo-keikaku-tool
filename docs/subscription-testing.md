@@ -38,13 +38,13 @@ npm run dev
 ### ミニマム月額
 
 ```bash
-curl -X POST http://localhost:3000/api/checkout/subscription \
+curl -X POST http://localhost:3000/api/subscribe \
   -H 'Content-Type: application/json' \
   -d '{
-    "plan_id": "minimum",
-    "billing_cycle": "monthly",
-    "customer_email": "test@example.com",
-    "form_data": {
+    "planId": "minimum",
+    "billingCycle": "monthly",
+    "customerEmail": "test@example.com",
+    "formData": {
       "building_name": "テストビル",
       "prefecture": "東京都"
     }
@@ -54,13 +54,13 @@ curl -X POST http://localhost:3000/api/checkout/subscription \
 ### スタンダード年額
 
 ```bash
-curl -X POST http://localhost:3000/api/checkout/subscription \
+curl -X POST http://localhost:3000/api/subscribe \
   -H 'Content-Type: application/json' \
   -d '{
-    "plan_id": "standard",
-    "billing_cycle": "yearly",
-    "customer_email": "test@example.com",
-    "form_data": {
+    "planId": "standard",
+    "billingCycle": "yearly",
+    "customerEmail": "test@example.com",
+    "formData": {
       "building_name": "テストビル",
       "prefecture": "東京都"
     }
@@ -109,13 +109,13 @@ stripe test-clocks advance <test_clock_id> --frozen-time <1ヶ月後のUnixタ�
 
 1. テストカード `4000 0000 0000 9995`（残高不足）で新規契約:
    ```bash
-   curl -X POST http://localhost:3000/api/checkout/subscription \
+   curl -X POST http://localhost:3000/api/subscribe \
      -H 'Content-Type: application/json' \
      -d '{
-       "plan_id": "minimum",
-       "billing_cycle": "monthly",
-       "customer_email": "fail-test@example.com",
-       "form_data": {"building_name": "テスト"}
+       "planId": "minimum",
+       "billingCycle": "monthly",
+       "customerEmail": "fail-test@example.com",
+       "formData": {"building_name": "テスト"}
      }'
    ```
 2. ブラウザで返された URL にアクセスし、カード `4000 0000 0000 9995` で試行

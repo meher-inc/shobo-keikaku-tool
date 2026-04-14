@@ -7,6 +7,7 @@ import {
   type PlanId,
   type BillingCycle,
 } from "../../../lib/plans";
+import { supabaseAdmin } from "../../../lib/supabase";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -64,10 +65,38 @@ export async function POST(request: NextRequest) {
       customer = await stripe.customers.create({ email: customerEmail });
     }
 
+    // ── insert pending row in Supabase ──────────────────────
+    const { data: draft, error: insertError } = await supabaseAdmin
+      .from("subscriptions")
+      .insert({
+        status: "incomplete",
+        plan_id: planId,
+        billing_cycle: billingCycle,
+        customer_email: customerEmail,
+        stripe_price_id: priceId,
+        stripe_customer_id: customer.id,
+        stripe_subscription_id: null,
+        cancel_at_period_end: false,
+        initial_form_data: formData || null,
+      })
+      .select("id")
+      .single();
+
+    if (insertError || !draft) {
+      console.error("[subscribe] supabase insert error:", insertError);
+      return NextResponse.json(
+        { error: "Failed to create subscription draft" },
+        { status: 500 }
+      );
+    }
+
+    const subscriptionDraftId: string = draft.id;
+
     // ── prepare metadata ──────────────────────────────────────
     // Stripe metadata values must be strings ≤500 chars each.
     const formDataStr = formData ? JSON.stringify(formData) : "";
     const metadata: Record<string, string> = {
+      subscription_draft_id: subscriptionDraftId,
       plan_id: planId,
       billing_cycle: billingCycle,
     };
@@ -84,6 +113,7 @@ export async function POST(request: NextRequest) {
       customer: customer.id,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
+      metadata,
       subscription_data: { metadata },
       success_url: `${appUrl}/subscribe/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/pricing`,
@@ -96,6 +126,12 @@ export async function POST(request: NextRequest) {
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
+
+    // ── save session id back to pending row for traceability ──
+    await supabaseAdmin
+      .from("subscriptions")
+      .update({ updated_at: new Date().toISOString() })
+      .eq("id", subscriptionDraftId);
 
     return NextResponse.json({ url: session.url });
   } catch (error: unknown) {
