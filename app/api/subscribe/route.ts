@@ -121,10 +121,10 @@ export async function POST(request: NextRequest) {
 
     if (customerId) {
       sessionParams.customer = customerId;
-    } else {
-      // No email provided — let Stripe Checkout collect it and create a Customer.
-      sessionParams.customer_creation = "always";
     }
+    // When customerId is absent, neither customer nor customer_email is set.
+    // In subscription mode Stripe automatically creates a Customer and shows
+    // the email input field on the Checkout page.
 
     if (coupon) {
       sessionParams.discounts = [{ coupon }];
