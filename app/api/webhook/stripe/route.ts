@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import { Resend } from "resend";
 import { supabaseAdmin } from "../../../../lib/supabase";
 import { sendPremiumReview } from "../../../../lib/sendPremiumReview";
-import { getPlanByPriceId } from "../../../../lib/plans";
+import { upsertSubscriptionFromStripe } from "../../../../lib/subscriptions";
 
 export const runtime = "nodejs";
 
@@ -41,14 +41,18 @@ export async function POST(req: NextRequest) {
   // try-catch and always returns 200 to prevent Stripe retries.
   try {
     switch (event.type) {
-      case "checkout.session.completed":
-        await handleCheckoutCompleted(event);
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.mode === "payment") {
+          await handleOneTimePayment(session);
+        } else if (session.mode === "subscription") {
+          await handleSubscriptionCheckoutCompleted(session);
+        }
         break;
+      }
       case "customer.subscription.created":
-        await handleSubscriptionCreated(event);
-        break;
       case "customer.subscription.updated":
-        await handleSubscriptionUpdated(event);
+        await handleSubscriptionUpsert(event);
         break;
       case "customer.subscription.deleted":
         await handleSubscriptionDeleted(event);
@@ -69,16 +73,9 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ received: true });
 }
 
-// ── checkout.session.completed (existing single-purchase flow) ──
+// ── checkout.session.completed — single-purchase (existing) ──────
 
-async function handleCheckoutCompleted(event: Stripe.Event) {
-  const session = event.data.object as Stripe.Checkout.Session;
-
-  // Subscription checkouts also fire checkout.session.completed,
-  // but the subscription-specific logic lives in
-  // customer.subscription.created. Skip if mode is subscription.
-  if (session.mode === "subscription") return;
-
+async function handleOneTimePayment(session: Stripe.Checkout.Session) {
   const orderId = session.metadata?.order_id;
   if (!orderId) {
     console.warn("[webhook] checkout.session.completed without order_id metadata", session.id);
@@ -156,121 +153,99 @@ async function handleCheckoutCompleted(event: Stripe.Event) {
   }
 }
 
-// ── subscription events ─────────────────────────────────────────
+// ── checkout.session.completed — subscription checkout ───────────
 
-async function handleSubscriptionCreated(event: Stripe.Event) {
-  const sub = event.data.object as Stripe.Subscription;
-  const meta = sub.metadata || {};
-  const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
-  const priceId = sub.items.data[0]?.price?.id || "";
+async function handleSubscriptionCheckoutCompleted(
+  session: Stripe.Checkout.Session
+) {
+  const subscriptionDraftId = session.metadata?.subscription_draft_id;
+  const stripeSubscriptionId = session.subscription as string | null;
+  const stripeCustomerId = session.customer as string | null;
 
-  // Resolve plan/cycle from metadata first, fall back to price lookup.
-  const resolved = getPlanByPriceId(priceId);
-  const planId = meta.plan_id || resolved?.plan.id || "unknown";
-  const billingCycle = meta.billing_cycle || resolved?.cycle || "monthly";
-
-  // Customer email
-  let customerEmail = "";
-  try {
-    const customer = await stripe.customers.retrieve(customerId);
-    if (!customer.deleted) customerEmail = customer.email || "";
-  } catch { /* ignore */ }
-
-  const formData = meta.form_data ? JSON.parse(meta.form_data) : null;
-
-  const { error } = await supabaseAdmin.from("subscriptions").insert({
-    stripe_customer_id: customerId,
-    stripe_subscription_id: sub.id,
-    stripe_price_id: priceId,
-    customer_email: customerEmail,
-    plan_id: planId,
-    billing_cycle: billingCycle,
-    status: sub.status,
-    current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
-    current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
-    cancel_at_period_end: sub.cancel_at_period_end,
-    initial_form_data: formData,
-  });
-
-  if (error) {
-    console.error("[webhook] subscriptions insert error:", error);
+  if (!subscriptionDraftId) {
+    console.warn("[webhook] subscription checkout without subscription_draft_id", session.id);
     return;
   }
 
-  // Welcome email
-  if (customerEmail) {
-    await resend.emails.send({
-      from: FROM_EMAIL,
-      to: customerEmail,
-      subject: "【トドケデ消防計画】サブスクリプション登録ありがとうございます",
-      html: `
-        <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
-          <h2 style="color:#E8332A;">ご登録ありがとうございます</h2>
-          <p>${planId === "standard" ? "スタンダード" : "ミニマム"}プラン（${billingCycle === "yearly" ? "年額" : "月額"}）でのご契約を承りました。</p>
-          <p>消防計画の Word ファイルは数分以内にメールでお送りいたします。</p>
-          <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
-        </div>`,
-    });
-  }
-
-  console.log("[webhook] subscription created:", sub.id, planId, billingCycle);
-}
-
-async function handleSubscriptionUpdated(event: Stripe.Event) {
-  const sub = event.data.object as Stripe.Subscription;
-  const priceId = sub.items.data[0]?.price?.id || "";
-  const resolved = getPlanByPriceId(priceId);
-
-  const updateData: Record<string, unknown> = {
-    status: sub.status,
-    stripe_price_id: priceId,
-    current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
-    current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
-    cancel_at_period_end: sub.cancel_at_period_end,
-    canceled_at: sub.canceled_at
-      ? new Date(sub.canceled_at * 1000).toISOString()
-      : null,
-  };
-
-  if (resolved) {
-    updateData.plan_id = resolved.plan.id;
-    updateData.billing_cycle = resolved.cycle;
-  }
+  // Update the pending draft row with Stripe IDs.
+  const updateData: Record<string, unknown> = {};
+  if (stripeSubscriptionId) updateData.stripe_subscription_id = stripeSubscriptionId;
+  if (stripeCustomerId) updateData.stripe_customer_id = stripeCustomerId;
 
   const { error } = await supabaseAdmin
     .from("subscriptions")
     .update(updateData)
-    .eq("stripe_subscription_id", sub.id);
+    .eq("id", subscriptionDraftId);
 
   if (error) {
-    console.error("[webhook] subscriptions update error:", error);
+    console.error("[webhook] subscription draft update error:", error);
+  }
+
+  console.log(
+    "[webhook] subscription checkout completed:",
+    session.id,
+    "draft:", subscriptionDraftId,
+    "sub:", stripeSubscriptionId
+  );
+}
+
+// ── customer.subscription.created / updated ──────────────────────
+
+async function handleSubscriptionUpsert(event: Stripe.Event) {
+  const sub = event.data.object as Stripe.Subscription;
+  await upsertSubscriptionFromStripe(sub);
+
+  // Send welcome email on creation
+  if (event.type === "customer.subscription.created") {
+    const customerId =
+      typeof sub.customer === "string" ? sub.customer : sub.customer.id;
+    let customerEmail = "";
+    try {
+      const customer = await stripe.customers.retrieve(customerId);
+      if (!customer.deleted) customerEmail = customer.email || "";
+    } catch { /* ignore */ }
+
+    const meta = sub.metadata || {};
+    const planId = meta.plan_id || "unknown";
+    const billingCycle = meta.billing_cycle || "monthly";
+
+    if (customerEmail) {
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to: customerEmail,
+        subject: "【トドケデ消防計画】サブスクリプション登録ありがとうございます",
+        html: `
+          <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
+            <h2 style="color:#E8332A;">ご登録ありがとうございます</h2>
+            <p>${planId === "standard" ? "スタンダード" : "ミニマム"}プラン（${billingCycle === "yearly" ? "年額" : "月額"}）でのご契約を承りました。</p>
+            <p>消防計画の Word ファイルは数分以内にメールでお送りいたします。</p>
+            <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
+            <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+          </div>`,
+      });
+    }
+
+    console.log("[webhook] subscription created:", sub.id, planId, billingCycle);
   }
 }
+
+// ── customer.subscription.deleted ────────────────────────────────
 
 async function handleSubscriptionDeleted(event: Stripe.Event) {
   const sub = event.data.object as Stripe.Subscription;
 
-  const { data: row, error: selectErr } = await supabaseAdmin
-    .from("subscriptions")
-    .select("customer_email")
-    .eq("stripe_subscription_id", sub.id)
-    .maybeSingle();
-
-  const { error: updateErr } = await supabaseAdmin
-    .from("subscriptions")
-    .update({
-      status: "canceled",
-      canceled_at: new Date().toISOString(),
-    })
-    .eq("stripe_subscription_id", sub.id);
-
-  if (updateErr) {
-    console.error("[webhook] subscriptions cancel update error:", updateErr);
-  }
+  // upsert will set status=canceled and canceled_at
+  await upsertSubscriptionFromStripe(sub);
 
   // Cancellation confirmation email
-  const email = row?.customer_email;
+  const customerId =
+    typeof sub.customer === "string" ? sub.customer : sub.customer.id;
+  let email = "";
+  try {
+    const customer = await stripe.customers.retrieve(customerId);
+    if (!customer.deleted) email = customer.email || "";
+  } catch { /* ignore */ }
+
   if (email) {
     await resend.emails.send({
       from: FROM_EMAIL,
@@ -290,8 +265,18 @@ async function handleSubscriptionDeleted(event: Stripe.Event) {
   console.log("[webhook] subscription deleted:", sub.id);
 }
 
+// ── invoice.payment_succeeded ────────────────────────────────────
+
 async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
   const invoice = event.data.object as Stripe.Invoice;
+
+  if (invoice.subscription) {
+    // Retrieve the up-to-date Subscription and upsert to DB
+    const sub = await stripe.subscriptions.retrieve(
+      invoice.subscription as string
+    );
+    await upsertSubscriptionFromStripe(sub);
+  }
 
   // Only send renewal notification for recurring cycles (not initial).
   if (invoice.billing_reason !== "subscription_cycle") return;
@@ -314,8 +299,19 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
   }
 }
 
+// ── invoice.payment_failed ───────────────────────────────────────
+
 async function handleInvoicePaymentFailed(event: Stripe.Event) {
   const invoice = event.data.object as Stripe.Invoice;
+
+  if (invoice.subscription) {
+    // Retrieve the up-to-date Subscription and upsert (status=past_due)
+    const sub = await stripe.subscriptions.retrieve(
+      invoice.subscription as string
+    );
+    await upsertSubscriptionFromStripe(sub);
+  }
+
   const email = invoice.customer_email;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://plan.todokede.jp";
 
