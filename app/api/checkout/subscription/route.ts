@@ -64,9 +64,11 @@ export async function POST(request: NextRequest) {
         plan_id,
         billing_cycle,
         customer_email,
+        stripe_price_id: priceId,
+        stripe_customer_id: null,
+        stripe_subscription_id: null,
+        cancel_at_period_end: false,
         initial_form_data: form_data,
-        stripe_subscription_id: `draft_${crypto.randomUUID()}`,
-        stripe_customer_id: "pending",
       })
       .select("id")
       .single();
