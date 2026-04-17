@@ -3,11 +3,9 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PLANS, type BillingCycle } from "../../../lib/plans";
 
-// Google Ads conversion config
 const GOOGLE_ADS_CONVERSION_ID = "AW-18069681696";
 const GOOGLE_ADS_CONVERSION_LABEL = "QAlqCP2rjZ4cEKDspahD";
 
-// gtag type declaration
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
@@ -43,7 +41,6 @@ function SuccessContent() {
       .catch(() => {});
   }, [sessionId]);
 
-  // Google広告コンバージョン発火（重複防止つき）
   const [convFired, setConvFired] = useState(false);
   useEffect(() => {
     if (convFired) return;
@@ -119,7 +116,7 @@ function SuccessContent() {
         </div>
 
         
-          href="https://lin.ee/MvnGLzW"
+          <a href="https://lin.ee/MvnGLzW"
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -132,7 +129,7 @@ function SuccessContent() {
         </a>
 
         
-          href="/account"
+          <a href="/account"
           style={{
             display: "block", width: "100%", padding: 14, borderRadius: 14,
             background: "#E8332A", color: "#fff", fontSize: 16, fontWeight: 600,
@@ -141,8 +138,9 @@ function SuccessContent() {
         >
           マイページへ
         </a>
+
         
-          href="/"
+          <a href="/"
           style={{
             display: "block", padding: 14, borderRadius: 14,
             background: "#f5f5f7", color: "#E8332A", fontSize: 15, fontWeight: 600,
