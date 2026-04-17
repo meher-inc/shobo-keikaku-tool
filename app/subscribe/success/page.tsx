@@ -1,6 +1,18 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { PLANS, type BillingCycle } from "../../../lib/plans";
+
+// Google Ads conversion config
+const GOOGLE_ADS_CONVERSION_ID = "AW-18069681696";
+const GOOGLE_ADS_CONVERSION_LABEL = "QAlqCP2rjZ4cEKDspahD";
+
+// gtag type declaration
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
 
 const PLAN_LABELS: Record<string, string> = {
   minimum: "ミニマム",
@@ -31,6 +43,28 @@ function SuccessContent() {
       .catch(() => {});
   }, [sessionId]);
 
+  // Google広告コンバージョン発火（重複防止つき）
+  const [convFired, setConvFired] = useState(false);
+  useEffect(() => {
+    if (convFired) return;
+    if (!info?.planId || !info?.billingCycle) return;
+    if (typeof window === "undefined" || !window.gtag) return;
+
+    const plan = PLANS.find((p) => p.id === info.planId);
+    if (!plan) return;
+    const cycle = info.billingCycle as BillingCycle;
+    const amount = plan.prices[cycle];
+    if (!amount) return;
+
+    window.gtag("event", "conversion", {
+      send_to: `${GOOGLE_ADS_CONVERSION_ID}/${GOOGLE_ADS_CONVERSION_LABEL}`,
+      value: amount,
+      currency: "JPY",
+      transaction_id: sessionId || "",
+    });
+    setConvFired(true);
+  }, [info, sessionId, convFired]);
+
   const planLabel = info?.planId ? PLAN_LABELS[info.planId] ?? info.planId : null;
   const cycleLabel = info?.billingCycle ? CYCLE_LABELS[info.billingCycle] ?? info.billingCycle : null;
   const nextBilling = info?.currentPeriodEnd
@@ -52,7 +86,6 @@ function SuccessContent() {
           サブスクリプション登録ありがとうございます
         </h1>
 
-        {/* Plan details */}
         {(planLabel || cycleLabel || nextBilling) && (
           <div style={{
             background: "#f5f5f7", borderRadius: 12, padding: "16px 20px",
@@ -75,7 +108,6 @@ function SuccessContent() {
           契約内容の確認・変更はマイページから行えます。
         </p>
 
-        {/* Release schedule notice */}
         <div style={{
           background: "#FFFBEB", border: "1px solid #f6c244", borderRadius: 12,
           padding: "14px 16px", margin: "20px 0", textAlign: "left",
@@ -86,8 +118,7 @@ function SuccessContent() {
           リリース時はご登録メールにてご案内いたします。
         </div>
 
-        {/* LINE registration */}
-        <a
+        
           href="https://lin.ee/MvnGLzW"
           target="_blank"
           rel="noopener noreferrer"
@@ -100,7 +131,7 @@ function SuccessContent() {
           LINE公式アカウントも登録する
         </a>
 
-        <a
+        
           href="/account"
           style={{
             display: "block", width: "100%", padding: 14, borderRadius: 14,
@@ -110,7 +141,7 @@ function SuccessContent() {
         >
           マイページへ
         </a>
-        <a
+        
           href="/"
           style={{
             display: "block", padding: 14, borderRadius: 14,
