@@ -28,6 +28,8 @@ export interface Plan {
   id: PlanId;
   name: string;
   description: string;
+  target: string;
+  recommended?: boolean;
   prices: {
     monthly: number;
     yearly: number;
@@ -44,6 +46,7 @@ export const PLANS: Plan[] = [
     id: "minimum",
     name: "ミニマム",
     description: "消防計画の自動生成に特化したエントリープラン",
+    target: "単一事業所・個人事業主の方に",
     prices: {
       monthly: 4980,
       yearly: 49800,
@@ -62,6 +65,8 @@ export const PLANS: Plan[] = [
     id: "standard",
     name: "スタンダード",
     description: "別表・ガイド・通知機能をフル装備した推奨プラン",
+    target: "中規模事業所・介護施設・保育園の方に",
+    recommended: true,
     prices: {
       monthly: 9800,
       yearly: 98000,
@@ -82,6 +87,7 @@ export const PLANS: Plan[] = [
     id: "pro",
     name: "プロ",
     description: "複数事業所・チェーン店・管理会社向けの上位プラン",
+    target: "複数事業所・チェーン店・管理会社の方に",
     prices: {
       monthly: 19800,
       yearly: 198000,
