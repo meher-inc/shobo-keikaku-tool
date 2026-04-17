@@ -1,113 +1,315 @@
-export const metadata = {
+import type { Metadata } from "next";
+import styles from "./tokusho.module.css";
+
+export const metadata: Metadata = {
   title: "特定商取引法に基づく表記 | トドケデ消防計画",
+  description:
+    "トドケデ消防計画の特定商取引法に基づく表記です。販売価格、支払方法、解約方法等をご確認いただけます。",
+  robots: { index: false },
 };
 
 export default function TokushoPage() {
-  const th = {
-    padding: "10px 16px",
-    textAlign: "left" as const,
-    fontWeight: 600,
-    color: "#1A1A1A",
-    background: "#f9f9f9",
-    borderBottom: "1px solid #e5e5e5",
-    whiteSpace: "nowrap" as const,
-  };
-  const td = {
-    padding: "10px 16px",
-    color: "#1A1A1A",
-    borderBottom: "1px solid #e5e5e5",
-  };
-  const table = {
-    width: "100%",
-    borderCollapse: "collapse" as const,
-    fontSize: 14,
-    margin: "16px 0 32px",
-  };
-
   return (
-    <div style={{ maxWidth: 720, margin: "0 auto", padding: "48px 20px 96px", lineHeight: 1.8, color: "#1A1A1A" }}>
-      <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 32, letterSpacing: "-0.01em" }}>
-        特定商取引法に基づく表記
-      </h1>
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>特定商取引法に基づく表記</h1>
+        <p className={styles.updated}>最終更新日: 2026年4月25日</p>
+      </header>
 
-      <table style={table}>
-        <tbody>
-          <tr><th style={th}>販売事業者</th><td style={td}>MeHer株式会社</td></tr>
-          <tr><th style={th}>運営統括責任者</th><td style={td}>丸岡 峻</td></tr>
-          <tr><th style={th}>所在地</th><td style={td}>お客様からご請求があった場合、遅滞なく開示いたします</td></tr>
-          <tr><th style={th}>電話番号</th><td style={td}>お客様からご請求があった場合、遅滞なく開示いたします</td></tr>
-          <tr><th style={th}>メールアドレス</th><td style={td}>plan@todokede.jp</td></tr>
-          <tr><th style={th}>販売URL</th><td style={td}>https://plan.todokede.jp</td></tr>
-          <tr><th style={th}>提供サービス</th><td style={td}>トドケデ消防計画（消防計画自動作成サービス）</td></tr>
-        </tbody>
-      </table>
+      <Section heading="販売業者">
+        <p>
+          MeHer株式会社
+          <br />
+          <span className={styles.note}>
+            ※2026年11月中に「株式会社トドケデ」へ商号変更予定
+          </span>
+        </p>
+      </Section>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>販売価格</h2>
+      <Section heading="運営統括責任者">
+        <p>丸岡　峻</p>
+      </Section>
 
-      <table style={table}>
-        <thead>
-          <tr>
-            <th style={th}>プラン</th>
-            <th style={th}>月額（税込）</th>
-            <th style={th}>年額（税込）</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td style={td}>ミニマム</td><td style={td}>4,980円</td><td style={td}>49,800円</td></tr>
-          <tr><td style={td}>スタンダード</td><td style={td}>9,800円</td><td style={td}>98,000円</td></tr>
-        </tbody>
-      </table>
+      <Section heading="所在地">
+        <p>
+          〒600-8223
+          <br />
+          京都府京都市下京区七条通油小路東入大黒町227番地 第2キョートビル402
+        </p>
+      </Section>
 
-      <p style={{ fontSize: 14, color: "#666666" }}>価格はすべて消費税を含んだ金額です。</p>
+      <Section heading="電話番号">
+        <p>
+          お客様からのご請求があった場合、遅滞なく開示いたします。
+          <br />
+          お問い合わせは下記メールアドレスまたはお問い合わせフォームよりお願いいたします。
+        </p>
+      </Section>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>商品代金以外にお客様にご負担いただく費用</h2>
-      <p style={{ fontSize: 14 }}>本サービスのご利用にあたり必要となるインターネット接続料金、通信料金等はお客様のご負担となります。</p>
+      <Section heading="メールアドレス">
+        <p>
+          <a href="mailto:support@todokede.jp">support@todokede.jp</a>
+        </p>
+      </Section>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>支払方法</h2>
-      <p style={{ fontSize: 14 }}>
-        クレジットカード決済（Stripe）<br />
-        利用可能ブランド：Visa、Mastercard、JCB、American Express、Diners Club
-      </p>
+      <Section heading="お問い合わせフォーム">
+        <p>
+          <a href="https://todokede.jp/contact">https://todokede.jp/contact</a>
+        </p>
+      </Section>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>支払時期</h2>
-      <ul style={{ fontSize: 14, paddingLeft: 20 }}>
-        <li>初回：お申し込み時に即時決済</li>
-        <li>2回目以降：毎月または毎年、契約日に応じた自動更新による継続決済</li>
-      </ul>
+      <Section heading="適格請求書発行事業者登録番号">
+        <p>T7130001074767</p>
+      </Section>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>サービスの提供時期</h2>
-      <p style={{ fontSize: 14 }}>決済完了後、直ちにサービスのご利用が可能となります。</p>
+      <Section heading="サービス名">
+        <p>
+          トドケデ消防計画（
+          <a href="https://plan.todokede.jp">https://plan.todokede.jp</a>）
+        </p>
+      </Section>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>契約の自動更新について</h2>
-      <p style={{ fontSize: 14 }}>本サービスは月額または年額の自動更新型サブスクリプションです。解約のお申し出がない限り、契約は同一条件で自動的に更新されます。</p>
+      <Section heading="販売価格">
+        <p>
+          すべて<strong>税込</strong>価格で表示しています。
+        </p>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>解約方法</h2>
-      <p style={{ fontSize: 14 }}>
-        次回課金日の前日までに、plan@todokede.jp 宛に解約のご希望をメールでお送りください。解約のお手続きを24時間以内に行い、完了のご連絡を差し上げます。
-      </p>
-      <p style={{ fontSize: 14 }}>解約後も、既に決済済みの期間満了日まではサービスをご利用いただけます。</p>
+        <h3 className={styles.sub}>月額プラン</h3>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>プラン</th>
+              <th className={styles.priceHeader}>月額（税込）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>ミニマム</td><td className={styles.price}>¥4,980</td></tr>
+            <tr><td>スタンダード</td><td className={styles.price}>¥9,800</td></tr>
+            <tr><td>プロ</td><td className={styles.price}>¥19,800</td></tr>
+          </tbody>
+        </table>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>返品・返金について</h2>
-      <p style={{ fontSize: 14 }}>
-        本サービスはデジタルサービスの性質上、決済完了後の返金は原則として承っておりません。
-      </p>
-      <p style={{ fontSize: 14 }}>ただし、以下のいずれかに該当する場合は、個別にご対応いたします。</p>
-      <ul style={{ fontSize: 14, paddingLeft: 20 }}>
-        <li>当社の責に帰すべき事由によりサービスの提供ができない場合</li>
-        <li>当社が定める重大な不具合によりサービスを継続的にご利用いただけない場合</li>
-      </ul>
+        <h3 className={styles.sub}>年額プラン（2ヶ月分お得）</h3>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>プラン</th>
+              <th className={styles.priceHeader}>年額（税込）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>ミニマム</td><td className={styles.price}>¥49,800</td></tr>
+            <tr><td>スタンダード</td><td className={styles.price}>¥98,000</td></tr>
+            <tr><td>プロ</td><td className={styles.price}>¥198,000</td></tr>
+          </tbody>
+        </table>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>動作環境</h2>
-      <ul style={{ fontSize: 14, paddingLeft: 20 }}>
-        <li>最新のGoogle Chrome、Safari、Firefox、Microsoft Edge</li>
-        <li>安定したインターネット接続環境</li>
-        <li>Microsoft Word（生成された消防計画ファイルの閲覧・編集に使用）</li>
-      </ul>
+        <div className={styles.campaign}>
+          <p className={styles.campaignTitle}>
+            既存顧客限定移行プラン（キャンペーン期間限定）
+          </p>
+          <p>
+            2026年5月1日までに単発購入（¥9,800）された方は、以下のいずれかをお選びいただけます。
+          </p>
+          <ul className={styles.campaignList}>
+            <li>
+              <strong>初月無料スタンダード</strong>: 初月 ¥0、2ヶ月目以降 月額 ¥9,800（税込）
+            </li>
+            <li>
+              <strong>年額特別プラン</strong>: スタンダード年額 ¥69,800（税込、通常¥98,000から約3割引）
+            </li>
+          </ul>
+          <p className={styles.campaignPeriod}>
+            キャンペーン期間: 移行案内送信日から2週間
+          </p>
+        </div>
+      </Section>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 12 }}>特別条件</h2>
-      <p style={{ fontSize: 14 }}>本サービスは自動更新型のサブスクリプションサービスです。お申し込みの前に本表記および利用規約を必ずご確認ください。</p>
+      <Section heading="商品代金以外の必要料金">
+        <p><strong>なし</strong></p>
+        <p>表示価格には消費税が含まれています。それ以外の追加料金は発生しません。</p>
+        <p className={styles.note}>
+          ※インターネット接続料金、通信費、パソコン・スマートフォン等の機器費用はお客様のご負担となります。
+        </p>
+      </Section>
 
-      <p style={{ fontSize: 13, color: "#666666", marginTop: 48 }}>制定日：2026年4月14日 / 最終更新日：2026年4月14日</p>
-    </div>
+      <Section heading="支払方法">
+        <p>クレジットカード決済（Stripe 経由）</p>
+        <div className={styles.cards}>
+          {["Visa", "Mastercard", "JCB", "American Express", "Diners Club"].map(
+            (brand) => (
+              <span key={brand} className={styles.cardBadge}>
+                {brand}
+              </span>
+            )
+          )}
+        </div>
+        <p className={styles.note}>
+          ※請求書払い・銀行振込は現時点では対応しておりません（将来的な対応を検討中）
+        </p>
+      </Section>
+
+      <Section heading="支払時期">
+        <h3 className={styles.sub}>月額プラン</h3>
+        <dl className={styles.detail}>
+          <dt>初回</dt>
+          <dd>お申込み手続き完了時に即時決済</dd>
+          <dt>2回目以降</dt>
+          <dd>毎月の契約更新日に自動決済</dd>
+        </dl>
+
+        <h3 className={styles.sub}>年額プラン</h3>
+        <dl className={styles.detail}>
+          <dt>初回</dt>
+          <dd>お申込み手続き完了時に一括決済</dd>
+          <dt>更新時</dt>
+          <dd>1年後の契約更新日に一括自動決済</dd>
+        </dl>
+
+        <h3 className={styles.sub}>
+          既存顧客移行プラン「初月無料スタンダード」の場合
+        </h3>
+        <dl className={styles.detail}>
+          <dt>初回決済</dt>
+          <dd>¥0（決済手続きのみ実行、課金はなし）</dd>
+          <dt>2回目以降</dt>
+          <dd>申込日の翌月同日より月額 ¥9,800（税込）を自動決済</dd>
+        </dl>
+      </Section>
+
+      <Section heading="役務の提供時期">
+        <p>決済完了後、ただちにサービスのご利用が可能になります。</p>
+      </Section>
+
+      <Section heading="自動更新について">
+        <p>
+          本サービスは
+          <strong>継続課金型のサブスクリプションサービス</strong>
+          です。お客様からの解約手続きがない限り、契約は自動的に更新されます。
+        </p>
+        <ul className={styles.list}>
+          <li>月額プラン: 毎月の契約更新日に自動更新</li>
+          <li>年額プラン: 1年後の契約更新日に自動更新</li>
+        </ul>
+      </Section>
+
+      <Section heading="解約方法">
+        <p>
+          <a href="/mypage">マイページ</a>
+          または Stripe カスタマーポータルから、いつでも解約手続きが可能です。
+        </p>
+        <ul className={styles.list}>
+          <li>
+            解約手続き完了後、
+            <strong>次回の契約更新日をもって課金が停止</strong>されます
+          </li>
+          <li>
+            解約手続き後も、現在の契約期間満了までは引き続きサービスをご利用いただけます
+          </li>
+        </ul>
+      </Section>
+
+      <Section heading="返金について">
+        <p>
+          役務の性質上、
+          <strong>
+            原則として既にお支払いいただいた料金の返金は承っておりません。
+          </strong>
+        </p>
+        <p>
+          ただし、以下のいずれかに該当する場合は、個別にご相談のうえ対応いたします。
+        </p>
+        <ul className={styles.listDash}>
+          <li>当社の重大なシステム障害により、相当期間サービスをご利用いただけなかった場合</li>
+          <li>当社に明らかな帰責事由がある場合</li>
+          <li>その他、消費者契約法等の法令により返金が必要と判断される場合</li>
+        </ul>
+        <h3 className={styles.sub}>日割り計算について</h3>
+        <p>
+          月の途中で解約された場合でも、
+          <strong>日割り計算による返金は行っておりません</strong>
+          。次回更新日までは引き続きサービスをご利用いただけます。
+        </p>
+      </Section>
+
+      <Section heading="最低利用期間">
+        <p>設定しておりません。月額プランは解約手続き後、次回更新日をもって終了いたします。</p>
+      </Section>
+
+      <Section heading="プラン変更について">
+        <p>
+          <a href="/mypage">マイページ</a>
+          または Stripe カスタマーポータルから、いつでもプラン変更が可能です。
+        </p>
+        <ul className={styles.list}>
+          <li>
+            <strong>アップグレード</strong>（例: ミニマム → スタンダード）:
+            変更時点で差額を日割り計算して即時適用
+          </li>
+          <li>
+            <strong>ダウングレード</strong>（例: スタンダード → ミニマム）:
+            次回更新日から新プラン適用
+          </li>
+        </ul>
+      </Section>
+
+      <Section heading="動作環境">
+        <p>以下のブラウザの最新版を推奨いたします。</p>
+        <ul className={styles.list}>
+          <li>Google Chrome</li>
+          <li>Safari</li>
+          <li>Microsoft Edge</li>
+          <li>Firefox</li>
+        </ul>
+        <p className={styles.note}>
+          ※Internet Explorer はサポート対象外です。
+          <br />
+          ※JavaScript および Cookie を有効にしてご利用ください。
+        </p>
+      </Section>
+
+      <Section heading="販売数量">
+        <p>特段の制限はありません。</p>
+      </Section>
+
+      <Section heading="特約事項">
+        <p>
+          本表記は特定商取引法に基づく法定表記です。サービスのご利用にあたっては、別途定める
+          <a href="/legal/terms">利用規約</a>および
+          <a href="/legal/privacy">プライバシーポリシー</a>
+          も併せてご確認ください。
+        </p>
+      </Section>
+
+      <Section heading="表記の変更について">
+        <p>
+          本表記の内容は、法令の改正・サービス内容の変更等により予告なく変更することがあります。変更後の内容は本ページに掲載した時点で効力を生じるものとします。
+        </p>
+      </Section>
+
+      <footer className={styles.footer}>
+        <p>&copy; 2026 MeHer株式会社</p>
+        <div className={styles.footerLinks}>
+          <a href="/legal/terms">利用規約</a>
+          <a href="/legal/privacy">プライバシーポリシー</a>
+          <a href="https://todokede.jp/contact">お問い合わせ</a>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+function Section({
+  heading,
+  children,
+}: {
+  heading: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className={styles.section}>
+      <h2 className={styles.sectionHeading}>{heading}</h2>
+      <div className={styles.sectionBody}>{children}</div>
+    </section>
   );
 }
