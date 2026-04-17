@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { PLANS, type BillingCycle } from "../lib/plans";
 import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
 
 const USE_CATEGORIES = [
@@ -34,93 +35,41 @@ const STEPS = [
   { id: "management", title: "管理者", icon: "👤" },
   { id: "equipment", title: "設備", icon: "🔧" },
   { id: "operations", title: "運用", icon: "📋" },
-  { id: "confirm", title: "生成", icon: "✅" },
+  { id: "confirm", title: "確認", icon: "✅" },
 ];
 
 const FAQ_ITEMS = [
   {
     q: "出力された消防計画はそのまま消防署に提出できますか?",
-    a: "はい。京都市消防局・東京消防庁の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。",
+    a: "はい。京都市消防局・東京消防庁の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。",
   },
   {
     q: "対応している消防本部を教えてください。",
-    a: "現在は京都市消防局・東京消防庁に正式対応しています。それ以外のエリアは標準様式(京都ベース)で出力されますので、ご利用前に管轄消防署の様式と照合することをお勧めします。大阪・名古屋・横浜・福岡は順次対応予定です。",
+    a: "現在は京都市消防局・東京消防庁に正式対応しています。それ以外のエリアは標準様式(京都ベース)で出力されます。大阪・名古屋・横浜・福岡は順次対応予定です。",
   },
   {
     q: "どのプランを選べばいいかわかりません。",
-    a: "迷ったらスタンダード(¥9,800)がおすすめです。消防計画本体に加えて別表すべてと記入ガイドPDFが付くので、初めて作成する方でも安心です。プレミアム(¥29,800)は「絶対に一発で通したい」「元消防士に直接見てほしい」方向けです。",
+    a: "迷ったらスタンダードがおすすめです。消防計画本体に加え、訓練計画・点検リマインド・変更届の自動生成まで対応します。複数事業所を管理される方はプロプランをご検討ください。",
   },
   {
-    q: "入力した情報は保存されますか?",
-    a: "いいえ、フォームに入力された情報は決済と書類生成のためだけに使用され、サーバーに保存されません。個人情報保護の観点から、安心してご利用いただけます。",
-  },
-  {
-    q: "決済後にダウンロードし忘れました。再ダウンロードできますか?",
-    a: "決済完了メールに記載されたURLから再度アクセスできます。万一リンクが無効になっている場合は、決済時のメールアドレスを添えて plan@todokede.jp までご連絡ください。",
+    q: "月額プランはいつでも解約できますか?",
+    a: "はい、マイページからいつでも解約可能です。解約した月の月末までサービスをご利用いただけます。",
   },
   {
     q: "防火管理者の資格がなくても消防計画を作成できますか?",
-    a: "消防計画の作成自体は誰でもできますが、提出には防火管理者の選任が必要です(特定用途で収容30人以上、延床300㎡以上の場合は甲種、それ以外は乙種)。資格取得は1〜2日の講習で可能です。お近くの消防署または日本防火・防災協会のサイトで受講できます。",
+    a: "消防計画の作成自体は誰でもできますが、提出には防火管理者の選任が必要です(特定用途で収容30人以上、延床300㎡以上の場合は甲種、それ以外は乙種)。資格取得は1〜2日の講習で可能です。",
   },
   {
     q: "出力形式はWordですか?PDFですか?",
-    a: "Word形式(.docx)で出力されます。消防署に提出する前に建物固有の情報を追記・修正したい場合にそのまま編集できます。印刷するだけの方は、Wordで開いてPDF保存してください。",
+    a: "Word形式(.docx)で出力されます。消防署に提出する前に建物固有の情報を追記・修正したい場合にそのまま編集できます。",
   },
   {
     q: "領収書は発行できますか?",
-    a: "Stripe決済完了時にStripeから自動で領収書が発行されます。会社名が必要な場合は、決済画面で入力いただけます。別途MeHer株式会社発行の領収書が必要な場合は plan@todokede.jp までご連絡ください。",
+    a: "Stripe決済完了時にStripeから自動で領収書が発行されます。会社名が必要な場合は、決済画面で入力いただけます。",
   },
   {
-    q: "返金は可能ですか?",
-    a: "出力された消防計画の内容に不備があった場合は、内容確認のうえ返金または再発行で対応いたします。「出力してみたけど使わなかった」という理由での返金はお断りしています。",
-  },
-  {
-    q: "法人として複数物件分まとめて購入できますか?",
-    a: (
-      <>
-        現在は1件ずつの購入となっております。管理会社様・フランチャイズ本部様などで複数物件の一括対応をご希望の場合は、
-        <a
-          href="https://todokede.jp"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#E8332A", textDecoration: "underline" }}
-        >
-          トドケデ本体の代行サービス
-        </a>
-        (¥50,000〜)をご検討ください。
-      </>
-    ),
-  },
-];
-
-const PLANS = [
-  {
-    id: "light",
-    name: "ライト",
-    price: 4980,
-    priceLabel: "¥4,980",
-    description: "消防計画のみ",
-    features: ["消防計画Word出力", "所轄消防本部の様式に準拠"],
-    missing: ["別表", "記入ガイド", "内容チェック"],
-  },
-  {
-    id: "standard",
-    name: "スタンダード",
-    price: 9800,
-    priceLabel: "¥9,800",
-    description: "計画＋別表＋ガイド",
-    badge: "おすすめ",
-    features: ["消防計画Word出力", "所轄消防本部の様式に準拠", "別表すべて出力", "記入ガイドPDF付き"],
-    missing: ["内容チェック"],
-  },
-  {
-    id: "premium",
-    name: "プレミアム",
-    price: 29800,
-    priceLabel: "¥29,800",
-    description: "チェック＋修正付き",
-    features: ["消防計画Word出力", "所轄消防本部の様式に準拠", "別表すべて出力", "記入ガイドPDF付き", "元消防士による内容チェック", "修正1回対応"],
-    missing: [],
+    q: "法人として複数物件を一括管理できますか?",
+    a: "プロプランなら最大10事業所を1契約で管理できます。10を超える場合は個別にご相談ください。",
   },
 ];
 
@@ -138,10 +87,8 @@ function Field({ label, value, onChange, placeholder, type = "text", required = 
 
 export default function Home() {
   const [step, setStep] = useState(0);
-  const [loading, setLoading] = useState(false);
-const [selectedPlan, setSelectedPlan] = useState("standard");
-const [showSample, setShowSample] = useState(false);  // ← これを追加
-const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [showSample, setShowSample] = useState(false);
+  const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [form, setForm] = useState({
     prefecture: "京都府", city: "京都市", ward: "", address_detail: "",
     building_name: "", use_category: "", total_area: "", num_floors: "", capacity: "",
@@ -171,61 +118,91 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   if (form.equipment.length === 0) missing.push("消防用設備");
   if (!form.evacuation_site) missing.push("避難場所");
 
-  const currentPlan = PLANS.find(p => p.id === selectedPlan)!;
-
-  async function handleGenerate() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, plan: selectedPlan }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert("決済セッションの作成に失敗しました");
-      }
-    } catch {
-      alert("通信エラーが発生しました");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <>
     <div style={{ maxWidth: 640, margin: "0 auto", padding: "20px 16px 40px" }}>
 
+      {/* ── Hero ─────────────────────────────────────────── */}
       <div style={{ textAlign: "center", padding: "48px 24px 40px" }}>
-        <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 8 }}>消防計画を、自動作成。</h1>
-        <p style={{ fontSize: 17, color: "#86868b", fontWeight: 400 }}>建物情報を入力するだけ。所轄消防本部の様式に準拠した計画書をWordで生成します。</p>
+        <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 8 }}>
+          月額プランで、継続的に消防安全を管理
+        </h1>
+        <p style={{ fontSize: 17, color: "#86868b", fontWeight: 400, lineHeight: 1.7 }}>
+          消防計画の作成から、年次更新・訓練記録・法改正追従まで。
+          <br />
+          一度作って終わりではなく、ずっと使える仕組みに。
+        </p>
       </div>
 
-      {/* Hero Sample CTA */}
-      <div style={{ textAlign: "center", marginBottom: 32, marginTop: -16 }}>
+      {/* ── Hero CTAs ────────────────────────────────────── */}
+      <div style={{ textAlign: "center", marginBottom: 32, marginTop: -16, display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+        <a
+          href="/pricing"
+          style={{
+            display: "inline-block",
+            background: "#E8332A",
+            color: "#fff",
+            padding: "14px 36px",
+            borderRadius: 12,
+            fontSize: 15,
+            fontWeight: 700,
+            textDecoration: "none",
+          }}
+        >
+          料金プランを見る
+        </a>
         <button
           onClick={() => setShowSample(true)}
           style={{
             background: "#fff",
             border: "2px solid #E8332A",
             color: "#E8332A",
-            padding: "14px 32px",
+            padding: "12px 28px",
             borderRadius: 12,
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: 700,
             cursor: "pointer",
-            boxShadow: "0 2px 8px rgba(232, 51, 42, 0.12)",
           }}
         >
-          📄 まずはサンプルを見る
+          サンプルを見る
         </button>
-        <p style={{ fontSize: 12, color: "#86868b", marginTop: 10 }}>
+        <p style={{ fontSize: 12, color: "#86868b", marginTop: 4 }}>
           実際に生成される消防計画(飲食店320㎡・別表付き)をご確認いただけます
         </p>
       </div>
 
+      {/* ── Mini Pricing Preview ─────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 32 }}>
+        {PLANS.map((plan) => (
+          <div
+            key={plan.id}
+            style={{
+              padding: "16px 12px",
+              borderRadius: 14,
+              border: plan.recommended ? "2px solid #E8332A" : "1px solid #e5e5e7",
+              textAlign: "center",
+              position: "relative",
+            }}
+          >
+            {plan.recommended && (
+              <div style={{
+                position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)",
+                background: "#E8332A", color: "#fff", fontSize: 10, fontWeight: 700,
+                padding: "2px 10px", borderRadius: 10, whiteSpace: "nowrap",
+              }}>
+                おすすめ
+              </div>
+            )}
+            <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{plan.name}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em" }}>
+              {plan.prices.monthly.toLocaleString()}
+            </div>
+            <div style={{ fontSize: 11, color: "#86868b" }}>円/月〜</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Form Wizard ──────────────────────────────────── */}
       <div style={{ display: "flex", gap: 4, marginBottom: 24, padding: 4, background: "#e8e8ed", borderRadius: 12 }}>
         {STEPS.map((s, i) => (
           <button key={s.id} onClick={() => setStep(i)} style={{
@@ -341,100 +318,9 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
         {step === 5 && (
           <div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>プランを選択</h2>
-            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24 }}>内容を確認してプランを選んでください</p>
+            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>入力内容の確認</h2>
+            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24 }}>内容を確認してください</p>
 
-            {/* Plan selector */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
-              {PLANS.map(plan => {
-                const isSelected = selectedPlan === plan.id;
-                return (
-                  <button
-                    key={plan.id}
-                    onClick={() => setSelectedPlan(plan.id)}
-                    style={{
-                      position: "relative",
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 14,
-                      padding: "18px 20px",
-                      borderRadius: 16,
-                      border: "none",
-                      cursor: "pointer",
-                      background: isSelected ? "#FDECEA" : "#f5f5f7",
-                      outline: isSelected ? "2.5px solid #E8332A" : "1.5px solid transparent",
-                      textAlign: "left" as const,
-                      transition: "all 0.15s ease",
-                    }}
-                  >
-                    {/* Radio indicator */}
-                    <div style={{
-                      width: 22, height: 22, borderRadius: 11, flexShrink: 0, marginTop: 2,
-                      background: isSelected ? "#E8332A" : "#fff",
-                      border: isSelected ? "none" : "2px solid #d2d2d7",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      {isSelected && (
-                        <div style={{ width: 8, height: 8, borderRadius: 4, background: "#fff" }} />
-                      )}
-                    </div>
-
-                    {/* Plan info */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontSize: 16, fontWeight: 700, color: "#1d1d1f" }}>{plan.name}</span>
-                        {plan.badge && (
-                          <span style={{
-                            fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10,
-                            background: "#E8332A", color: "#fff", letterSpacing: "0.02em",
-                          }}>{plan.badge}</span>
-                        )}
-                      </div>
-                      <div style={{ fontSize: 13, color: "#86868b", marginBottom: 8 }}>{plan.description}</div>
-                      <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
-                        {plan.features.map(f => (
-                          <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "#FADAD6" : "#e8e8ed", color: isSelected ? "#C8261E" : "#6e6e73" }}>
-                            ✓ {f}
-                          </span>
-                        ))}
-                        {plan.missing.map(m => (
-                          <span key={m} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: "#f5f5f7", color: "#c7c7cc", textDecoration: "line-through" }}>
-                            {m}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Price */}
-                    <div style={{ flexShrink: 0, textAlign: "right" as const }}>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "#E8332A" : "#1d1d1f", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
-                      <div style={{ fontSize: 11, color: "#86868b" }}>税込</div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-{/* Sample preview button */}
-            <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <button
-                onClick={() => setShowSample(true)}
-                style={{
-                  background: "#fff",
-                  border: "2px solid #E8332A",
-                  color: "#E8332A",
-                  padding: "12px 28px",
-                  borderRadius: 12,
-                  fontSize: 14,
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                📄 サンプルをもう一度見る
-              </button>
-              <p style={{ fontSize: 12, color: "#86868b", marginTop: 8 }}>
-                スタンダードプランで生成される内容のサンプルです
-              </p>
-            </div>
             {/* Missing items warning */}
             {missing.length > 0 && (
               <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: "#fffbf0", border: "1px solid #ffd9a0" }}>
@@ -455,15 +341,19 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "—"}</div>
             </div>
 
-            {/* CTA button */}
-            <button onClick={handleGenerate} disabled={completeness < 100 || loading} style={{
-              width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
-              cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
-              background: completeness === 100 && !loading ? "#E8332A" : "#d2d2d7", color: "#fff",
-            }}>
-              {loading ? "決済画面に移動中..." : `${currentPlan.priceLabel} で生成する`}
-            </button>
-            {completeness < 100 && <p style={{ fontSize: 13, color: "#86868b", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
+            {/* CTA: go to pricing */}
+            <a
+              href="/pricing"
+              style={{
+                display: "block", width: "100%", padding: 16, borderRadius: 14, border: "none",
+                fontSize: 17, fontWeight: 600, cursor: "pointer", textAlign: "center",
+                background: completeness === 100 ? "#E8332A" : "#d2d2d7",
+                color: "#fff", textDecoration: "none",
+              }}
+            >
+              プランを選んで申し込む
+            </a>
+            {completeness < 100 && <p style={{ fontSize: 13, color: "#86868b", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力するとプラン選択に進めます</p>}
 
             {/* Trust badges */}
             <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "#86868b" }}>
@@ -478,82 +368,46 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step > 0 && <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#e8e8ed", color: "#1d1d1f", fontSize: 15, fontWeight: 600 }}>← 戻る</button>}
         {step < STEPS.length - 1 && <button onClick={() => setStep(step + 1)} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
       </div>
-{/* Sample preview modal */}
+
+      {/* Sample preview modal */}
       {showSample && (
         <div
           onClick={() => setShowSample(false)}
           style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.75)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: 16,
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            zIndex: 1000, padding: 16,
           }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: "#fff",
-              borderRadius: 16,
-              width: "100%",
-              maxWidth: 900,
-              height: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
+              background: "#fff", borderRadius: 16, width: "100%", maxWidth: 900,
+              height: "90vh", display: "flex", flexDirection: "column", overflow: "hidden",
             }}
           >
             <div style={{
-              padding: "14px 20px",
-              borderBottom: "1px solid #e5e5e5",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              padding: "14px 20px", borderBottom: "1px solid #e5e5e5",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
             }}>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: "#1d1d1f" }}>
-                  消防計画サンプル
-                </div>
-                <div style={{ fontSize: 12, color: "#86868b" }}>
-                  京都市・飲食店320㎡(架空事業者)
-                </div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#1d1d1f" }}>消防計画サンプル</div>
+                <div style={{ fontSize: 12, color: "#86868b" }}>京都市・飲食店320㎡(架空事業者)</div>
               </div>
               <button
                 onClick={() => setShowSample(false)}
-                style={{
-                  background: "#f5f5f7",
-                  border: "none",
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  fontSize: 16,
-                  cursor: "pointer",
-                  color: "#1d1d1f",
-                }}
+                style={{ background: "#f5f5f7", border: "none", width: 32, height: 32, borderRadius: 16, fontSize: 16, cursor: "pointer", color: "#1d1d1f" }}
               >
                 ✕
               </button>
             </div>
-            {/* Desktop: PDF iframe */}
-            <iframe
-              src="/samples/sample-kyoto-standard.pdf"
-              className="sample-desktop"
-            />
-            {/* Mobile: page images */}
+            <iframe src="/samples/sample-kyoto-standard.pdf" className="sample-desktop" />
             <div className="sample-mobile">
               {Array.from({ length: SAMPLE_PAGES_COUNT }, (_, i) => {
                 const num = String(i + 1).padStart(2, "0");
                 return (
-                  <img
-                    key={num}
-                    src={`/samples/pages/page-${num}.png`}
-                    alt={`消防計画サンプル ${i + 1}ページ`}
-                    className="sample-mobile-page"
-                    loading={i < 3 ? "eager" : "lazy"}
-                  />
+                  <img key={num} src={`/samples/pages/page-${num}.png`} alt={`消防計画サンプル ${i + 1}ページ`}
+                    className="sample-mobile-page" loading={i < 3 ? "eager" : "lazy"} />
                 );
               })}
             </div>
@@ -563,116 +417,27 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
     </div>
 
-    {/* FAQ Section */}
-    <section
-      style={{
-        maxWidth: 1080,
-        margin: "0 auto",
-        padding: "clamp(64px, 10vw, 96px) clamp(16px, 4vw, 24px)",
-      }}
-    >
-      <h2
-        style={{
-          fontSize: "clamp(24px, 5vw, 32px)",
-          fontWeight: 900,
-          textAlign: "center",
-          marginBottom: 48,
-          color: "#1a1a1a",
-        }}
-      >
+    {/* ── FAQ Section ────────────────────────────────────── */}
+    <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(64px, 10vw, 96px) clamp(16px, 4vw, 24px)" }}>
+      <h2 style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 900, textAlign: "center", marginBottom: 48, color: "#1a1a1a" }}>
         よくあるご質問
       </h2>
       <div>
         {FAQ_ITEMS.map((item, i) => {
           const isOpen = faqOpen === i;
           return (
-            <div
-              key={i}
-              onClick={() => setFaqOpen(isOpen ? null : i)}
-              style={{
-                borderBottom: "1px solid #e5e5e5",
-                padding: "20px 0",
-                cursor: "pointer",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 16,
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    flex: 1,
-                    minWidth: 0,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 18,
-                      fontWeight: 900,
-                      color: "#E8332A",
-                      flexShrink: 0,
-                    }}
-                  >
-                    Q.
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "clamp(14px, 3.5vw, 16px)",
-                      fontWeight: 700,
-                      color: "#1a1a1a",
-                    }}
-                  >
-                    {item.q}
-                  </span>
+            <div key={i} onClick={() => setFaqOpen(isOpen ? null : i)} style={{ borderBottom: "1px solid #e5e5e5", padding: "20px 0", cursor: "pointer" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 0 }}>
+                  <span style={{ fontSize: 18, fontWeight: 900, color: "#E8332A", flexShrink: 0 }}>Q.</span>
+                  <span style={{ fontSize: "clamp(14px, 3.5vw, 16px)", fontWeight: 700, color: "#1a1a1a" }}>{item.q}</span>
                 </div>
-                <span
-                  style={{
-                    fontSize: 24,
-                    color: "#666",
-                    flexShrink: 0,
-                    lineHeight: 1,
-                  }}
-                >
-                  {isOpen ? "−" : "+"}
-                </span>
+                <span style={{ fontSize: 24, color: "#666", flexShrink: 0, lineHeight: 1 }}>{isOpen ? "−" : "+"}</span>
               </div>
               {isOpen && (
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    marginTop: 16,
-                    padding: "clamp(14px, 4vw, 20px)",
-                    background: "#FDECEA",
-                    borderRadius: 8,
-                    display: "flex",
-                    gap: 10,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontWeight: 900,
-                      color: "#1a1a1a",
-                      flexShrink: 0,
-                    }}
-                  >
-                    A.
-                  </span>
-                  <div
-                    style={{
-                      fontSize: "clamp(13px, 3.5vw, 15px)",
-                      lineHeight: 1.8,
-                      color: "#1a1a1a",
-                    }}
-                  >
-                    {item.a}
-                  </div>
+                <div onClick={(e) => e.stopPropagation()} style={{ marginTop: 16, padding: "clamp(14px, 4vw, 20px)", background: "#FDECEA", borderRadius: 8, display: "flex", gap: 10 }}>
+                  <span style={{ fontWeight: 900, color: "#1a1a1a", flexShrink: 0 }}>A.</span>
+                  <div style={{ fontSize: "clamp(13px, 3.5vw, 15px)", lineHeight: 1.8, color: "#1a1a1a" }}>{item.a}</div>
                 </div>
               )}
             </div>
@@ -681,31 +446,34 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       </div>
     </section>
 
-    {/* Subscription CTA */}
-    <section style={{ maxWidth: 720, margin: "0 auto", padding: "64px 20px 0" }}>
-      <div style={{
-        background: "linear-gradient(135deg, #FFF5F5 0%, #FFF 100%)",
-        border: "1px solid #FDECEA",
-        borderRadius: 20, padding: "40px 32px", textAlign: "center",
-      }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
-          毎年の更新作業から解放されませんか？
+    {/* ── Care BCP Waitlist Placeholder Banner ────────────── */}
+    <section className="bg-gradient-to-r from-green-50 to-blue-50 py-16">
+      <div className="max-w-4xl mx-auto px-4 text-center">
+        <span className="inline-block px-3 py-1 bg-orange-500 text-white text-xs font-bold rounded-full mb-3">
+          COMING SOON
+        </span>
+        <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          介護施設向け BCP（業務継続計画）SaaS、2026年7月リリース予定
         </h2>
-        <p style={{ fontSize: 15, color: "#86868b", lineHeight: 1.7, marginBottom: 24 }}>
-          サブスク事前登録受付中。機能のフルリリースは
-          <strong style={{ color: "#1d1d1f" }}>2026年5月予定</strong>です。
-          いま登録いただくと、リリース時から継続利用いただけます。
+        <p className="text-gray-700 mb-6 max-w-2xl mx-auto text-sm md:text-base">
+          2024年4月義務化から1年、介護施設の BCP 策定率は15%未満。
+          元京都市消防局の知見を活かし、デイサービス・訪問介護・入所系すべてに対応する
+          BCP 作成 SaaS を開発中です。
         </p>
         <a
-          href="/pricing"
-          style={{
-            display: "inline-block", padding: "14px 36px", borderRadius: 12,
-            background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600,
-            textDecoration: "none",
+          href="#"
+          className="inline-block px-6 py-3 bg-orange-600 text-white font-bold rounded-lg opacity-70 cursor-not-allowed"
+          aria-disabled="true"
+          onClick={(e) => {
+            e.preventDefault();
+            alert("ウェイトリスト登録ページは2026年4月22日頃公開予定です。少々お待ちください。");
           }}
         >
-          サブスクプランを見る
+          ウェイトリストに登録する（準備中）
         </a>
+        <p className="text-xs text-gray-500 mt-4">
+          ※ このリンクは2026年4月22日頃に有効化されます。
+        </p>
       </div>
     </section>
     </>
