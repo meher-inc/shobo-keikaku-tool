@@ -123,7 +123,7 @@ export function PricingCards({ isYearly }: PricingCardsProps) {
                 variant={isRecommended ? "default" : "outline"}
                 className={cn(
                   "mb-6 w-full",
-                  isRecommended && "bg-red-600 hover:bg-red-700"
+                  isRecommended && "bg-red-600 text-white hover:bg-red-700"
                 )}
                 disabled={loadingPlan !== null}
                 onClick={() => handleSubscribe(plan.id)}
