@@ -45,7 +45,12 @@ export function FeatureTable() {
 
         {/* Desktop Table */}
         <div className="hidden overflow-hidden rounded-2xl border border-gray-200 bg-white md:block">
-          <table className="w-full">
+          <table className="w-full" style={{ tableLayout: "fixed" }}>
+            <colgroup>
+              <col style={{ width: "60%" }} />
+              <col style={{ width: "20%" }} />
+              <col style={{ width: "20%" }} />
+            </colgroup>
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50">
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
@@ -59,33 +64,31 @@ export function FeatureTable() {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {featureGroups.map((group) => (
-                <tbody key={group.name}>
-                  <tr className="bg-gray-50">
-                    <td
-                      colSpan={3}
-                      className="px-6 py-3 text-sm font-semibold text-gray-700"
-                    >
-                      {group.name}
+            {featureGroups.map((group) => (
+              <tbody key={group.name}>
+                <tr className="bg-gray-50">
+                  <td
+                    colSpan={3}
+                    className="px-6 py-3 text-sm font-semibold text-gray-700"
+                  >
+                    {group.name}
+                  </td>
+                </tr>
+                {group.features.map((feature) => (
+                  <tr key={feature.name} className="border-t border-gray-100">
+                    <td className="px-6 py-3 text-sm text-gray-600">
+                      {feature.name}
+                    </td>
+                    <td className="px-6 py-3">
+                      <FeatureCheck included={feature.minimum} />
+                    </td>
+                    <td className="bg-red-50/50 px-6 py-3">
+                      <FeatureCheck included={feature.standard} />
                     </td>
                   </tr>
-                  {group.features.map((feature) => (
-                    <tr key={feature.name} className="border-t border-gray-100">
-                      <td className="px-6 py-3 text-sm text-gray-600">
-                        {feature.name}
-                      </td>
-                      <td className="px-6 py-3">
-                        <FeatureCheck included={feature.minimum} />
-                      </td>
-                      <td className="bg-red-50/50 px-6 py-3">
-                        <FeatureCheck included={feature.standard} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              ))}
-            </tbody>
+                ))}
+              </tbody>
+            ))}
           </table>
         </div>
 
