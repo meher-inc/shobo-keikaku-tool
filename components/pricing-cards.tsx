@@ -25,14 +25,6 @@ const featureLists: Record<string, { text: string; isNew: boolean }[]> = {
     { text: "変更届の自動生成", isNew: false },
     { text: "PDF一括出力", isNew: false },
   ],
-  pro: [
-    { text: "スタンダードの全機能", isNew: false },
-    { text: "複数事業所の一元管理（最大10事業所）", isNew: false },
-    { text: "防火点検記録の管理", isNew: false },
-    { text: "AI自動生成機能", isNew: true },
-    { text: "ボウテンナビ連携", isNew: false },
-    { text: "専用サポート窓口", isNew: false },
-  ],
 }
 
 function formatPrice(price: number): string {

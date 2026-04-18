@@ -5,7 +5,7 @@
  * instead of hardcoding plan names, prices, or Stripe price IDs.
  */
 
-export const PLAN_IDS = ["minimum", "standard", "pro"] as const;
+export const PLAN_IDS = ["minimum", "standard"] as const;
 export type PlanId = (typeof PLAN_IDS)[number];
 
 /** Alias kept in sync with PlanId for clarity in subscription-specific code. */
@@ -81,28 +81,6 @@ export const PLANS: Plan[] = [
       "提出用ガイドPDF",
       "法改正フラグ通知",
       "点検・訓練リマインド",
-    ],
-  },
-  {
-    id: "pro",
-    name: "プロ",
-    description: "複数事業所・チェーン店・管理会社向けの上位プラン",
-    target: "複数事業所・チェーン店・管理会社の方に",
-    prices: {
-      monthly: 19800,
-      yearly: 198000,
-    },
-    priceIds: {
-      monthly: process.env.STRIPE_PRICE_PRO_MONTHLY ?? "",
-      yearly: process.env.STRIPE_PRICE_PRO_YEARLY ?? "",
-    },
-    features: [
-      "スタンダードの全機能",
-      "複数事業所の一元管理（最大10事業所）",
-      "防火点検記録の管理",
-      "AI自動生成機能",
-      "ボウテンナビ連携（点検業者マッチング優先枠）",
-      "専用サポート窓口",
     ],
   },
 ];
