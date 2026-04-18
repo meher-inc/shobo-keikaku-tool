@@ -13,7 +13,7 @@ export default function TokushoPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <h1 className={styles.title}>特定商取引法に基づく表記</h1>
-        <p className={styles.updated}>最終更新日: 2026年4月25日</p>
+        <p className={styles.updated}>最終更新日: 2026年4月18日</p>
       </header>
 
       <Section heading="販売業者">
@@ -85,7 +85,6 @@ export default function TokushoPage() {
           <tbody>
             <tr><td>ミニマム</td><td className={styles.price}>¥4,980</td></tr>
             <tr><td>スタンダード</td><td className={styles.price}>¥9,800</td></tr>
-            <tr><td>プロ</td><td className={styles.price}>¥19,800</td></tr>
           </tbody>
         </table>
 
@@ -100,7 +99,6 @@ export default function TokushoPage() {
           <tbody>
             <tr><td>ミニマム</td><td className={styles.price}>¥49,800</td></tr>
             <tr><td>スタンダード</td><td className={styles.price}>¥98,000</td></tr>
-            <tr><td>プロ</td><td className={styles.price}>¥198,000</td></tr>
           </tbody>
         </table>
 
@@ -260,6 +258,7 @@ export default function TokushoPage() {
           <li>Safari</li>
           <li>Microsoft Edge</li>
           <li>Firefox</li>
+          <li>Microsoft Word（生成された消防計画ファイルの閲覧・編集に使用）</li>
         </ul>
         <p className={styles.note}>
           ※Internet Explorer はサポート対象外です。
