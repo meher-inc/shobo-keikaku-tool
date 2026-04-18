@@ -62,7 +62,7 @@ export function PricingCards({ isYearly }: PricingCardsProps) {
 
   return (
     <section className="bg-white px-4 pb-20 md:px-8">
-      <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
+      <div className="mx-auto grid max-w-3xl gap-8 md:grid-cols-2">
         {PLANS.map((plan) => {
           const price = isYearly ? plan.prices.yearly : plan.prices.monthly
           const features = featureLists[plan.id] || []
@@ -75,7 +75,7 @@ export function PricingCards({ isYearly }: PricingCardsProps) {
               className={cn(
                 "relative flex flex-col rounded-2xl border bg-white p-6",
                 isRecommended
-                  ? "border-red-500 pt-10 shadow-lg md:scale-105"
+                  ? "border-red-500 pt-10 shadow-lg"
                   : "border-gray-200"
               )}
             >
