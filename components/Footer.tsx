@@ -10,6 +10,8 @@ export default function Footer() {
           <a href="/" style={{ color: "#666", textDecoration: "none" }}>トドケデ消防計画</a>
         </p>
         <p style={{ marginTop: 8, fontSize: 11 }}>
+          <a href="/mypage" style={{ color: "#666", textDecoration: "none" }}>マイページ</a>
+          {" ・ "}
           <a href="/legal/tokusho" style={{ color: "#666", textDecoration: "none" }}>特定商取引法に基づく表記</a>
           {" ・ "}
           <a href="/legal/privacy" style={{ color: "#666", textDecoration: "none" }}>プライバシーポリシー</a>
