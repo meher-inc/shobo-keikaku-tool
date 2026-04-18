@@ -129,7 +129,7 @@ function SuccessContent() {
         </a>
 
         
-          <a href="/account"
+          <a href="/mypage"
           style={{
             display: "block", width: "100%", padding: 14, borderRadius: 14,
             background: "#E8332A", color: "#fff", fontSize: 16, fontWeight: 600,
