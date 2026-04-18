@@ -48,7 +48,7 @@ export default function TokushoPage() {
 
       <Section heading="メールアドレス">
         <p>
-          <a href="mailto:support@todokede.jp">support@todokede.jp</a>
+          <a href="mailto:plan@todokede.jp">plan@todokede.jp</a>
         </p>
       </Section>
 
@@ -176,7 +176,15 @@ export default function TokushoPage() {
       </Section>
 
       <Section heading="役務の提供時期">
-        <p>決済完了後、ただちにサービスのご利用が可能になります。</p>
+        <p>
+          本サービスは現在、<strong>先行予約</strong>を受け付けております。
+          サービスの正式提供開始は <strong>2026年5月（予定）</strong>です。
+          サービス開始日は当社ウェブサイトにて改めてご案内いたします。
+        </p>
+        <p>
+          サービス正式開始日より前にご解約のお申し出をいただいた場合、決済済み料金を全額返金いたします。
+        </p>
+        <p>正式提供開始後は、決済完了後ただちに本サービスをご利用いただけます。</p>
       </Section>
 
       <Section heading="自動更新について">
@@ -193,12 +201,15 @@ export default function TokushoPage() {
 
       <Section heading="解約方法">
         <p>
-          <a href="/mypage">マイページ</a>
-          または Stripe カスタマーポータルから、いつでも解約手続きが可能です。
+          <a href="mailto:plan@todokede.jp">plan@todokede.jp</a>
+          宛にメールで解約のお申し出をお送りください。解約のお手続きを24時間以内（土日祝日を除く）に行い、完了のご連絡を差し上げます。
+        </p>
+        <p>
+          サービス正式開始日（2026年5月予定）より前の先行予約期間中にご解約のお申し出をいただいた場合は、<strong>決済済み料金を全額返金</strong>いたします。
         </p>
         <ul className={styles.list}>
           <li>
-            解約手続き完了後、
+            サービス正式開始日以降の解約手続き完了後、
             <strong>次回の契約更新日をもって課金が停止</strong>されます
           </li>
           <li>
@@ -218,6 +229,9 @@ export default function TokushoPage() {
           ただし、以下のいずれかに該当する場合は、個別にご相談のうえ対応いたします。
         </p>
         <ul className={styles.listDash}>
+          <li>
+            <strong>サービス正式開始日（2026年5月予定）より前にご解約のお申し出をいただいた場合（決済済み料金を全額返金）</strong>
+          </li>
           <li>当社の重大なシステム障害により、相当期間サービスをご利用いただけなかった場合</li>
           <li>当社に明らかな帰責事由がある場合</li>
           <li>その他、消費者契約法等の法令により返金が必要と判断される場合</li>
@@ -236,8 +250,8 @@ export default function TokushoPage() {
 
       <Section heading="プラン変更について">
         <p>
-          <a href="/mypage">マイページ</a>
-          または Stripe カスタマーポータルから、いつでもプラン変更が可能です。
+          <a href="mailto:plan@todokede.jp">plan@todokede.jp</a>
+          宛にメールでプラン変更のご希望をお送りください。変更手続きを24時間以内（土日祝日を除く）に行い、完了のご連絡を差し上げます。
         </p>
         <ul className={styles.list}>
           <li>

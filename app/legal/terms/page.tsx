@@ -33,6 +33,9 @@ export default function TermsPage() {
       <ol style={olstyle}>
         <li>本サービスは、事業所情報に基づき消防計画書を自動生成するサービスです。</li>
         <li>
+          本サービスは現在先行予約を受け付けており、正式なサービス提供開始は<strong>2026年5月（予定）</strong>です。サービス開始日は当社ウェブサイトにて改めてご案内いたします。
+        </li>
+        <li>
           契約プランに応じて以下の機能をご利用いただけます。
           <ul style={{ paddingLeft: 20, marginTop: 8 }}>
             <li><strong>ミニマムプラン</strong>：消防計画書（Word形式）の自動生成、年次更新機能、メールサポート</li>
@@ -68,8 +71,9 @@ export default function TermsPage() {
 
       <h2 style={h2style}>第7条（解約）</h2>
       <ol style={olstyle}>
-        <li><a href="/mypage" style={{ color: "#1a56db" }}>マイページ</a>またはStripeカスタマーポータルから、いつでも解約手続きが可能です。</li>
-        <li>解約手続き完了後、次回契約更新日をもって課金が停止されます。</li>
+        <li><a href="mailto:plan@todokede.jp" style={{ color: "#1a56db" }}>plan@todokede.jp</a> 宛にメールで解約のお申し出をいただくことで、いつでも解約手続きが可能です。解約のお手続きを24時間以内（土日祝日を除く）に行い、完了のご連絡を差し上げます。</li>
+        <li><strong>サービス正式開始日（2026年5月予定）より前に解約のお申し出をいただいた場合、当社はお客様から決済済みの料金を全額返金いたします。</strong></li>
+        <li>サービス正式開始日以降は、解約手続き完了後、次回契約更新日をもって課金が停止されます。</li>
         <li>解約後も、現在の契約期間満了までは引き続きサービスをご利用いただけます。</li>
         <li>最低利用期間は設定しておりません。</li>
       </ol>
@@ -89,7 +93,7 @@ export default function TermsPage() {
 
       <h2 style={h2style}>第9条（プラン変更）</h2>
       <ol style={olstyle}>
-        <li><a href="/mypage" style={{ color: "#1a56db" }}>マイページ</a>またはStripeカスタマーポータルから、いつでもプラン変更が可能です。</li>
+        <li><a href="mailto:plan@todokede.jp" style={{ color: "#1a56db" }}>plan@todokede.jp</a> 宛にメールでプラン変更のご希望をお送りいただくことで、いつでもプラン変更が可能です。</li>
         <li><strong>アップグレード</strong>（例：ミニマム → スタンダード）：変更時点で差額を日割り計算して即時適用されます。</li>
         <li><strong>ダウングレード</strong>（例：スタンダード → ミニマム）：次回更新日から新プランが適用されます。</li>
       </ol>
