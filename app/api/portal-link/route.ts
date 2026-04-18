@@ -5,7 +5,17 @@ import { sendPortalLinkEmail } from "../../../lib/sendPortalLink";
 const OK_MESSAGE =
   "登録済みのメールアドレスに該当すれば、ポータルへのリンクをメールでお送りしました。メールボックスをご確認ください。";
 
+// Timing attack mitigation: every 200 response must complete in at
+// least this many ms so an attacker cannot distinguish "registered"
+// from "unknown" by wall-clock. Tuned ~500ms above the observed hit
+// path p50 (Supabase + Stripe portal create + Resend send ≈ 2.5s)
+// to cover p99 latency drift observed at 2.9s. Security-critical —
+// do not lower without re-measuring the hit path p99.
+const TIMING_PADDING_MS = 3000;
+
 export async function POST(request: NextRequest) {
+  const start = Date.now();
+
   let email: unknown;
   try {
     const body = await request.json();
@@ -44,6 +54,14 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     // Never surface internal errors — they'd enable email enumeration.
     console.error("[portal-link] error:", err);
+  }
+
+  // timing attack mitigation: single unified wait-until at the 200
+  // return point ensures all paths (hit/non-hit/Supabase-error/
+  // Stripe-error/Resend-error) converge to the same wall-clock band.
+  const remaining = TIMING_PADDING_MS - (Date.now() - start);
+  if (remaining > 0) {
+    await new Promise((r) => setTimeout(r, remaining));
   }
 
   return NextResponse.json({ ok: true, message: OK_MESSAGE });
