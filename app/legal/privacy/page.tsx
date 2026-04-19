@@ -79,6 +79,7 @@ export default function PrivacyPage() {
         <li>Supabase Inc.（データベース運用）</li>
         <li>Vercel Inc.（アプリケーションホスティング）</li>
         <li>Resend, Inc.（メール配信）</li>
+        <li>Google LLC（ウェブサイトのアクセス解析、広告効果測定／Google Analytics 4、Google Adsコンバージョントラッキング）</li>
       </ul>
 
       <h2 style={h2style}>6. 個人情報の国外移転</h2>
@@ -95,6 +96,7 @@ export default function PrivacyPage() {
           <tr><td style={tdstyle}>Supabase Inc.</td><td style={tdstyle}>アメリカ合衆国（一部シンガポール）</td></tr>
           <tr><td style={tdstyle}>Vercel Inc.</td><td style={tdstyle}>アメリカ合衆国</td></tr>
           <tr><td style={tdstyle}>Resend, Inc.</td><td style={tdstyle}>アメリカ合衆国</td></tr>
+          <tr><td style={tdstyle}>Google LLC</td><td style={tdstyle}>アメリカ合衆国</td></tr>
         </tbody>
       </table>
       <p style={pstyle}>当社は、これらの国における個人情報保護に関する制度について合理的な情報を収集するとともに、各委託先との契約において、日本の個人情報保護法に準じた適切な安全管理措置が講じられていることを確認したうえで委託を行っています。</p>
@@ -124,8 +126,39 @@ export default function PrivacyPage() {
       <h2 style={h2style}>9. 個人情報の開示、訂正、利用停止、削除</h2>
       <p style={pstyle}>お客様は、当社に対して、ご自身の個人情報の開示、訂正、追加、削除、利用停止、第三者提供の停止を請求することができます。ご請求は、本ポリシー末尾のお問い合わせ先までお申し出ください。</p>
 
-      <h2 style={h2style}>10. Cookieの利用について</h2>
-      <p style={pstyle}>当社は、お客様に最適なサービスを提供するため、Cookieを使用することがあります。お客様はブラウザの設定によりCookieの受け取りを拒否することができますが、その場合、本サービスの一部機能をご利用いただけないことがあります。</p>
+      <h2 style={h2style}>10. Cookieおよび外部送信について</h2>
+      <p style={pstyle}>当社は、本サービスの提供・改善のため、以下のCookieおよび外部送信（情報収集モジュール）を利用しています。本サービスをご利用いただく際、お客様のブラウザから以下の事業者へ情報が送信される場合があります。</p>
+
+      <h3 style={h3style}>10.1 Google Analytics 4</h3>
+      <ul style={ulstyle}>
+        <li>送信先：Google LLC（米国）</li>
+        <li>送信される情報：ページURL、リファラー、デバイス・ブラウザ情報、IPアドレス、Cookie識別子（クライアントID）</li>
+        <li>利用目的：ウェブサイトの利用状況の分析、サービスの改善</li>
+        <li>
+          詳細・オプトアウト：
+          <a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank" rel="noopener noreferrer">https://policies.google.com/technologies/partner-sites?hl=ja</a>
+          （Google Analyticsオプトアウトアドオン：
+          <a href="https://tools.google.com/dlpage/gaoptout?hl=ja" target="_blank" rel="noopener noreferrer">https://tools.google.com/dlpage/gaoptout?hl=ja</a>
+          ）
+        </li>
+      </ul>
+
+      <h3 style={h3style}>10.2 Google Adsコンバージョントラッキング</h3>
+      <ul style={ulstyle}>
+        <li>送信先：Google LLC（米国）</li>
+        <li>送信される情報：広告クリック後の購入完了情報、購入金額、取引ID、Cookie識別子</li>
+        <li>利用目的：広告効果の測定および最適化</li>
+        <li>
+          詳細・オプトアウト：
+          <a href="https://policies.google.com/privacy?hl=ja" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy?hl=ja</a>
+          （広告のパーソナライズ設定：
+          <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">https://adssettings.google.com/</a>
+          ）
+        </li>
+      </ul>
+
+      <h3 style={h3style}>10.3 オプトアウトの方法</h3>
+      <p style={pstyle}>上記のCookieおよび情報送信を停止したい場合は、ブラウザの設定（第三者Cookieのブロック等）または上記リンクのオプトアウト手段をご利用ください。</p>
 
       <h2 style={h2style}>11. プライバシーポリシーの変更</h2>
       <p style={pstyle}>当社は、法令の変更または事業上の必要に応じて、本ポリシーを変更することがあります。変更後のプライバシーポリシーは、本サイト上に掲載した時点から効力を生じるものとします。</p>
@@ -134,7 +167,7 @@ export default function PrivacyPage() {
       <p style={pstyle}>本ポリシーに関するお問い合わせ、個人情報の取扱いに関するご請求等は、以下の窓口までご連絡ください。</p>
       <p style={pstyle}>MeHer株式会社<br />メールアドレス：plan@todokede.jp</p>
 
-      <p style={{ fontSize: 13, color: "#666666", marginTop: 48 }}>制定日：2026年4月14日 / 最終更新日：2026年4月18日</p>
+      <p style={{ fontSize: 13, color: "#666666", marginTop: 48 }}>制定日：2026年4月14日 / 最終更新日：2026年4月19日</p>
     </div>
   );
 }

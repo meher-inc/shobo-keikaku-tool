@@ -59,6 +59,22 @@ function SuccessContent() {
       currency: "JPY",
       transaction_id: sessionId || "",
     });
+
+    window.gtag("event", "purchase", {
+      transaction_id: sessionId || "",
+      value: amount,
+      currency: "JPY",
+      items: [
+        {
+          item_id: info.planId,
+          item_name: `${plan.name}（${CYCLE_LABELS[cycle] ?? cycle}）`,
+          price: amount,
+          quantity: 1,
+          item_category: cycle,
+        },
+      ],
+    });
+
     setConvFired(true);
   }, [info, sessionId, convFired]);
 
