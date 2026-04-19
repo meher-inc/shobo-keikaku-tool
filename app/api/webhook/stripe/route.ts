@@ -277,8 +277,9 @@ async function handleSubscriptionUpsert(event: Stripe.Event) {
       const amountLabel = amount
         ? `¥${amount.toLocaleString("ja-JP")}`
         : "—";
-      const nextBillingLabel = sub.current_period_end
-        ? new Date(sub.current_period_end * 1000).toLocaleDateString("ja-JP", {
+      const periodEnd = sub.items?.data?.[0]?.current_period_end;
+      const nextBillingLabel = periodEnd
+        ? new Date(periodEnd * 1000).toLocaleDateString("ja-JP", {
             year: "numeric",
             month: "long",
             day: "numeric",
