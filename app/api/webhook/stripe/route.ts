@@ -348,7 +348,7 @@ async function handleSubscriptionDeleted(event: Stripe.Event) {
           <p>ご利用いただきありがとうございました。</p>
           <p>再度ご契約いただく場合は <a href="https://plan.todokede.jp/pricing">こちら</a> からお手続きください。</p>
           <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+          <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社</p>
         </div>`,
     });
   }
@@ -384,7 +384,7 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
           <p>今月分のお支払いが正常に処理されました。</p>
           <p>契約内容の確認・変更は <a href="https://plan.todokede.jp/mypage">マイページ</a> から行えます。</p>
           <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+          <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社</p>
         </div>`,
     });
   }
@@ -419,7 +419,7 @@ async function handleInvoicePaymentFailed(event: Stripe.Event) {
           <p>以下のリンクからカード情報を更新してください。</p>
           <a href="${appUrl}/mypage" style="display:inline-block;padding:12px 24px;background:#E8332A;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">カード情報を更新する</a>
           <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+          <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社</p>
         </div>`,
     });
   }

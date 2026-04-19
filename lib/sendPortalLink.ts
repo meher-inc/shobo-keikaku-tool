@@ -31,7 +31,7 @@ export async function sendPortalLinkEmail(
         <p style="color:#666;font-size:12px;">このリンクは発行から約1時間有効です。期限切れの場合はもう一度 <a href="${appUrl}/mypage">マイページ</a> からリンクを請求してください。</p>
         <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
         <p style="color:#999;font-size:11px;">このメールに心当たりがない場合は破棄してください。</p>
-        <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+        <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社</p>
       </div>`,
   });
 
