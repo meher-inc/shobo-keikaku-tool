@@ -13,6 +13,14 @@ const OK_MESSAGE =
 // do not lower without re-measuring the hit path p99.
 const TIMING_PADDING_MS = 3000;
 
+function summarizeError(err: unknown): string {
+  if (err instanceof Error) {
+    const frame = err.stack?.split("\n")[1]?.trim() ?? "(no stack)";
+    return `${err.name}: ${err.message} (${frame})`;
+  }
+  return String(err);
+}
+
 export async function POST(request: NextRequest) {
   const start = Date.now();
 
@@ -48,12 +56,12 @@ export async function POST(request: NextRequest) {
 
     if (data?.stripe_customer_id) {
       await sendPortalLinkEmail(normalized, data.stripe_customer_id).catch(
-        (e) => console.error("[portal-link] send failed:", e)
+        (e) => console.error("[portal-link] send failed:", summarizeError(e))
       );
     }
   } catch (err) {
     // Never surface internal errors — they'd enable email enumeration.
-    console.error("[portal-link] error:", err);
+    console.error("[portal-link] error:", summarizeError(err));
   }
 
   // timing attack mitigation: single unified wait-until at the 200
