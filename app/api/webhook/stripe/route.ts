@@ -5,6 +5,7 @@ import { Resend } from "resend";
 import { supabaseAdmin } from "../../../../lib/supabase";
 import { sendPremiumReview } from "../../../../lib/sendPremiumReview";
 import { upsertSubscriptionFromStripe } from "../../../../lib/subscriptions";
+import { PLANS } from "../../../../lib/plans";
 
 export const runtime = "nodejs";
 
@@ -260,15 +261,56 @@ async function handleSubscriptionUpsert(event: Stripe.Event) {
     const billingCycle = meta.billing_cycle || "monthly";
 
     if (customerEmail) {
+      const plan = PLANS.find((p) => p.id === planId);
+      const planLabel =
+        plan?.name ??
+        (planId === "standard"
+          ? "スタンダード"
+          : planId === "minimum"
+            ? "ミニマム"
+            : "ご契約");
+      const cycleLabel = billingCycle === "yearly" ? "年額" : "月額";
+      const amount =
+        plan && (billingCycle === "monthly" || billingCycle === "yearly")
+          ? plan.prices[billingCycle]
+          : undefined;
+      const amountLabel = amount
+        ? `¥${amount.toLocaleString("ja-JP")}`
+        : "—";
+      const nextBillingLabel = sub.current_period_end
+        ? new Date(sub.current_period_end * 1000).toLocaleDateString("ja-JP", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        : "—";
+
       await resend.emails.send({
         from: FROM_EMAIL,
         to: customerEmail,
-        subject: "【トドケデ消防計画】サブスクリプション登録ありがとうございます",
+        subject: "【plan.todokede.jp】先行予約のお申し込みありがとうございます",
         html: `
           <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
-            <h2 style="color:#E8332A;">ご登録ありがとうございます</h2>
-            <p>${planId === "standard" ? "スタンダード" : "ミニマム"}プラン（${billingCycle === "yearly" ? "年額" : "月額"}）でのご契約を承りました。</p>
-            <p>消防計画の Word ファイルは数分以内にメールでお送りいたします。</p>
+            <h2 style="color:#E8332A;">先行予約のお申し込みありがとうございます</h2>
+            <p>この度は plan.todokede.jp のサブスクリプションにお申し込みいただき、誠にありがとうございます。お支払いが正常に完了しました。</p>
+
+            <div style="background:#f5f5f7;padding:16px 20px;border-radius:12px;margin:20px 0;font-size:14px;line-height:1.9;">
+              <div><strong>プラン:</strong> ${planLabel}（${cycleLabel}）</div>
+              <div><strong>金額:</strong> ${amountLabel}（税込）</div>
+              <div><strong>次回請求日:</strong> ${nextBillingLabel}</div>
+            </div>
+
+            <h3 style="margin-top:28px;font-size:16px;">サービス提供開始について</h3>
+            <p>現在、plan.todokede.jp は<strong>先行予約</strong>期間中です。サービスの正式な機能提供は<strong>2026年5月</strong>を予定しており、正式提供開始時に改めてご案内メールをお送りいたします。</p>
+            <p style="color:#555;font-size:13px;">※ 消防計画 Word ファイルの生成機能は、正式提供開始時よりご利用可能となります。決済完了直後の納品物送付は行っておりません。</p>
+
+            <h3 style="margin-top:28px;font-size:16px;">ご契約管理</h3>
+            <p>プラン変更・解約・支払い方法変更等は <a href="https://plan.todokede.jp/mypage">マイページ</a> からいつでも可能です。</p>
+            <p style="color:#555;font-size:13px;">サービス正式開始日（2026年5月予定）より前の先行予約期間中にご解約のお申し出をいただいた場合は、<strong>決済済み料金を全額返金</strong>いたします。</p>
+
+            <h3 style="margin-top:28px;font-size:16px;">お問い合わせ</h3>
+            <p>ご不明な点がありましたら、このメールにご返信ください。</p>
+
             <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
             <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
           </div>`,
