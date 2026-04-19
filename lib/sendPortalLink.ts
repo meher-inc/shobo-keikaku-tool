@@ -2,8 +2,7 @@
 // Kept separate from sendPremiumReview to avoid coupling unrelated flows.
 import Stripe from "stripe";
 import { Resend } from "resend";
-
-const FROM_EMAIL = "トドケデ消防計画 <plan@todokede.jp>";
+import { FROM_EMAIL } from "./email";
 
 export async function sendPortalLinkEmail(
   email: string,

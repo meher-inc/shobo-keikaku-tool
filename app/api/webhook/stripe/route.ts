@@ -6,6 +6,7 @@ import { supabaseAdmin } from "../../../../lib/supabase";
 import { sendPremiumReview } from "../../../../lib/sendPremiumReview";
 import { upsertSubscriptionFromStripe } from "../../../../lib/subscriptions";
 import { PLANS } from "../../../../lib/plans";
+import { FROM_EMAIL } from "../../../../lib/email";
 
 export const runtime = "nodejs";
 
@@ -14,7 +15,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = "plan.todokede.jp <noreply@todokede.jp>";
 const REVIEW_TO_EMAIL = process.env.REVIEW_TO_EMAIL || "plan@todokede.jp";
 
 export async function POST(req: NextRequest) {

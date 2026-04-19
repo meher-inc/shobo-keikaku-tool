@@ -2,8 +2,8 @@
 // Pure function for sending the two premium-review emails (SHUN + customer).
 // Used by both /api/premium-review (client path) and /api/webhook/stripe (server path).
 import { Resend } from "resend";
+import { FROM_EMAIL } from "./email";
 
-const FROM_EMAIL = "plan.todokede.jp <noreply@todokede.jp>";
 const REVIEW_TO_EMAIL = process.env.REVIEW_TO_EMAIL || "plan@todokede.jp";
 
 // Japanese labels for the main form fields. Anything not in this map is
