@@ -2,8 +2,8 @@
 // Pure function for sending the two premium-review emails (SHUN + customer).
 // Used by both /api/premium-review (client path) and /api/webhook/stripe (server path).
 import { Resend } from "resend";
+import { FROM_EMAIL } from "./email";
 
-const FROM_EMAIL = "plan.todokede.jp <noreply@todokede.jp>";
 const REVIEW_TO_EMAIL = process.env.REVIEW_TO_EMAIL || "plan@todokede.jp";
 
 // Japanese labels for the main form fields. Anything not in this map is
@@ -192,7 +192,7 @@ export async function sendPremiumReview(args: SendPremiumReviewArgs): Promise<vo
       </div>
       <p>添付に、ご入力内容をもとに自動生成した消防計画Wordを同封しています。</p>
       <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-      <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社<br/>お問い合わせ: ${escapeHtml(
+      <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社<br/>お問い合わせ: ${escapeHtml(
         REVIEW_TO_EMAIL
       )}</p>
     </div>`;
@@ -201,7 +201,7 @@ export async function sendPremiumReview(args: SendPremiumReviewArgs): Promise<vo
     from: FROM_EMAIL,
     to: customerEmail,
     replyTo: REVIEW_TO_EMAIL,
-    subject: "【plan.todokede.jp】プレミアムチェック依頼を受付けました",
+    subject: "【トドケデ】プレミアムチェック依頼を受付けました",
     html: customerHtml,
     attachments: [attachment],
   });

@@ -6,6 +6,7 @@ import { supabaseAdmin } from "../../../../lib/supabase";
 import { sendPremiumReview } from "../../../../lib/sendPremiumReview";
 import { upsertSubscriptionFromStripe } from "../../../../lib/subscriptions";
 import { PLANS } from "../../../../lib/plans";
+import { FROM_EMAIL } from "../../../../lib/email";
 
 export const runtime = "nodejs";
 
@@ -14,7 +15,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = "plan.todokede.jp <noreply@todokede.jp>";
 const REVIEW_TO_EMAIL = process.env.REVIEW_TO_EMAIL || "plan@todokede.jp";
 
 export async function POST(req: NextRequest) {
@@ -289,10 +289,10 @@ async function handleSubscriptionUpsert(event: Stripe.Event) {
       await resend.emails.send({
         from: FROM_EMAIL,
         to: customerEmail,
-        subject: "【トドケデ消防計画】先行予約のお申し込みありがとうございます",
+        subject: "【トドケデ消防計画】お申し込みありがとうございます",
         html: `
           <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
-            <h2 style="color:#E8332A;">先行予約のお申し込みありがとうございます</h2>
+            <h2 style="color:#E8332A;">お申し込みありがとうございます</h2>
             <p>この度はトドケデ消防計画のサブスクリプションにお申し込みいただき、誠にありがとうございます。お支払いが正常に完了しました。</p>
 
             <div style="background:#f5f5f7;padding:16px 20px;border-radius:12px;margin:20px 0;font-size:14px;line-height:1.9;">
@@ -301,13 +301,11 @@ async function handleSubscriptionUpsert(event: Stripe.Event) {
               <div><strong>次回請求日:</strong> ${nextBillingLabel}</div>
             </div>
 
-            <h3 style="margin-top:28px;font-size:16px;">サービス提供開始について</h3>
-            <p>現在、トドケデ消防計画は<strong>先行予約</strong>期間中です。サービスの正式な機能提供は<strong>2026年5月</strong>を予定しており、正式提供開始時に改めてご案内メールをお送りいたします。</p>
-            <p style="color:#555;font-size:13px;">※ 消防計画 Word ファイルの生成機能は、正式提供開始時よりご利用可能となります。決済完了直後の納品物送付は行っておりません。</p>
+            <h3 style="margin-top:28px;font-size:16px;">ご利用方法について</h3>
+            <p><a href="https://plan.todokede.jp/mypage">マイページ</a>からフォームに情報を入力し、消防計画 Word ファイルを生成いただけます。</p>
 
             <h3 style="margin-top:28px;font-size:16px;">ご契約管理</h3>
             <p>プラン変更・解約・支払い方法変更等は <a href="https://plan.todokede.jp/mypage">マイページ</a> からいつでも可能です。</p>
-            <p style="color:#555;font-size:13px;">サービス正式開始日（2026年5月予定）より前の先行予約期間中にご解約のお申し出をいただいた場合は、<strong>決済済み料金を全額返金</strong>いたします。</p>
 
             <h3 style="margin-top:28px;font-size:16px;">お問い合わせ</h3>
             <p>ご不明な点がありましたら、このメールにご返信ください。</p>
@@ -350,7 +348,7 @@ async function handleSubscriptionDeleted(event: Stripe.Event) {
           <p>ご利用いただきありがとうございました。</p>
           <p>再度ご契約いただく場合は <a href="https://plan.todokede.jp/pricing">こちら</a> からお手続きください。</p>
           <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+          <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社</p>
         </div>`,
     });
   }
@@ -386,7 +384,7 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
           <p>今月分のお支払いが正常に処理されました。</p>
           <p>契約内容の確認・変更は <a href="https://plan.todokede.jp/mypage">マイページ</a> から行えます。</p>
           <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+          <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社</p>
         </div>`,
     });
   }
@@ -421,7 +419,7 @@ async function handleInvoicePaymentFailed(event: Stripe.Event) {
           <p>以下のリンクからカード情報を更新してください。</p>
           <a href="${appUrl}/mypage" style="display:inline-block;padding:12px 24px;background:#E8332A;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">カード情報を更新する</a>
           <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-          <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+          <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社</p>
         </div>`,
     });
   }

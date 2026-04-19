@@ -121,17 +121,6 @@ function SuccessContent() {
           契約内容の確認・変更はマイページから行えます。
         </p>
 
-        <div style={{
-          background: "#FFFBEB", border: "1px solid #f6c244", borderRadius: 12,
-          padding: "14px 16px", margin: "20px 0", textAlign: "left",
-          fontSize: 13, color: "#92400E", lineHeight: 1.7,
-        }}>
-          <strong>生成機能のリリースについて</strong><br />
-          サブスクプランの消防計画生成機能は2026年5月以降の段階リリースとなります。
-          リリース時はご登録メールにてご案内いたします。
-        </div>
-
-        
           <a href="https://lin.ee/MvnGLzW"
           target="_blank"
           rel="noopener noreferrer"
