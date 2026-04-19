@@ -292,7 +292,7 @@ async function handleSubscriptionUpsert(event: Stripe.Event) {
         html: `
           <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
             <h2 style="color:#E8332A;">先行予約のお申し込みありがとうございます</h2>
-            <p>この度は plan.todokede.jp のサブスクリプションにお申し込みいただき、誠にありがとうございます。お支払いが正常に完了しました。</p>
+            <p>この度はトドケデ消防計画のサブスクリプションにお申し込みいただき、誠にありがとうございます。お支払いが正常に完了しました。</p>
 
             <div style="background:#f5f5f7;padding:16px 20px;border-radius:12px;margin:20px 0;font-size:14px;line-height:1.9;">
               <div><strong>プラン:</strong> ${planLabel}（${cycleLabel}）</div>
@@ -301,7 +301,7 @@ async function handleSubscriptionUpsert(event: Stripe.Event) {
             </div>
 
             <h3 style="margin-top:28px;font-size:16px;">サービス提供開始について</h3>
-            <p>現在、plan.todokede.jp は<strong>先行予約</strong>期間中です。サービスの正式な機能提供は<strong>2026年5月</strong>を予定しており、正式提供開始時に改めてご案内メールをお送りいたします。</p>
+            <p>現在、トドケデ消防計画は<strong>先行予約</strong>期間中です。サービスの正式な機能提供は<strong>2026年5月</strong>を予定しており、正式提供開始時に改めてご案内メールをお送りいたします。</p>
             <p style="color:#555;font-size:13px;">※ 消防計画 Word ファイルの生成機能は、正式提供開始時よりご利用可能となります。決済完了直後の納品物送付は行っておりません。</p>
 
             <h3 style="margin-top:28px;font-size:16px;">ご契約管理</h3>
@@ -312,7 +312,7 @@ async function handleSubscriptionUpsert(event: Stripe.Event) {
             <p>ご不明な点がありましたら、このメールにご返信ください。</p>
 
             <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
-            <p style="color:#888;font-size:13px;">plan.todokede.jp / MeHer株式会社</p>
+            <p style="color:#888;font-size:13px;">トドケデ消防計画 / MeHer株式会社</p>
           </div>`,
       });
     }
