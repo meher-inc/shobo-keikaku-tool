@@ -1,1 +1,1 @@
-export const FROM_EMAIL = "plan.todokede.jp <noreply@todokede.jp>";
+export const FROM_EMAIL = "トドケデ <noreply@plan.todokede.jp>";
