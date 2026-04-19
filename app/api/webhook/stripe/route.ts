@@ -288,7 +288,7 @@ async function handleSubscriptionUpsert(event: Stripe.Event) {
       await resend.emails.send({
         from: FROM_EMAIL,
         to: customerEmail,
-        subject: "【plan.todokede.jp】先行予約のお申し込みありがとうございます",
+        subject: "【トドケデ消防計画】先行予約のお申し込みありがとうございます",
         html: `
           <div style="font-family:-apple-system,sans-serif;line-height:1.7;color:#1d1d1f;">
             <h2 style="color:#E8332A;">先行予約のお申し込みありがとうございます</h2>
