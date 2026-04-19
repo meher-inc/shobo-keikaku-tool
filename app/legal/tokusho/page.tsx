@@ -145,15 +145,6 @@ export default function TokushoPage() {
           <dd>1年後の契約更新日に一括自動決済</dd>
         </dl>
 
-        <h3 className={styles.sub}>
-          既存顧客移行プラン「初月無料スタンダード」の場合
-        </h3>
-        <dl className={styles.detail}>
-          <dt>初回決済</dt>
-          <dd>¥0（決済手続きのみ実行、課金はなし）</dd>
-          <dt>2回目以降</dt>
-          <dd>申込日の翌月同日より月額 ¥9,800（税込）を自動決済</dd>
-        </dl>
       </Section>
 
       <Section heading="役務の提供時期">
