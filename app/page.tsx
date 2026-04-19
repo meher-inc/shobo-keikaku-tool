@@ -692,9 +692,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           毎年の更新作業から解放されませんか？
         </h2>
         <p style={{ fontSize: 15, color: "#86868b", lineHeight: 1.7, marginBottom: 24 }}>
-          サブスク事前登録受付中。機能のフルリリースは
-          <strong style={{ color: "#1d1d1f" }}>2026年5月予定</strong>です。
-          いま登録いただくと、リリース時から継続利用いただけます。
+          月額プラン提供中。元消防士・現役防災士が監修する消防計画作成サービスです。
         </p>
         <a
           href="/pricing"
