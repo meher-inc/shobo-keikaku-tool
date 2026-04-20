@@ -4,8 +4,8 @@ import { supabaseAdmin } from "../../../lib/supabase";
 import type { CareBcpWaitlistCreateInput } from "../../../types/care-bcp-waitlist";
 
 const bodySchema = z.object({
-  email: z.string().email(),
-  facility_name: z.string().min(1).max(200),
+  email: z.string().email().toLowerCase().trim(),
+  facility_name: z.string().trim().min(1).max(200),
   facility_type: z.enum(["tsusho", "nyusho", "houmon", "tasyou", "sonota"]),
   region: z.string().max(100).optional(),
   source: z.string().max(50).optional(),
@@ -49,10 +49,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       // UNIQUE(email, facility_name) 違反 → 冪等扱いで 200
       if (error.code === "23505") {
-        console.info("[care-bcp-waitlist] duplicate (idempotent):", {
-          email: input.email,
-          facility_name: input.facility_name,
-        });
+        console.info("[care-bcp-waitlist] duplicate registration detected");
         return NextResponse.json(
           { received: true, duplicate: true },
           { status: 200 }
@@ -76,17 +73,15 @@ export async function POST(request: NextRequest) {
     //   facilityName: input.facility_name,
     // });
 
-    console.info("[care-bcp-waitlist] registered:", {
-      id: data.id,
-      email: data.email,
-    });
+    console.info("[care-bcp-waitlist] registered:", { id: data.id });
 
     return NextResponse.json(
       { received: true, id: data.id },
       { status: 201 }
     );
   } catch (e) {
-    console.error("[care-bcp-waitlist] unexpected error:", e);
+    const message = e instanceof Error ? e.message : String(e);
+    console.error("[care-bcp-waitlist] unexpected error:", message);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
