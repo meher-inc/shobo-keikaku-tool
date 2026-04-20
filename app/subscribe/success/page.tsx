@@ -78,6 +78,18 @@ function SuccessContent() {
     setConvFired(true);
   }, [info, sessionId, convFired]);
 
+  const [subscribeFired, setSubscribeFired] = useState(false);
+  useEffect(() => {
+    if (subscribeFired) return;
+    if (!sessionId) return;
+    if (typeof window === "undefined" || !window.gtag) return;
+
+    window.gtag("event", "subscribe_success", {
+      session_id: sessionId,
+    });
+    setSubscribeFired(true);
+  }, [sessionId, subscribeFired]);
+
   const planLabel = info?.planId ? PLAN_LABELS[info.planId] ?? info.planId : null;
   const cycleLabel = info?.billingCycle ? CYCLE_LABELS[info.billingCycle] ?? info.billingCycle : null;
   const nextBilling = info?.currentPeriodEnd

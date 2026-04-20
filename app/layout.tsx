@@ -48,6 +48,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('js', new Date());
             gtag('config', 'AW-18069681696');
             gtag('config', 'G-7611WP9PEY');
+            // NEXT_PUBLIC_GA_ID はマーケ統合プロパティ(G-TF01DPKTPQ)。
+            // 既存 G-7611WP9PEY(運用分析)と並列 config 方式で並存。
             ${process.env.NEXT_PUBLIC_GA_ID ? `gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');` : ""}
           `}
         </Script>
