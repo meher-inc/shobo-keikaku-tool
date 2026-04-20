@@ -13,7 +13,7 @@ export default function TokushoPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <h1 className={styles.title}>特定商取引法に基づく表記</h1>
-        <p className={styles.updated}>最終更新日: 2026年4月18日</p>
+        <p className={styles.updated}>最終更新日: 2026年4月20日</p>
       </header>
 
       <Section heading="販売業者">
