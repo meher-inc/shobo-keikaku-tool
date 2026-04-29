@@ -162,6 +162,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     : form.prefecture === "東京都" ? "東京消防庁"
     : form.city === "大阪市" ? "大阪市消防局"
     : form.city === "横浜市" ? "横浜市消防局"
+    : form.city === "福岡市" ? "福岡市消防局"
     : form.city ? "標準様式"
     : "";
 

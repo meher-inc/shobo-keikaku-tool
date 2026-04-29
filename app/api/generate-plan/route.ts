@@ -10,19 +10,21 @@ import { NextRequest, NextResponse } from "next/server";
  *   ?pack=tokyo-full    → tokyo TFD full pack (explicit)
  *   ?pack=osaka-full    → osaka-city 中・小規模 pack (explicit)
  *   ?pack=yokohama-full → yokohama-city 一般用 pack (explicit)
+ *   ?pack=fukuoka-full  → fukuoka-city 中規模防火対象物用 pack (explicit)
  *   ?pack=sample        → kyoto-city sample (ch1 only, dev use)
  *   (no pack param)     → auto-select based on form.prefecture:
  *                          東京都   → tokyo-full
  *                          大阪府   → osaka-full
  *                          神奈川県 → yokohama-full
+ *                          福岡県   → fukuoka-full
  *                          else     → full (kyoto fallback)
  *
  * The `engine` query param is accepted but ignored (v2 is the
  * only engine — v1 was retired).
  *
  * TODO(Phase 2B): VALID_PACKS const + selectPackByPrefecture() 関数の
- *                 抽出リファクタ。福岡・名古屋追加時の inline ternary
- *                 膨張に伴って実施判断。
+ *                 抽出リファクタ。福岡（Tier 1 第2弾で追加済）・名古屋
+ *                 追加に伴う inline ternary 膨張で実施判断。
  */
 export async function POST(request: NextRequest) {
   try {
@@ -38,6 +40,7 @@ export async function POST(request: NextRequest) {
       packParam === "tokyo-full" ||
       packParam === "osaka-full" ||
       packParam === "yokohama-full" ||
+      packParam === "fukuoka-full" ||
       packParam === "sample"
     ) {
       // Explicit pack from query string.
@@ -50,6 +53,7 @@ export async function POST(request: NextRequest) {
         prefecture === "東京都" ? "tokyo-full"
         : prefecture === "大阪府" ? "osaka-full"
         : prefecture === "神奈川県" ? "yokohama-full"
+        : prefecture === "福岡県" ? "fukuoka-full"
         : "full";
     }
 
@@ -63,7 +67,8 @@ export async function POST(request: NextRequest) {
         | "full"
         | "tokyo-full"
         | "osaka-full"
-        | "yokohama-full",
+        | "yokohama-full"
+        | "fukuoka-full",
     });
 
     return new NextResponse(new Uint8Array(buffer), {
