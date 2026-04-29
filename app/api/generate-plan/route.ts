@@ -6,14 +6,23 @@ import { NextRequest, NextResponse } from "next/server";
  * Generate a 消防計画 Word document (docx) from form data.
  *
  * Pack selection:
- *   ?pack=full        → kyoto-city full pack (explicit)
- *   ?pack=tokyo-full  → tokyo TFD full pack (explicit)
- *   ?pack=sample      → kyoto-city sample (ch1 only, dev use)
- *   (no pack param)   → auto-select based on form.prefecture:
- *                        東京都 → tokyo-full, else → full (kyoto)
+ *   ?pack=full          → kyoto-city full pack (explicit)
+ *   ?pack=tokyo-full    → tokyo TFD full pack (explicit)
+ *   ?pack=osaka-full    → osaka-city 中・小規模 pack (explicit)
+ *   ?pack=yokohama-full → yokohama-city 一般用 pack (explicit)
+ *   ?pack=sample        → kyoto-city sample (ch1 only, dev use)
+ *   (no pack param)     → auto-select based on form.prefecture:
+ *                          東京都   → tokyo-full
+ *                          大阪府   → osaka-full
+ *                          神奈川県 → yokohama-full
+ *                          else     → full (kyoto fallback)
  *
  * The `engine` query param is accepted but ignored (v2 is the
  * only engine — v1 was retired).
+ *
+ * TODO(Phase 2B): VALID_PACKS const + selectPackByPrefecture() 関数の
+ *                 抽出リファクタ。福岡・名古屋追加時の inline ternary
+ *                 膨張に伴って実施判断。
  */
 export async function POST(request: NextRequest) {
   try {
@@ -24,14 +33,24 @@ export async function POST(request: NextRequest) {
     const packParam = url.searchParams.get("pack");
     let pack: string;
 
-    if (packParam === "full" || packParam === "tokyo-full" || packParam === "sample") {
+    if (
+      packParam === "full" ||
+      packParam === "tokyo-full" ||
+      packParam === "osaka-full" ||
+      packParam === "yokohama-full" ||
+      packParam === "sample"
+    ) {
       // Explicit pack from query string.
       pack = packParam;
     } else {
       // Auto-select from form data (same routing logic as v1's
       // city/prefecture dispatch at the former L98-113).
       const prefecture = form.prefecture || "";
-      pack = prefecture === "東京都" ? "tokyo-full" : "full";
+      pack =
+        prefecture === "東京都" ? "tokyo-full"
+        : prefecture === "大阪府" ? "osaka-full"
+        : prefecture === "神奈川県" ? "yokohama-full"
+        : "full";
     }
 
     // ── generate ─────────────────────────────────────────────
@@ -39,7 +58,12 @@ export async function POST(request: NextRequest) {
       "../../../lib/engine-v2/adapters/generate-plan"
     );
     const buffer = await runV2Adapter(form, {
-      pack: pack as "sample" | "full" | "tokyo-full",
+      pack: pack as
+        | "sample"
+        | "full"
+        | "tokyo-full"
+        | "osaka-full"
+        | "yokohama-full",
     });
 
     return new NextResponse(new Uint8Array(buffer), {
