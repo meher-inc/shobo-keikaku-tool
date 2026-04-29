@@ -16,7 +16,9 @@ import { runV2Adapter } from "../adapters/generate-plan";
 
 const ZIP_MAGIC = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
 
-async function dispatch(pack: "full" | "tokyo-full" | "osaka-full" | "yokohama-full") {
+async function dispatch(
+  pack: "full" | "tokyo-full" | "osaka-full" | "yokohama-full" | "fukuoka-full"
+) {
   const buf = await runV2Adapter(
     { building_name: "テスト株式会社", company_name: "テスト株式会社" },
     { pack }
@@ -56,5 +58,15 @@ describe("runV2Adapter dispatcher branches", () => {
     expect(xml).toContain("【一般用】");
     // yokohama-only 帰宅困難者条文 (different from tokyo's 帰宅困難者対策章)
     expect(xml).toContain("第36条　帰宅困難者発生時の待機場所の確保等");
+  });
+
+  it("pack=fukuoka-full → fukuoka builder (fukuoka-distinctive 第１章 + 中規模防火対象物用 cover + 第19条 unified gating)", async () => {
+    const xml = await dispatch("fukuoka-full");
+    // fukuoka uses 第N章 format (yokohama と同型、osaka/kyoto/tokyo の 第N とは異なる)
+    expect(xml).toContain("第１章　総則");
+    // fukuoka cover subtitle
+    expect(xml).toContain("【中規模防火対象物用】");
+    // fukuoka-only chapter 5 (yokohama の 第6章 防災教育及び自衛消防訓練 とは別構造)
+    expect(xml).toContain("第５章　防災教育及び訓練等");
   });
 });
