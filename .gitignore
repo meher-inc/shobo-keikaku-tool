@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 public/samples/*.docx
+
+# recon artifacts (downloaded source templates, v1 references)
+/tmp/
