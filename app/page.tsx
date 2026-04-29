@@ -40,11 +40,11 @@ const STEPS = [
 const FAQ_ITEMS = [
   {
     q: "出力された消防計画はそのまま消防署に提出できますか?",
-    a: "はい。京都市消防局・東京消防庁の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。",
+    a: "はい。京都市消防局・東京消防庁・大阪市消防局・横浜市消防局の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。",
   },
   {
     q: "対応している消防本部を教えてください。",
-    a: "現在は京都市消防局・東京消防庁に正式対応しています。それ以外のエリアは標準様式(京都ベース)で出力されますので、ご利用前に管轄消防署の様式と照合することをお勧めします。大阪・名古屋・横浜・福岡は順次対応予定です。",
+    a: "現在は京都市消防局・東京消防庁・大阪市消防局・横浜市消防局に正式対応しています。それ以外のエリアは標準様式(京都ベース)で出力されますので、ご利用前に管轄消防署の様式と照合することをお勧めします。名古屋・福岡は順次対応予定です。",
   },
   {
     q: "どのプランを選べばいいかわかりません。",
@@ -157,7 +157,13 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const toggleEquip = (e: string) => set("equipment", form.equipment.includes(e) ? form.equipment.filter((x: string) => x !== e) : [...form.equipment, e]);
   const selectedUse = USE_CATEGORIES.find(u => u.value === form.use_category);
   const isSpecific = selectedUse?.specific ?? false;
-  const deptName = form.city === "京都市" ? "京都市消防局" : form.prefecture === "東京都" ? "東京消防庁" : form.city ? "標準様式" : "";
+  const deptName =
+    form.city === "京都市" ? "京都市消防局"
+    : form.prefecture === "東京都" ? "東京消防庁"
+    : form.city === "大阪市" ? "大阪市消防局"
+    : form.city === "横浜市" ? "横浜市消防局"
+    : form.city ? "標準様式"
+    : "";
 
   const checks = [form.building_name, form.use_category, form.total_area, form.capacity, form.owner_name, form.manager_name, form.manager_tel, form.equipment.length > 0, form.emergency_name, form.evacuation_site];
   const completeness = Math.round(checks.filter(Boolean).length / checks.length * 100);
