@@ -14,6 +14,10 @@ import type { RenderData } from "../helpers/placeholder";
 import type { TemplatePack, Chapter, Section } from "../types/template-pack";
 import { buildChildrenFromPack, type SectionOverride } from "../builders/document";
 import { buildCoverPage } from "../builders/shared/cover-page";
+import {
+  buildYokohamaAppendices,
+  buildYokohamaAppendixList,
+} from "../builders/yokohama/appendices";
 import { toRenderData } from "./to-render-data";
 import yokohamaCityFull from "../templates/yokohama-city.full.json";
 
@@ -106,7 +110,17 @@ export async function buildYokohamaFull(form: any): Promise<Buffer> {
 
   const packChildren = buildChildrenFromPack(filteredPack, data, overrides);
 
-  const allChildren: (Paragraph | Table)[] = [...coverChildren, ...packChildren];
+  // ── plan-based appendix gating ─────────────────────────────
+  // Mirrors kyoto/tokyo: plan === "light" → no appendices at all.
+  const plan = (form?.plan as string) || "standard";
+  const includeAppendix = plan !== "light";
+
+  const allChildren: (Paragraph | Table)[] = [
+    ...coverChildren,
+    ...packChildren,
+    ...(includeAppendix ? buildYokohamaAppendixList(data) : []),
+    ...(includeAppendix ? buildYokohamaAppendices(data) : []),
+  ];
 
   const doc = new Document({
     sections: [
