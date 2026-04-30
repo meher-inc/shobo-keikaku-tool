@@ -14,6 +14,10 @@ import type { RenderData } from "../helpers/placeholder";
 import type { TemplatePack, Chapter, Section } from "../types/template-pack";
 import { buildChildrenFromPack, type SectionOverride } from "../builders/document";
 import { buildCoverPage } from "../builders/shared/cover-page";
+import {
+  buildNagoyaAppendices,
+  buildNagoyaAppendixList,
+} from "../builders/nagoya/appendices";
 import { toRenderData } from "./to-render-data";
 import nagoyaCityFull from "../templates/nagoya-city.full.json";
 
@@ -142,7 +146,17 @@ export async function buildNagoyaFull(form: any): Promise<Buffer> {
 
   const packChildren = buildChildrenFromPack(filteredPack, data, overrides);
 
-  const allChildren: (Paragraph | Table)[] = [...coverChildren, ...packChildren];
+  // ── plan-based appendix gating ─────────────────────────────
+  // Mirrors kyoto/tokyo/osaka/yokohama/fukuoka: plan === "light" → no appendices.
+  const plan = (form?.plan as string) || "standard";
+  const includeAppendix = plan !== "light";
+
+  const allChildren: (Paragraph | Table)[] = [
+    ...coverChildren,
+    ...packChildren,
+    ...(includeAppendix ? buildNagoyaAppendixList(data) : []),
+    ...(includeAppendix ? buildNagoyaAppendices(data) : []),
+  ];
 
   const doc = new Document({
     sections: [
