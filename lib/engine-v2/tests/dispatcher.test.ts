@@ -17,7 +17,13 @@ import { runV2Adapter } from "../adapters/generate-plan";
 const ZIP_MAGIC = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
 
 async function dispatch(
-  pack: "full" | "tokyo-full" | "osaka-full" | "yokohama-full" | "fukuoka-full"
+  pack:
+    | "full"
+    | "tokyo-full"
+    | "osaka-full"
+    | "yokohama-full"
+    | "fukuoka-full"
+    | "nagoya-full"
 ) {
   const buf = await runV2Adapter(
     { building_name: "テスト株式会社", company_name: "テスト株式会社" },
@@ -68,5 +74,18 @@ describe("runV2Adapter dispatcher branches", () => {
     expect(xml).toContain("【中規模防火対象物用】");
     // fukuoka-only chapter 5 (yokohama の 第6章 防災教育及び自衛消防訓練 とは別構造)
     expect(xml).toContain("第５章　防災教育及び訓練等");
+  });
+
+  it("pack=nagoya-full → nagoya builder (nagoya-distinctive 第１章 + 中規模防火対象物用 cover + 名古屋独自 第5章 警戒宣言発令時)", async () => {
+    const xml = await dispatch("nagoya-full");
+    // nagoya uses 第N章 format (yokohama/fukuoka と同型)
+    expect(xml).toContain("第１章　総則");
+    // nagoya shares cover subtitle with fukuoka (5 dept 統一)
+    expect(xml).toContain("【中規模防火対象物用】");
+    // nagoya-only chapter 5 (Option B 機能別擬似章、東海地震・警戒宣言の独立章)
+    expect(xml).toContain("第５章　警戒宣言発令時の応急対策");
+    // nagoya-only 第9条 / 第10条 (東海地震、強化地域該当、無条件 emit)
+    expect(xml).toContain("第９条　東海地震注意情報発表時から警戒宣言が発令されるまでの措置");
+    expect(xml).toContain("第10条　警戒宣言発令時の対応策");
   });
 });

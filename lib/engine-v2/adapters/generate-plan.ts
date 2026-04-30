@@ -6,6 +6,7 @@ import { buildTokyoFull } from "./tokyo-full";
 import { buildOsakaFull } from "./osaka-full";
 import { buildYokohamaFull } from "./yokohama-full";
 import { buildFukuokaFull } from "./fukuoka-full";
+import { buildNagoyaFull } from "./nagoya-full";
 
 /**
  * v2 experimental adapter for /api/generate-plan.
@@ -27,6 +28,11 @@ import { buildFukuokaFull } from "./fukuoka-full";
  *   - "fukuoka-full"         — Fukuoka 中規模防火対象物用 (5 chapters +
  *                              附則 (ch5 包含) + 別表 1-3 + 別記様式).
  *                              Tier 1 第2弾 (Phase 2C, 2026-04-30).
+ *   - "nagoya-full"          — Nagoya その他用《中規模》 (8 chapters
+ *                              機能別擬似章 Option B + 附則 + 別表 1-3
+ *                              + 別記様式、第9-10条 東海地震・警戒宣言
+ *                              無条件 emit). Tier 1 完成 (Phase 2C,
+ *                              2026-04-30).
  */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,7 +44,8 @@ export type V2Pack =
   | "tokyo-full"
   | "osaka-full"
   | "yokohama-full"
-  | "fukuoka-full";
+  | "fukuoka-full"
+  | "nagoya-full";
 
 export async function runV2Adapter(
   form: AnyForm,
@@ -64,6 +71,10 @@ export async function runV2Adapter(
 
   if (packName === "fukuoka-full") {
     return buildFukuokaFull(form);
+  }
+
+  if (packName === "nagoya-full") {
+    return buildNagoyaFull(form);
   }
 
   // sample path — unchanged from Step 3.
