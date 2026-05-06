@@ -43,3 +43,8 @@ public/samples/*.docx
 
 # recon artifacts (downloaded source templates, v1 references)
 /tmp/
+
+# campaign-legacy-leads 送信ログ（宛先メアド等のPIIを含む）
+/scripts/campaign-legacy-leads/logs/
+# campaign-legacy-leads リードCSV（顧客PIIを含む、各人ローカル配置）
+/scripts/campaign-legacy-leads/data/
