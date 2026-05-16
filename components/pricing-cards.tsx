@@ -1,13 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { Check } from "lucide-react"
+import { Check, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { PLANS } from "@/lib/plans"
 
 interface PricingCardsProps {
   isYearly: boolean
+}
+
+interface CheckoutError {
+  code: string
+  planLabel: string
+  datetime: string
 }
 
 // Feature lists per plan (richer descriptions for the pricing page)
@@ -33,8 +39,22 @@ function formatPrice(price: number): string {
 
 export function PricingCards({ isYearly }: PricingCardsProps) {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
+  const [checkoutError, setCheckoutError] = useState<CheckoutError | null>(null)
+
+  const reportCheckoutError = (planId: string) => {
+    const plan = PLANS.find((p) => p.id === planId)
+    const planLabel = plan
+      ? `${plan.name}（${isYearly ? "年額" : "月額"}）`
+      : planId
+    setCheckoutError({
+      code: `ERR-${Date.now()}`,
+      planLabel,
+      datetime: new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }),
+    })
+  }
 
   const handleSubscribe = async (planId: string) => {
+    setCheckoutError(null)
     setLoadingPlan(planId)
     try {
       const res = await fetch("/api/subscribe", {
@@ -50,18 +70,62 @@ export function PricingCards({ isYearly }: PricingCardsProps) {
         window.location.href = data.url
       } else {
         console.error("No URL returned", data)
-        alert("決済ページへの遷移に失敗しました。サポートにご連絡ください。")
+        reportCheckoutError(planId)
       }
     } catch (err) {
       console.error(err)
-      alert("エラーが発生しました。")
+      reportCheckoutError(planId)
     } finally {
       setLoadingPlan(null)
     }
   }
 
+  const mailtoHref = checkoutError
+    ? `mailto:support@todokede.jp?subject=${encodeURIComponent(
+        `【決済エラー】${checkoutError.code}`
+      )}&body=${encodeURIComponent(
+        `エラーコード：${checkoutError.code}\nご選択のプラン：${checkoutError.planLabel}\n発生日時：${checkoutError.datetime}\n\nお問い合わせ内容をご記入ください。`
+      )}`
+    : ""
+
   return (
     <section className="bg-white px-4 pb-20 md:px-8">
+      <div className="mx-auto max-w-3xl">
+        {checkoutError && (
+          <div
+            role="alert"
+            className="mb-6 rounded-lg border-l-4 border-red-500 bg-red-50 p-4 text-sm text-red-900"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-2">
+                <p className="font-semibold">決済ページへの遷移に失敗しました</p>
+                <p className="text-xs text-red-800">
+                  エラーコード: {checkoutError.code}
+                </p>
+                <p>
+                  恐れ入りますが、以下の方法でお問い合わせください。エラーコードをお伝えいただくと、迅速にご対応できます。
+                </p>
+                <p>
+                  <a
+                    href={mailtoHref}
+                    className="font-medium underline hover:text-red-700"
+                  >
+                    メールで問い合わせる
+                  </a>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCheckoutError(null)}
+                aria-label="閉じる"
+                className="shrink-0 rounded p-1 text-red-700 hover:bg-red-100 hover:text-red-900"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
       <div className="mx-auto grid max-w-3xl gap-8 md:grid-cols-2">
         {PLANS.map((plan) => {
           const price = isYearly ? plan.prices.yearly : plan.prices.monthly
