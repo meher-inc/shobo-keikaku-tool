@@ -234,12 +234,6 @@ function SuccessContent() {
           )}
         </div>
 
-        <div style={{ marginTop: 32, fontSize: 12, color: "#86868b" }}>
-          <p>届出でお困りの場合は代行サービスもご利用いただけます</p>
-          <a href="https://todokede.jp" style={{ color: "#E8332A", fontWeight: 600, textDecoration: "none" }}>
-            トドケデ代行サービス →
-          </a>
-        </div>
       </div>
     </>
   );

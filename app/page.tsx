@@ -85,7 +85,7 @@ const FAQ_ITEMS = [
           rel="noopener noreferrer"
           style={{ color: "#E8332A", textDecoration: "underline" }}
         >
-          トドケデ本体の代行サービス
+          トドケデ本体の消防計画作成支援サービス
         </a>
         (¥50,000〜)をご検討ください。
       </>
