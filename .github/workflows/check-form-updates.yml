@@ -1,0 +1,189 @@
+name: Check form template updates
+
+# 全国統一様式 届出書テンプレートの典拠ページが更新されていないか週次で監視。
+# 差分があれば GitHub Issue を自動作成する。
+#
+# 監視仕様:
+#   - 各 URL を curl して HTTP ステータス + SHA-256 を取得
+#   - .github/form-hashes.json の baseline と照合
+#   - ステータスまたはハッシュが異なれば差分とみなす
+#
+# 監視対象は .github/form-hashes.json の monitored[] を Single Source of Truth とする。
+
+on:
+  schedule:
+    # 毎週月曜 09:00 JST = UTC 00:00 (前日日曜 24:00)
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    name: Compare baseline vs current
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify baseline file exists
+        run: test -f .github/form-hashes.json
+
+      - name: Fetch URLs and compute current snapshot
+        id: snapshot
+        env:
+          USER_AGENT: 'Mozilla/5.0 (compatible; shobo-keikaku-form-watcher/1.0; +https://plan.todokede.jp)'
+        run: |
+          set -euo pipefail
+
+          # baseline から監視対象の id / url リストを取り出す
+          ids=$(jq -r '.monitored[].id' .github/form-hashes.json)
+
+          # 結果を current.json に書き出す
+          echo '{ "monitored": [' > current.json
+          first=true
+
+          while IFS= read -r id; do
+            url=$(jq -r --arg id "$id" '.monitored[] | select(.id == $id) | .url' .github/form-hashes.json)
+
+            tmp=$(mktemp)
+            # --fail を使わない（4xx/5xx でもステータスを記録するため）
+            http_status=$(curl -sL \
+              -o "$tmp" \
+              -w '%{http_code}' \
+              --max-time 60 \
+              -H "User-Agent: ${USER_AGENT}" \
+              "$url" || echo "000")
+            sha256=$(sha256sum "$tmp" | awk '{print $1}')
+            size=$(wc -c < "$tmp" | tr -d ' ')
+            rm -f "$tmp"
+
+            if [ "$first" = true ]; then first=false; else echo ',' >> current.json; fi
+            jq -n \
+              --arg id "$id" \
+              --arg url "$url" \
+              --argjson http_status "$http_status" \
+              --argjson size "$size" \
+              --arg sha256 "$sha256" \
+              '{ id: $id, url: $url, http_status: $http_status, size_bytes: $size, sha256: $sha256 }' \
+              >> current.json
+          done <<< "$ids"
+
+          echo ']}' >> current.json
+
+          echo '## current snapshot' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          jq '.' current.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Diff baseline vs current
+        id: diff
+        run: |
+          set -euo pipefail
+
+          # 各 id について baseline と current を比較
+          diff_text=$(jq -r --slurpfile baseline .github/form-hashes.json --slurpfile current current.json '
+            ($baseline[0].monitored | map({ key: .id, value: . }) | from_entries) as $b
+            | ($current[0].monitored | map({ key: .id, value: . }) | from_entries) as $c
+            | [
+                ( $b | keys[] as $id
+                  | if ($c[$id] | not) then
+                      "MISSING_IN_CURRENT  " + $id
+                    elif ($b[$id].http_status != $c[$id].http_status) then
+                      "STATUS_CHANGED      " + $id + "  (" + ($b[$id].http_status|tostring) + " -> " + ($c[$id].http_status|tostring) + ")  " + $b[$id].url
+                    elif ($b[$id].sha256 != $c[$id].sha256) then
+                      "HASH_CHANGED        " + $id + "  " + $b[$id].url + "  old=" + $b[$id].sha256 + "  new=" + $c[$id].sha256
+                    else
+                      empty
+                    end
+                ),
+                ( $c | keys[] as $id
+                  | if ($b[$id] | not) then
+                      "NEW_IN_CURRENT      " + $id
+                    else empty end
+                )
+              ]
+            | .[]
+          ')
+
+          if [ -z "$diff_text" ]; then
+            echo "has_diff=false" >> "$GITHUB_OUTPUT"
+            echo "差分なし（全 URL hash 一致）" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "has_diff=true" >> "$GITHUB_OUTPUT"
+            {
+              echo 'diff<<EOF'
+              echo "$diff_text"
+              echo 'EOF'
+            } >> "$GITHUB_OUTPUT"
+            echo '## ⚠ 差分検知' >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            echo "$diff_text" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Open or comment GitHub Issue on diff
+        if: steps.diff.outputs.has_diff == 'true'
+        uses: actions/github-script@v7
+        env:
+          DIFF: ${{ steps.diff.outputs.diff }}
+        with:
+          script: |
+            const diff = process.env.DIFF || '';
+            const today = new Date().toISOString().slice(0, 10);
+            const titlePrefix = '[form-watcher] 様式典拠ページに差分検知';
+            const title = `${titlePrefix} (${today})`;
+
+            const body = [
+              '`lib/engine-v2/national/templates/*.json` の典拠としている',
+              '様式公開ページに HTML 差分が検出されました。',
+              '',
+              '## 差分内容',
+              '```',
+              diff,
+              '```',
+              '',
+              '## 対応手順',
+              '1. 各 URL を実ブラウザで開き、様式 PDF の更新有無を確認',
+              '2. PDF が更新されていれば該当する `templates/*.json` を差し替え',
+              '3. 更新不要であれば `.github/form-hashes.json` を現在値に更新して PR',
+              '',
+              '_自動生成 by `.github/workflows/check-form-updates.yml`_',
+            ].join('\n');
+
+            // 同タイトルの open issue があれば、新規作成せずコメント追加
+            const { data: openIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const existing = openIssues.find(i => i.title.startsWith(titlePrefix));
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `## 再検知 (${today})\n\n${body}`,
+              });
+              core.notice(`既存 issue #${existing.number} にコメント追加`);
+            } else {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+              core.notice(`issue #${created.data.number} を作成`);
+            }
+
+      - name: Mark job failed if diff exists
+        if: steps.diff.outputs.has_diff == 'true'
+        run: |
+          echo "差分検知のため job を失敗扱いとする（Issue は作成済）" >&2
+          exit 1

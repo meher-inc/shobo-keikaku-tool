@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "packName": "equipment-construction-start",
+  "title": "工事整備対象設備等着工届出書",
+  "legalRef": "別記様式第1号の7（第33条の18関係）",
+  "summary": "甲種消防設備士のみが工事できる工事整備対象設備等を着工する際に、着工10日前までに所轄消防長へ提出する全国統一様式の届出書。",
+  "preamble": "下記のとおり、工事整備対象設備等の工事に着手するので届け出ます。",
+  "submitToTemplate": "{{municipality}}消防長　殿",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市区町村）", "type": "text", "required": true, "placeholder": "例：京都市" }
+  ],
+  "sections": [
+    {
+      "id": "site",
+      "heading": "工事の場所及び対象",
+      "fields": [
+        { "key": "constructionLocation", "label": "工事の場所", "type": "text", "required": true },
+        { "key": "buildingName", "label": "工事を行う防火対象物の名称", "type": "text", "required": true },
+        { "key": "equipmentKind", "label": "工事整備対象設備等の種類", "type": "text", "required": true, "placeholder": "例：自動火災報知設備" }
+      ]
+    },
+    {
+      "id": "constructor",
+      "heading": "工事整備対象設備等の工事施工者",
+      "fields": [
+        { "key": "constructorAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "constructorPhone", "label": "電話番号", "type": "text" },
+        { "key": "constructorName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "fire-equipment-officer",
+      "heading": "消防設備士",
+      "fields": [
+        { "key": "officerLicenseKind", "label": "免状の種類（甲種／乙種）", "type": "radio", "options": ["甲種", "乙種"], "required": true },
+        { "key": "officerLicenseClass", "label": "免状の指定区分（種類等）", "type": "text", "required": true, "placeholder": "例：第4類" },
+        { "key": "officerLicensePrefecture", "label": "交付知事（都道府県）", "type": "text", "required": true },
+        { "key": "officerLicenseDate", "label": "免状交付年月日", "type": "date", "required": true },
+        { "key": "officerLicenseNumber", "label": "免状交付番号", "type": "text", "required": true },
+        { "key": "officerCoursePrefecture", "label": "講習受講地（都道府県）", "type": "text" },
+        { "key": "officerCourseDate", "label": "講習受講年月", "type": "text", "placeholder": "例：令和6年4月" }
+      ]
+    },
+    {
+      "id": "work",
+      "heading": "工事の種別・予定日",
+      "fields": [
+        { "key": "workKind", "label": "工事の種別", "type": "radio", "options": ["新設", "増設", "移設", "取替え", "改造", "その他"], "required": true },
+        { "key": "workStartDate", "label": "着工予定日", "type": "date", "required": true },
+        { "key": "workCompletionDate", "label": "完成予定日", "type": "date", "required": true }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "工事の種別欄は、該当する事項を○印（本様式ではレ印☑）で囲むこと。",
+    "受付欄・経過欄は記入しないこと。"
+  ]
+}

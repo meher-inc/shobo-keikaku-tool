@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "note": "全国統一様式 届出書テンプレートの典拠ページ監視。週次でHTMLハッシュを比較し、差分があればGitHub Issueを自動作成する。HTTPステータスとSHA-256の組合せで判定。",
+  "monitored": [
+    {
+      "id": "tokyo-fire-defense-ss02",
+      "label": "東京消防庁 防火管理関係届出書 索引",
+      "url": "https://www.tfd.metro.tokyo.lg.jp/drs/ss_02/",
+      "http_status": 403,
+      "sha256": "97edf8870fd9e61000f6eb32cfd05f8b83d487bf46328cc7e57e5d9a6d8f22bd",
+      "note": "User-Agent 等で 403 を返す挙動。403時のページもハッシュとして記録し、200遷移等の変化を検知する。"
+    },
+    {
+      "id": "kyoto-fire-bureau-bouka",
+      "label": "京都市消防局 防火・防災管理関係届出書 索引",
+      "url": "https://www.city.kyoto.lg.jp/shobo/page/0000231617.html",
+      "http_status": 200,
+      "sha256": "32301936c80b4103bfbd7b499b2dc9f5cb0471a3b127329bdc4468fb2f9bceb9"
+    },
+    {
+      "id": "elaws-fire-service-law-enforcement-rules",
+      "label": "e-Gov 消防法施行規則",
+      "url": "https://elaws.e-gov.go.jp/document?lawid=336M50000002006",
+      "http_status": 200,
+      "sha256": "0f4e26e30acc9a7f817a20a9503dc45feae6eb2a8a4963d3e9d7e98b055f8914",
+      "note": "e-Gov は SPA 構造で本文を JavaScript レンダリング。curl 時点では初期 HTML スケルトン (約 800B) のみを取得するため、本文変更の検知精度には限界がある。"
+    }
+  ]
+}
