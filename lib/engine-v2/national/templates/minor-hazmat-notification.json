@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "packName": "minor-hazmat-notification",
+  "title": "少量危険物等 貯蔵・取扱届出書（少量危険物・指定可燃物）",
+  "legalRef": "火災予防条例 別記第13号様式（第15条関係）等",
+  "summary": "指定数量未満の少量危険物または指定可燃物を貯蔵もしくは取り扱う際に、所轄消防署長へ提出する火災予防条例準拠様式。設置/変更の10日前までに届出が必要。",
+  "preamble": "{{municipality}}火災予防条例の規定により、{{hazmatKind}}の{{operationKind}}をするので届け出ます。",
+  "submitToTemplate": "{{municipality}} {{fireDeptName}}消防署長　殿",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所（法人の場合は主たる事務所の所在地）", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者名）", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "hazmatKind", "label": "対象種別", "type": "radio", "options": ["少量危険物", "指定可燃物"], "required": true },
+    { "key": "operationKind", "label": "届出区分", "type": "radio", "options": ["貯蔵", "取扱い"], "required": true },
+    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市区町村）", "type": "text", "required": true },
+    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "location",
+      "heading": "貯蔵又は取扱いの場所",
+      "fields": [
+        { "key": "siteAddress", "label": "場所の地名及び地番", "type": "text", "required": true },
+        { "key": "buildingName", "label": "防火対象物の名称", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "hazmat",
+      "heading": "対象物",
+      "fields": [
+        { "key": "hazmatClass", "label": "類", "type": "text", "required": true, "placeholder": "例：第4類" },
+        { "key": "hazmatItemName", "label": "品名", "type": "text", "required": true },
+        { "key": "designatedQuantity", "label": "指定数量", "type": "text", "required": true },
+        { "key": "maxQuantity", "label": "最大数量", "type": "text", "required": true },
+        { "key": "operationSummary", "label": "貯蔵又は取扱いの方法の概要", "type": "multiline", "required": true }
+      ]
+    },
+    {
+      "id": "facility",
+      "heading": "貯蔵又は取扱いの場所の構造等",
+      "fields": [
+        { "key": "facilityPosition", "label": "位置", "type": "multiline", "required": true },
+        { "key": "facilityStructure", "label": "構造", "type": "multiline", "required": true },
+        { "key": "facilityEquipment", "label": "設備の概要", "type": "multiline", "required": true },
+        { "key": "fireEquipmentSummary", "label": "消防用設備等又は特殊消防用設備等の概要", "type": "multiline" }
+      ]
+    },
+    {
+      "id": "schedule",
+      "heading": "予定",
+      "fields": [
+        { "key": "startDate", "label": "貯蔵又は取扱いの開始予定年月日", "type": "date", "required": true }
+      ]
+    }
+  ],
+  "footnotes": [
+    "貯蔵又は取扱いの場所の付近見取図を別途添付すること。",
+    "本様式は火災予防条例に基づくため、自治体ごとに様式番号が異なる場合がある。京都市は第13号様式（第15条関係）、東京消防庁等は別途準拠様式を参照すること。"
+  ]
+}

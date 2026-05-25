@@ -6,6 +6,7 @@ import {
 } from "../registry";
 
 const EXPECTED_PACKS = [
+  // Phase 1
   "fire-manager-appointment",
   "fire-plan-notification",
   "self-defense-org-establishment",
@@ -13,11 +14,20 @@ const EXPECTED_PACKS = [
   "building-construction-plan",
   "equipment-construction-start",
   "equipment-installation",
+  // Phase 2
+  "fire-object-inspection-report",
+  "equipment-inspection-report",
+  "inspection-report-special-approval",
+  "hazmat-facility-permit",
+  "hazmat-facility-abolition",
+  "hazmat-safety-supervisor",
+  "minor-hazmat-notification",
+  "event-hosting-notification",
 ] as const;
 
 describe("national pack registry", () => {
-  it("registers all 7 Phase-1 packs", () => {
-    expect(NATIONAL_PACK_NAMES).toHaveLength(7);
+  it("registers all Phase-1 + Phase-2 packs (15 total)", () => {
+    expect(NATIONAL_PACK_NAMES).toHaveLength(15);
     for (const name of EXPECTED_PACKS) {
       expect(NATIONAL_PACK_NAMES).toContain(name);
     }

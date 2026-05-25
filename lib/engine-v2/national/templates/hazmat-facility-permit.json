@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "packName": "hazmat-facility-permit",
+  "title": "危険物製造所・貯蔵所・取扱所 設置（変更）許可申請書",
+  "legalRef": "様式第2（第4条関係）／様式第6（第6条関係）",
+  "summary": "指定数量以上の危険物を貯蔵または取り扱う危険物製造所・貯蔵所・取扱所を新設または変更する際に、市町村長等へ申請する全国統一様式。工事着工前の申請が必須。",
+  "preamble": "下記のとおり、危険物製造所等の{{operationType}}の許可を受けたいので申請します。",
+  "submitToTemplate": "{{municipality}}長　殿",
+  "submitterTitle": "申請者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "operationType", "label": "申請区分", "type": "radio", "options": ["設置", "変更"], "required": true },
+    { "key": "submitDate", "label": "申請日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true, "placeholder": "例：京都市" }
+  ],
+  "sections": [
+    {
+      "id": "owner",
+      "heading": "設置者",
+      "fields": [
+        { "key": "ownerAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "ownerPhone", "label": "電話番号", "type": "text" },
+        { "key": "ownerName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "location",
+      "heading": "設置場所",
+      "fields": [
+        { "key": "facilityLocation", "label": "設置場所", "type": "text", "required": true },
+        { "key": "fireZone", "label": "防火地域別", "type": "text", "placeholder": "例：防火地域" },
+        { "key": "useZone", "label": "用途地域別", "type": "text", "placeholder": "例：工業地域" }
+      ]
+    },
+    {
+      "id": "facility",
+      "heading": "施設区分・危険物",
+      "fields": [
+        { "key": "facilityKind", "label": "製造所等の別", "type": "text", "required": true, "placeholder": "例：屋内貯蔵所" },
+        { "key": "facilityCategory", "label": "貯蔵所又は取扱所の区分", "type": "text", "placeholder": "例：一般取扱所" },
+        { "key": "hazmatClassAndName", "label": "危険物の類、品名（指定数量）、最大数量", "type": "multiline", "required": true, "placeholder": "例：第4類 第1石油類（200L） 最大1,000L" },
+        { "key": "designatedQuantityMultiple", "label": "指定数量の倍数", "type": "text", "required": true },
+        { "key": "regulationCategory", "label": "位置、構造及び設備の基準に係る区分", "type": "text", "required": true, "placeholder": "例：令第10条第1項（規則第13条の2第1項）" },
+        { "key": "structureSummary", "label": "位置、構造、設備の概要", "type": "multiline", "required": true },
+        { "key": "operationSummary", "label": "危険物の貯蔵又は取扱方法の概要", "type": "multiline", "required": true }
+      ]
+    },
+    {
+      "id": "schedule",
+      "heading": "工程",
+      "fields": [
+        { "key": "constructionStartDate", "label": "着工予定期日", "type": "date", "required": true },
+        { "key": "completionDate", "label": "完成予定期日", "type": "date", "required": true },
+        { "key": "otherMatters", "label": "その他必要な事項", "type": "multiline" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "本申請書は移送取扱所以外の製造所等に用いるものであること。",
+    "法人にあっては名称、代表者氏名及び主たる事務所の所在地を記入すること。",
+    "位置、構造及び設備の基準に係る区分の欄には、適用を受けようとする危険物の規制に関する政令の条文を記入すること。",
+    "受付欄・経過欄・手数料欄・許可年月日・許可番号は記入しないこと。",
+    "変更許可申請の場合は、既存の許可番号・許可年月日を別途添付資料で示すこと。"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "packName": "fire-object-inspection-report",
+  "title": "防火対象物点検結果報告書",
+  "legalRef": "別記様式第1（消防法第8条の2の2第1項関係）",
+  "summary": "防火対象物点検資格者が実施した防火対象物点検の結果を、所轄消防署長へ報告する全国統一様式。",
+  "preamble": "下記のとおり防火対象物の点検を実施したので、消防法第8条の2の2第1項の規定に基づき報告します。",
+  "submitToTemplate": "{{municipality}} {{fireDeptName}}消防署長　殿",
+  "submitterTitle": "管理権原者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所（法人の場合は名称及び代表者氏名）", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "submitDate", "label": "報告日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市区町村）", "type": "text", "required": true, "placeholder": "例：京都市" },
+    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "building",
+      "heading": "防火対象物",
+      "fields": [
+        { "key": "buildingAddress", "label": "所在地", "type": "text", "required": true },
+        { "key": "buildingName", "label": "名称", "type": "text", "required": true },
+        { "key": "multipleAuthorityPart", "label": "複数権原の場合に管理権原に属する部分の名称", "type": "text" },
+        { "key": "buildingUse", "label": "用途", "type": "text", "required": true },
+        { "key": "buildingCategory", "label": "令別表第1の項番", "type": "text", "required": true, "placeholder": "例：（16）項イ" },
+        { "key": "structureKind", "label": "構造", "type": "text", "required": true, "placeholder": "例：耐火造" },
+        { "key": "floorsAbove", "label": "地上階数", "type": "text", "required": true },
+        { "key": "floorsBelow", "label": "地下階数", "type": "text" },
+        { "key": "floorArea", "label": "床面積（㎡）", "type": "text" },
+        { "key": "totalArea", "label": "延べ面積（㎡）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "inspection",
+      "heading": "点検",
+      "fields": [
+        { "key": "inspectionDate", "label": "点検実施日", "type": "date", "required": true },
+        { "key": "rule4-2-6applies", "label": "消防法施行規則第4条の2の6第2項の適用", "type": "checkbox-group", "options": ["第1号", "第2号", "第3号"] }
+      ]
+    },
+    {
+      "id": "inspector",
+      "heading": "点検者",
+      "fields": [
+        { "key": "inspectorAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "inspectorPhone", "label": "電話番号", "type": "text", "required": true },
+        { "key": "inspectorName", "label": "氏名", "type": "text", "required": true },
+        { "key": "inspectorInstitution", "label": "免状 講習機関名", "type": "text", "required": true },
+        { "key": "inspectorLicenseDate", "label": "免状交付年月日", "type": "date", "required": true },
+        { "key": "inspectorLicenseNumber", "label": "免状交付番号", "type": "text", "required": true },
+        { "key": "inspectorLicenseExpiry", "label": "有効期限", "type": "date", "required": true }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "複数権原の場合は管理権原に属する部分の情報を記入すること。",
+    "受付欄・経過欄・備考欄は記入しないこと。"
+  ]
+}

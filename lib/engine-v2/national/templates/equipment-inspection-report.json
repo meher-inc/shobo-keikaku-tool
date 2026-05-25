@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "packName": "equipment-inspection-report",
+  "title": "消防用設備等（特殊消防用設備等）点検結果報告書",
+  "legalRef": "別記様式第1（消防法第17条の3の3関係）",
+  "summary": "消防用設備等または特殊消防用設備等の定期点検結果を、所轄消防署長へ報告する全国統一様式。",
+  "preamble": "下記のとおり消防用設備等（特殊消防用設備等）の点検を実施したので、消防法第17条の3の3の規定に基づき報告します。",
+  "submitToTemplate": "{{fireAuthorityName}}　{{fireDeptName}}消防署長　殿",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "submitDate", "label": "報告日", "type": "date", "required": true },
+    { "key": "fireAuthorityName", "label": "提出先（消防本部・庁名）", "type": "text", "required": true, "placeholder": "例：東京消防庁" },
+    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "building",
+      "heading": "防火対象物",
+      "fields": [
+        { "key": "buildingAddress", "label": "所在地", "type": "text", "required": true },
+        { "key": "buildingName", "label": "名称", "type": "text", "required": true },
+        { "key": "buildingUse", "label": "用途", "type": "text", "required": true, "placeholder": "例：（16）項イ" },
+        { "key": "floorsAbove", "label": "地上階数", "type": "text", "required": true },
+        { "key": "floorsBelow", "label": "地下階数", "type": "text" },
+        { "key": "totalArea", "label": "延べ面積（㎡）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "equipment",
+      "heading": "点検した消防用設備等の種類",
+      "fields": [
+        { "key": "equipmentKinds", "label": "種類等（複数の場合は改行区切り）", "type": "multiline", "required": true, "placeholder": "例：消火器具\nスプリンクラー設備\n自動火災報知設備\n避難器具\n誘導灯及び誘導標識" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "消防設備士又は消防設備点検資格者が点検を実施した場合は、点検者一覧（別記様式第3）を別途添付すること。",
+    "消防用設備等又は特殊消防用設備等ごとの点検票を別途添付すること。",
+    "受付欄・経過欄・備考欄は記入しないこと。"
+  ]
+}
