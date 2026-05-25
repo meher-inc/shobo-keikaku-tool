@@ -23,15 +23,16 @@
     {
       "id": "building",
       "heading": "防火対象物（建築物その他の工作物）",
+      "description": "※1 = 複数権原の場合は、管理権原に属する部分の情報を記入する。",
       "fields": [
         { "key": "buildingAddress", "label": "所在地", "type": "text", "required": true },
         { "key": "buildingPhone", "label": "電話番号", "type": "text" },
         { "key": "buildingName", "label": "名称", "type": "text", "required": true },
         { "key": "managementAuthority", "label": "管理権原", "type": "radio", "options": ["単一権原", "複数権原"], "required": true },
         { "key": "multipleAuthorityPart", "label": "複数権原の場合に管理権原に属する部分の名称", "type": "text", "helpText": "管理権原が「複数権原」の場合のみ記入" },
-        { "key": "buildingUse", "label": "用途", "type": "text", "required": true, "placeholder": "例：事務所" },
-        { "key": "buildingCategory", "label": "令別表第1の項番", "type": "text", "required": true, "placeholder": "例：（15）項" },
-        { "key": "capacity", "label": "収容人員", "type": "text", "required": true, "placeholder": "例：120人" },
+        { "key": "buildingUse", "label": "用途 ※1", "type": "text", "required": true, "placeholder": "例：事務所" },
+        { "key": "buildingCategory", "label": "令別表第1の項番 ※1", "type": "text", "required": true, "placeholder": "例：（15）項" },
+        { "key": "capacity", "label": "収容人員 ※1", "type": "text", "required": true, "placeholder": "例：120人" },
         { "key": "managerKind", "label": "種別（甲種／乙種）", "type": "radio", "options": ["甲種", "乙種"], "helpText": "防火管理者の場合のみ選択" }
       ]
     },
@@ -39,7 +40,7 @@
       "id": "rule-application",
       "type": "row-table",
       "heading": "令第2条 / 令第3条第3項 適用区分（該当時のみ）",
-      "description": "令第2条適用＝同一敷地内に複数の防火対象物がある場合に、対象ごとに記入。令第3条第3項適用＝複数権原で管理権原に属する部分ごとに記入。最大2行ずつ。3行以上必要な場合は任意の別紙で添付すること。",
+      "description": "※2 = 消防法施行令第2条を適用するものは同一敷地内にある同令第1条の2の防火対象物ごとに、同令第3条第3項を適用するものは管理権原に属する部分ごとに記入する。最大2行ずつ。3行以上必要な場合は任意の別紙で添付すること。",
       "rowHeaderLabel": "区分",
       "columns": [
         { "key": "Name", "label": "名称" },
@@ -47,16 +48,16 @@
         { "key": "Capacity", "label": "収容人員" }
       ],
       "rows": [
-        { "key": "rule2Building1", "label": "令第2条を適用するもの 1" },
-        { "key": "rule2Building2", "label": "令第2条を適用するもの 2" },
-        { "key": "rule3p3Part1", "label": "令第3条第3項を適用するもの 1" },
-        { "key": "rule3p3Part2", "label": "令第3条第3項を適用するもの 2" }
+        { "key": "rule2Building1", "label": "令第2条を適用するもの ※2 (1)" },
+        { "key": "rule2Building2", "label": "令第2条を適用するもの ※2 (2)" },
+        { "key": "rule3p3Part1", "label": "令第3条第3項を適用するもの ※2 (1)" },
+        { "key": "rule3p3Part2", "label": "令第3条第3項を適用するもの ※2 (2)" }
       ]
     },
     {
       "id": "appointment",
       "heading": "選任の場合",
-      "description": "選任の場合に該当欄を記入してください。",
+      "description": "選任の場合に該当欄を記入してください。修了年月日は防火管理講習修了時は左欄、防災管理講習修了時は右欄に記入（両方記入可）。",
       "fields": [
         { "key": "managerName", "label": "氏名", "type": "text" },
         { "key": "managerNameKana", "label": "フリガナ", "type": "text" },
@@ -65,8 +66,25 @@
         { "key": "positionTitle", "label": "職務上の地位", "type": "text" },
         { "key": "qualificationKind", "label": "資格区分", "type": "checkbox-group", "options": ["防火管理（甲種）新規講習", "防火管理（甲種）再講習", "防火管理（乙種）", "防災管理 新規講習", "防災管理 再講習"] },
         { "key": "qualificationInstitution", "label": "講習機関", "type": "text" },
-        { "key": "qualificationCompletionDate", "label": "修了年月日", "type": "date" },
-        { "key": "otherQualification", "label": "その他資格根拠条文", "type": "text", "placeholder": "例：令第3条第1項第1号" }
+        { "key": "qualificationCompletionDateFire", "label": "修了年月日（防火管理講習）", "type": "date", "helpText": "防火管理講習を修了した場合のみ記入" },
+        { "key": "qualificationCompletionDateDisaster", "label": "修了年月日（防災管理講習）", "type": "date", "helpText": "防災管理講習を修了した場合のみ記入" }
+      ]
+    },
+    {
+      "id": "qualification-other",
+      "type": "row-table",
+      "heading": "資格 - その他（講習以外の資格根拠）",
+      "description": "講習以外の資格根拠に該当する法令の行に「☑」（または「✓」）と号番号を記入してください。複数該当時は該当行すべてに記入。",
+      "rowHeaderLabel": "根拠条文",
+      "columns": [
+        { "key": "Check", "label": "該当", "placeholder": "☑" },
+        { "key": "Number", "label": "号番号", "placeholder": "例：第1号（◯）" }
+      ],
+      "rows": [
+        { "key": "rule3para1", "label": "令第3条第1項" },
+        { "key": "rule47para1", "label": "令第47条第1項" },
+        { "key": "regulation2", "label": "規則第2条" },
+        { "key": "regulation51-5", "label": "規則第51条の5" }
       ]
     },
     {
@@ -82,15 +100,20 @@
     {
       "id": "remarks",
       "heading": "その他必要事項",
+      "description": "備考5（令第1条の2第3項第2号3号の建物）・備考6（管理的・監督的地位の不在理由）の該当時はこの欄に記入してください。",
       "fields": [
         { "key": "remarks", "label": "備考・特記事項", "type": "multiline" }
       ]
     }
   ],
   "footnotes": [
-    "この用紙の大きさは、日本産業規格Ａ４とすること。",
-    "該当欄については、レ印（☑）で選択した値が転記される。",
-    "複数権原の場合は管理権原に属する部分の情報を記入すること。",
-    "防火・防災管理者の資格を証する書面を別途添付すること。"
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "□印のある欄については、該当の□印にレを付けること。",
+    "※1欄は、複数権原の場合にあっては管理権原に属する部分の情報を記入すること。",
+    "※2欄は、消防法施行令第2条を適用するものにあっては同一敷地内にある同令第1条の2の防火対象物ごとに、同令第3条第3項を適用するものにあっては管理権原に属する部分ごとに記入すること。欄が不足する場合は、任意で書類を作成し添付すること。",
+    "消防法施行令第1条の2第3項第2号及び第3号の防火対象物にあってはその他必要な事項の欄に工事が完了した際の防火対象物の規模を記入すること。",
+    "消防法施行令第3条第2項又は同令第47条括弧書を適用するものにあってはその他必要な事項の欄に管理的又は監督的な地位にある者のいずれもが防火及び防災管理上必要な業務を適切に遂行することができない理由を記入すること。",
+    "防火・防災管理者の資格を証する書面を添付すること。",
+    "※3欄は、記入しないこと。"
   ]
 }
