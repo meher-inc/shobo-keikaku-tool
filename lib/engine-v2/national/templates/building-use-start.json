@@ -1,0 +1,79 @@
+{
+  "version": "1.0",
+  "packName": "building-use-start",
+  "title": "防火対象物使用開始届出書",
+  "legalRef": "第3号様式の2（火災予防条例 第12条の2関係）",
+  "summary": "防火対象物またはその部分の使用を開始する際に、使用開始7日前までに所轄消防署長へ提出する届出書。",
+  "preamble": "下記のとおり、防火対象物又はその部分の使用を開始したいので、火災予防条例第56条の2第1項の規定に基づき届け出ます。",
+  "submitToTemplate": "{{fireAuthorityName}}　{{fireDeptName}}消防署長　殿",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
+    { "key": "fireAuthorityName", "label": "提出先（消防本部・庁名）", "type": "text", "required": true, "placeholder": "例：東京消防庁" },
+    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true, "placeholder": "例：千代田" }
+  ],
+  "sections": [
+    {
+      "id": "building",
+      "heading": "防火対象物の概要（建物）",
+      "fields": [
+        { "key": "buildingAddress", "label": "所在地", "type": "text", "required": true },
+        { "key": "buildingName", "label": "名称", "type": "text", "required": true },
+        { "key": "structure", "label": "構造", "type": "checkbox-group", "options": ["耐火", "準耐火（イ）", "準耐火（ロ-1）", "準耐火（ロ-2）", "防火", "木造", "その他"], "required": true },
+        { "key": "floorsAbove", "label": "地上階数", "type": "text", "required": true, "placeholder": "例：5" },
+        { "key": "floorsBelow", "label": "地下階数", "type": "text", "placeholder": "例：1" },
+        { "key": "buildingArea", "label": "建築面積（㎡）", "type": "text", "required": true },
+        { "key": "totalArea", "label": "延べ面積（㎡）", "type": "text", "required": true },
+        { "key": "buildingUse", "label": "用途", "type": "text", "required": true, "placeholder": "例：（16）項イ（特定用途複合）" }
+      ]
+    },
+    {
+      "id": "tenant",
+      "heading": "事業所欄（テナント／事業所単位の届出時のみ）",
+      "description": "建物全体での届出の場合は空欄で構いません。",
+      "fields": [
+        { "key": "tenantName", "label": "事業所の名称", "type": "text" },
+        { "key": "tenantPhone", "label": "事業所の電話", "type": "text" },
+        { "key": "tenantFloor", "label": "事業所のある階", "type": "text", "placeholder": "例：2階" },
+        { "key": "tenantArea", "label": "床面積（㎡）", "type": "text" },
+        { "key": "tenantUse", "label": "事業所の用途", "type": "text", "placeholder": "例：（3）項ロ（飲食店）" }
+      ]
+    },
+    {
+      "id": "construction",
+      "heading": "工事等種別",
+      "fields": [
+        { "key": "constructionKindBuilding", "label": "建物の場合", "type": "checkbox-group", "options": ["新築", "増築", "改築", "用途変更", "移転", "模様替え", "修繕", "その他"] },
+        { "key": "constructionKindTenant", "label": "事業所の場合（自由記述）", "type": "text", "placeholder": "例：事業所入居に伴う間仕切り変更工事" }
+      ]
+    },
+    {
+      "id": "schedule",
+      "heading": "使用開始日",
+      "fields": [
+        { "key": "useStartDate", "label": "使用開始日", "type": "date", "required": true }
+      ]
+    },
+    {
+      "id": "designer-builder",
+      "heading": "設計者・施工者",
+      "fields": [
+        { "key": "designerName", "label": "設計者（会社名・担当者）", "type": "text" },
+        { "key": "designerPhone", "label": "設計者 電話番号", "type": "text" },
+        { "key": "builderName", "label": "施工者（会社名・担当者）", "type": "text" },
+        { "key": "builderPhone", "label": "施工者 電話番号", "type": "text" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ列4番とすること。",
+    "届出者が法人の場合、氏名欄にはその名称及び代表者氏名を記入すること。",
+    "事業所欄は、事業所に関する届出の場合のみ記入すること。",
+    "添付図書（概要表・平面図・立面図・断面図・室内仕上表・建具表 等）は別途用意のうえ提出すること。"
+  ]
+}
