@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "packName": "inspection-report-special-approval",
+  "title": "防火対象物・防災管理点検報告特例認定申請書",
+  "legalRef": "別記様式第1号の2の2の2の3（第4条の2の8、第51条の16関係）",
+  "summary": "防火対象物点検または防災管理点検について、所轄消防署長から点検報告の特例認定を受けるための申請書。",
+  "preamble": "下記のとおり、{{kind}}点検報告の特例の認定を受けたいので申請します。",
+  "submitToTemplate": "{{municipality}} {{fireDeptName}}消防署長　殿",
+  "submitterTitle": "管理権原者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所（法人の場合は名称及び代表者氏名）", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "kind", "label": "種別", "type": "radio", "options": ["防火対象物", "防災管理"], "required": true },
+    { "key": "submitDate", "label": "申請日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市区町村）", "type": "text", "required": true },
+    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "object",
+      "heading": "防火対象物又は防災管理対象物",
+      "fields": [
+        { "key": "objectAddress", "label": "所在地", "type": "text", "required": true },
+        { "key": "objectName", "label": "名称", "type": "text", "required": true },
+        { "key": "managementAuthority", "label": "管理権原", "type": "radio", "options": ["単一権原", "複数権原"], "required": true },
+        { "key": "multipleAuthorityPart", "label": "複数権原の場合に管理権原に属する部分の名称", "type": "text" },
+        { "key": "objectUse", "label": "用途", "type": "text", "required": true },
+        { "key": "objectCategory", "label": "令別表第1の項番", "type": "text", "required": true },
+        { "key": "capacity", "label": "収容人員", "type": "text", "required": true },
+        { "key": "rule2AppliesName", "label": "令第2条を適用するものの名称", "type": "text" },
+        { "key": "rule2AppliesCategory", "label": "令第2条を適用するものの令別表第1項番", "type": "text" },
+        { "key": "rule2AppliesCapacity", "label": "令第2条を適用するものの収容人員", "type": "text" }
+      ]
+    },
+    {
+      "id": "history",
+      "heading": "管理開始・前回認定",
+      "fields": [
+        { "key": "managementStartDateFire", "label": "申請者が管理を開始した年月日（防火対象物）", "type": "date" },
+        { "key": "managementStartDateDisaster", "label": "申請者が管理を開始した年月日（防災管理対象物）", "type": "date" },
+        { "key": "lastApprovalDateFire", "label": "前回の特例認定年月日（防火対象物）", "type": "date" },
+        { "key": "lastApprovalDateDisaster", "label": "前回の特例認定年月日（防災管理対象物）", "type": "date" },
+        { "key": "otherMatters", "label": "その他必要な事項", "type": "multiline" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "管理を開始した日その他市町村長が定める事項を記載した書類を別途添付すること。",
+    "受付欄・経過欄は記入しないこと。"
+  ]
+}

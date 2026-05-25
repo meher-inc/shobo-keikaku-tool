@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "packName": "hazmat-safety-supervisor",
+  "title": "危険物保安監督者 選任・解任届出書",
+  "legalRef": "様式第20（第48条の3関係）",
+  "summary": "危険物製造所等における危険物保安監督者を選任または解任した際に、市町村長等へ提出する全国統一様式。",
+  "preamble": "下記のとおり、危険物保安監督者を{{operationType}}したので届け出ます。",
+  "submitToTemplate": "{{municipality}}長　殿",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "operationType", "label": "選任／解任", "type": "radio", "options": ["選任", "解任"], "required": true },
+    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "owner",
+      "heading": "設置者",
+      "fields": [
+        { "key": "ownerAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "ownerPhone", "label": "電話番号", "type": "text" },
+        { "key": "ownerName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "facility",
+      "heading": "対象施設",
+      "fields": [
+        { "key": "facilityKind", "label": "製造所等の別", "type": "text", "required": true },
+        { "key": "facilityCategory", "label": "貯蔵所又は取扱所の区分", "type": "text" },
+        { "key": "permitDate", "label": "設置の許可年月日", "type": "date", "required": true },
+        { "key": "permitNumber", "label": "設置の許可番号", "type": "text", "required": true },
+        { "key": "facilityLocation", "label": "設置場所", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "supervisor-appoint",
+      "heading": "選任の場合",
+      "description": "選任時に該当欄を記入してください。",
+      "fields": [
+        { "key": "appointName", "label": "氏名", "type": "text" },
+        { "key": "appointLicenseKind", "label": "危険物取扱者免状の種類", "type": "text", "placeholder": "例：甲種／乙種第4類" },
+        { "key": "appointDate", "label": "選任年月日", "type": "date" }
+      ]
+    },
+    {
+      "id": "supervisor-dismiss",
+      "heading": "解任の場合",
+      "description": "解任時に該当欄を記入してください。",
+      "fields": [
+        { "key": "dismissName", "label": "氏名", "type": "text" },
+        { "key": "dismissDate", "label": "解任年月日", "type": "date" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "法人にあっては名称、代表者氏名及び主たる事務所の所在地を記入すること。",
+    "受付欄・備考欄は記入しないこと。"
+  ]
+}
