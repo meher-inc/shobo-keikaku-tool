@@ -21,6 +21,7 @@ import type {
   RowTableSection,
 } from "../types/national-form-pack";
 import { isRowTableSection } from "../types/national-form-pack";
+import { formatDate } from "./date-format";
 
 const FONT = "MS Mincho";
 const TABLE_WIDTH = 9026;
@@ -67,7 +68,11 @@ function applyTemplate(template: string, data: NationalFormData): string {
   });
 }
 
-function renderFieldValue(field: FormField, data: NationalFormData): string {
+function renderFieldValue(
+  field: FormField,
+  data: NationalFormData,
+  pack: NationalFormPack
+): string {
   const raw = data[field.key];
   if (raw === undefined || raw === "") return "";
   if (Array.isArray(raw)) {
@@ -76,18 +81,25 @@ function renderFieldValue(field: FormField, data: NationalFormData): string {
     }
     return raw.join("、");
   }
+  if (field.type === "date") {
+    return formatDate(raw, pack.dateFormat ?? "wareki");
+  }
   if (field.type === "radio" || field.type === "select") {
     return `☑ ${raw}`;
   }
   return raw;
 }
 
-function buildKeyValueTable(section: KeyValueSection, data: NationalFormData): Table {
+function buildKeyValueTable(
+  section: KeyValueSection,
+  data: NationalFormData,
+  pack: NationalFormPack
+): Table {
   const labelWidth = Math.floor(TABLE_WIDTH * 0.32);
   const valueWidth = TABLE_WIDTH - labelWidth;
 
   const rows: TableRow[] = section.fields.map((field) => {
-    const value = renderFieldValue(field, data);
+    const value = renderFieldValue(field, data, pack);
     return new TableRow({
       children: [
         cell(field.label, { width: labelWidth, shading: "F2F2F2", bold: true }),
@@ -158,11 +170,15 @@ function buildRowTable(section: RowTableSection, data: NationalFormData): Table 
   });
 }
 
-function buildSectionTable(section: FormSection, data: NationalFormData): Table {
+function buildSectionTable(
+  section: FormSection,
+  data: NationalFormData,
+  pack: NationalFormPack
+): Table {
   if (isRowTableSection(section)) {
     return buildRowTable(section, data);
   }
-  return buildKeyValueTable(section, data);
+  return buildKeyValueTable(section, data, pack);
 }
 
 function buildSubmitterTable(pack: NationalFormPack, data: NationalFormData): Table {
@@ -186,7 +202,7 @@ function buildSubmitterTable(pack: NationalFormPack, data: NationalFormData): Ta
     return new TableRow({
       children: [
         cell(field.label, { width: labelWidth, shading: "F2F2F2", bold: true }),
-        cell(renderFieldValue(field, data), { width: valueWidth }),
+        cell(renderFieldValue(field, data, pack), { width: valueWidth }),
       ],
     });
   });
@@ -213,7 +229,10 @@ export function buildNationalDocument(
   );
   children.push(p(""));
 
-  const submitDate = (data.submitDate as string | undefined) ?? "    年    月    日";
+  const submitDateRaw = (data.submitDate as string | undefined) ?? "";
+  const submitDate = submitDateRaw
+    ? formatDate(submitDateRaw, pack.dateFormat ?? "wareki")
+    : "    年    月    日";
   children.push(p(submitDate, { align: AlignmentType.RIGHT }));
   children.push(p(applyTemplate(pack.submitToTemplate, data)));
   children.push(p(""));
@@ -232,7 +251,7 @@ export function buildNationalDocument(
     if (section.description) {
       children.push(p(section.description, { size: 18 }));
     }
-    children.push(buildSectionTable(section, data));
+    children.push(buildSectionTable(section, data, pack));
   }
 
   if (pack.footnotes.length > 0) {
