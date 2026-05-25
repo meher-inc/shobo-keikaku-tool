@@ -59,6 +59,12 @@ export const NationalFormPackSchema = z.object({
   headerFields: z.array(FormFieldSchema).optional(),
   sections: z.array(FormSectionSchema),
   footnotes: z.array(z.string()),
+  /**
+   * 複雑度の高い書類（Phase 3：危険物関係許可申請等）に true を設定すると、
+   * フォーム上に「行政書士に相談する」ボタンと説明文を表示する。
+   * 専門的な判断が必要な書類向けの導線フラグ。
+   */
+  consultProfessional: z.boolean().optional(),
 });
 export type NationalFormPack = z.infer<typeof NationalFormPackSchema>;
 

@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "packName": "hazmat-comprehensive-safety-supervisor",
+  "title": "危険物保安統括管理者 選任・解任届出書",
+  "legalRef": "様式第19（第47条の6関係）",
+  "summary": "同一事業所において指定数量3,000倍以上の危険物を貯蔵または取り扱う製造所等を有する事業所において、危険物保安統括管理者を選任または解任した際の届出書。",
+  "consultProfessional": true,
+  "preamble": "下記のとおり、危険物保安統括管理者を{{operationType}}したので届け出ます。",
+  "submitToTemplate": "{{municipality}}長　殿",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "operationType", "label": "選任／解任", "type": "radio", "options": ["選任", "解任"], "required": true },
+    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "site",
+      "heading": "事業所",
+      "fields": [
+        { "key": "siteLocationAndName", "label": "事業所の設置場所及び名称", "type": "multiline", "required": true, "placeholder": "例：京都市〇〇区〇〇町1-2-3　〇〇株式会社 京都工場" }
+      ]
+    },
+    {
+      "id": "supervisor-appoint",
+      "heading": "選任の場合",
+      "description": "選任時に該当欄を記入してください。",
+      "fields": [
+        { "key": "appointName", "label": "氏名", "type": "text" },
+        { "key": "appointDate", "label": "選任年月日", "type": "date" },
+        { "key": "appointPosition", "label": "職務上の地位", "type": "text", "placeholder": "例：工場長" }
+      ]
+    },
+    {
+      "id": "supervisor-dismiss",
+      "heading": "解任の場合",
+      "description": "解任時に該当欄を記入してください。",
+      "fields": [
+        { "key": "dismissName", "label": "氏名", "type": "text" },
+        { "key": "dismissDate", "label": "解任年月日", "type": "date" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "法人にあっては名称、代表者氏名及び主たる事務所の所在地を記入すること。",
+    "受付欄・備考欄は記入しないこと。"
+  ]
+}

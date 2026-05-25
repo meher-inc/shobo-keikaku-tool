@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "packName": "hazmat-facility-safety-officer",
+  "title": "危険物施設保安員 選任・解任届出書",
+  "legalRef": "第22号様式（第17条関係）",
+  "summary": "指定数量100倍以上の製造所、移送取扱所、または規則第60条に規定するものを除く一般取扱所の設置者が、危険物施設保安員を選任または解任した際の届出書。",
+  "consultProfessional": true,
+  "preamble": "危険物製造所等の危険物施設保安員を次のとおり選任・解任しましたので届け出ます。",
+  "submitToTemplate": "（宛先）{{municipality}}長",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所（法人の場合は主たる事業所の所在地）", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者名）", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "facility",
+      "heading": "対象施設",
+      "fields": [
+        { "key": "facilityName", "label": "施設の名称", "type": "text", "required": true },
+        { "key": "ownerAddress", "label": "設置者 住所", "type": "text", "required": true },
+        { "key": "ownerName", "label": "設置者 氏名", "type": "text", "required": true },
+        { "key": "facilityCategory", "label": "選任を必要とする製造所等の区分", "type": "checkbox-group", "options": ["製造所", "移送取扱所", "一般取扱所"], "required": true, "helpText": "一般取扱所は、危険物の規制に関する規則第60条に規定するものを除く" },
+        { "key": "permitDate", "label": "許可年月日", "type": "date", "required": true },
+        { "key": "permitNumber", "label": "許可番号", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "officer-1",
+      "heading": "選任又は解任した危険物施設保安員 1人目",
+      "fields": [
+        { "key": "officer1Type", "label": "選任・解任の別", "type": "radio", "options": ["選任", "解任"] },
+        { "key": "officer1Position", "label": "職名", "type": "text" },
+        { "key": "officer1Name", "label": "氏名", "type": "text" },
+        { "key": "officer1License", "label": "危険物取扱者の資格の有無", "type": "radio", "options": ["有", "無"] }
+      ]
+    },
+    {
+      "id": "officer-2",
+      "heading": "選任又は解任した危険物施設保安員 2人目（任意）",
+      "fields": [
+        { "key": "officer2Type", "label": "選任・解任の別", "type": "radio", "options": ["選任", "解任"] },
+        { "key": "officer2Position", "label": "職名", "type": "text" },
+        { "key": "officer2Name", "label": "氏名", "type": "text" },
+        { "key": "officer2License", "label": "危険物取扱者の資格の有無", "type": "radio", "options": ["有", "無"] }
+      ]
+    },
+    {
+      "id": "officer-3",
+      "heading": "選任又は解任した危険物施設保安員 3人目（任意）",
+      "fields": [
+        { "key": "officer3Type", "label": "選任・解任の別", "type": "radio", "options": ["選任", "解任"] },
+        { "key": "officer3Position", "label": "職名", "type": "text" },
+        { "key": "officer3Name", "label": "氏名", "type": "text" },
+        { "key": "officer3License", "label": "危険物取扱者の資格の有無", "type": "radio", "options": ["有", "無"] }
+      ]
+    }
+  ],
+  "footnotes": [
+    "本様式（第22号様式）は最大4名分の保安員を記入できる構造だが、本フォームでは3名分を提供。4名以上の場合は別紙対応すること。",
+    "該当する区分欄にはレ印を記入する。"
+  ]
+}

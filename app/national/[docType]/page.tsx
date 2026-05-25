@@ -64,6 +64,41 @@ export default async function NationalDocPage({ params }: Props) {
         )}
       </header>
 
+      {pack.consultProfessional && (
+        <aside
+          style={{
+            marginBottom: 24,
+            padding: "16px 20px",
+            background: "#f8f9fa",
+            border: "1px solid #d1d5db",
+            borderRadius: 10,
+            fontSize: 13,
+            color: "#374151",
+            lineHeight: 1.8,
+          }}
+        >
+          <p style={{ margin: "0 0 12px" }}>
+            この書類は専門的な判断が必要な場合があります。
+            行政書士との直接相談をご検討ください。
+          </p>
+          <Link
+            href="/contact"
+            style={{
+              display: "inline-block",
+              padding: "8px 18px",
+              background: "#6b7280",
+              color: "#fff",
+              borderRadius: 8,
+              textDecoration: "none",
+              fontSize: 13,
+              fontWeight: 600,
+            }}
+          >
+            行政書士に相談する →
+          </Link>
+        </aside>
+      )}
+
       <NationalForm pack={pack} />
 
       <aside

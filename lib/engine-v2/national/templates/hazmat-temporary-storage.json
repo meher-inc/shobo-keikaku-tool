@@ -1,0 +1,84 @@
+{
+  "version": "1.0",
+  "packName": "hazmat-temporary-storage",
+  "title": "危険物仮貯蔵・仮取扱い承認申請書",
+  "legalRef": "様式第1の2（第1条の6関係）",
+  "summary": "指定数量以上の危険物を、所轄消防長または消防署長の承認を受けて10日以内の期間に限り、製造所等以外の場所で仮貯蔵または仮取扱いする際の申請書。",
+  "consultProfessional": true,
+  "preamble": "下記のとおり、危険物の{{operationKind}}の承認を受けたいので申請します。",
+  "submitToTemplate": "{{authority}}　殿",
+  "submitterTitle": "申請者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "operationKind", "label": "申請区分", "type": "radio", "options": ["仮貯蔵", "仮取扱い"], "required": true },
+    { "key": "submitDate", "label": "申請日", "type": "date", "required": true },
+    { "key": "authority", "label": "提出先（消防長または消防署長）", "type": "text", "required": true, "placeholder": "例：京都市消防局長 殿" }
+  ],
+  "sections": [
+    {
+      "id": "owner",
+      "heading": "危険物の所有者・管理者又は占有者",
+      "fields": [
+        { "key": "ownerAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "ownerPhone", "label": "電話番号", "type": "text" },
+        { "key": "ownerName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "site",
+      "heading": "仮貯蔵・仮取扱いの場所",
+      "fields": [
+        { "key": "siteAddress", "label": "所在地", "type": "text", "required": true },
+        { "key": "siteName", "label": "名称", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "hazmat",
+      "heading": "対象危険物・方法",
+      "fields": [
+        { "key": "hazmatClassNameMax", "label": "危険物の類、品名及び最大数量", "type": "multiline", "required": true, "placeholder": "例：第4類 第1石油類（200L） 最大1,000L" },
+        { "key": "designatedQuantityMultiple", "label": "指定数量の倍数", "type": "text", "required": true, "placeholder": "例：5倍" },
+        { "key": "operationMethod", "label": "仮貯蔵・仮取扱いの方法", "type": "multiline", "required": true }
+      ]
+    },
+    {
+      "id": "schedule",
+      "heading": "期間・管理",
+      "fields": [
+        { "key": "startDate", "label": "仮貯蔵・仮取扱いの期間（開始日）", "type": "date", "required": true },
+        { "key": "endDate", "label": "仮貯蔵・仮取扱いの期間（終了日）", "type": "date", "required": true },
+        { "key": "durationDays", "label": "期間（日数）", "type": "text", "required": true, "placeholder": "例：10日間" },
+        { "key": "managementStatus", "label": "管理の状況（消火設備の設置状況含む）", "type": "multiline", "required": true }
+      ]
+    },
+    {
+      "id": "site-supervisor",
+      "heading": "現場管理責任者",
+      "fields": [
+        { "key": "supervisorAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "supervisorEmergencyPhone", "label": "緊急連絡先", "type": "text", "required": true },
+        { "key": "supervisorName", "label": "氏名", "type": "text", "required": true },
+        { "key": "supervisorLicense", "label": "危険物取扱者免状", "type": "radio", "options": ["有", "無"], "required": true },
+        { "key": "supervisorLicenseKind", "label": "免状の種類（免状有の場合）", "type": "text", "placeholder": "例：甲種／乙種第4類" }
+      ]
+    },
+    {
+      "id": "reason",
+      "heading": "理由・処理",
+      "fields": [
+        { "key": "reasonAndPostHandling", "label": "仮貯蔵・仮取扱いの理由及び期間経過後の処理", "type": "multiline", "required": true },
+        { "key": "otherMatters", "label": "その他必要事項", "type": "multiline" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "法人にあっては名称、代表者氏名及び主たる事務所の所在地を記入すること。",
+    "案内図、配置図、平面図、構造図その他関係書類を別途添付すること。",
+    "受付欄・経過欄・手数料欄・承認年月日・承認番号は記入しないこと。"
+  ]
+}

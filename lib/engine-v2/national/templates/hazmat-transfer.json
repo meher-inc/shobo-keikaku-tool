@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "packName": "hazmat-transfer",
+  "title": "危険物製造所等 譲渡引渡届出書",
+  "legalRef": "様式第15（第7条関係）",
+  "summary": "危険物製造所・貯蔵所・取扱所の譲渡または引渡しがあった際に、譲受人または引渡を受けた者が市町村長等へ提出する全国統一様式。",
+  "consultProfessional": true,
+  "preamble": "下記のとおり、危険物製造所等の譲渡又は引渡しがあったので届け出ます。",
+  "submitToTemplate": "{{municipality}}長　殿",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "receiver",
+      "heading": "譲渡又は引渡を受けた者",
+      "fields": [
+        { "key": "receiverAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "receiverPhone", "label": "電話番号", "type": "text" },
+        { "key": "receiverName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "giver",
+      "heading": "譲渡又は引渡をした者",
+      "fields": [
+        { "key": "giverAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "giverPhone", "label": "電話番号", "type": "text" },
+        { "key": "giverName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "facility",
+      "heading": "対象 製造所等",
+      "fields": [
+        { "key": "facilityLocation", "label": "設置場所", "type": "text", "required": true },
+        { "key": "facilityKind", "label": "製造所等の別", "type": "text", "required": true },
+        { "key": "facilityCategory", "label": "貯蔵所又は取扱所の区分", "type": "text" },
+        { "key": "permitDate", "label": "設置の許可年月日", "type": "date", "required": true },
+        { "key": "permitNumber", "label": "設置の許可番号", "type": "text", "required": true },
+        { "key": "completionInspectionDate", "label": "設置の完成検査年月日", "type": "date" },
+        { "key": "completionInspectionNumber", "label": "完成検査番号", "type": "text" },
+        { "key": "hazmatClassAndName", "label": "危険物の類、品名（指定数量）、最大数量", "type": "multiline", "required": true },
+        { "key": "designatedQuantityMultiple", "label": "指定数量の倍数", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "reason",
+      "heading": "理由",
+      "fields": [
+        { "key": "transferReason", "label": "譲渡又は引渡のあった理由", "type": "multiline", "required": true, "placeholder": "例：売買／相続／合併／会社分割 等" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "法人にあっては名称、代表者氏名及び主たる事務所の所在地を記入すること。",
+    "譲渡引渡を証明する書類（売買契約書／登記事項証明書／合併契約書 等）を別途添付すること。",
+    "受付欄・経過欄は記入しないこと。"
+  ]
+}

@@ -23,13 +23,41 @@ const EXPECTED_PACKS = [
   "hazmat-safety-supervisor",
   "minor-hazmat-notification",
   "event-hosting-notification",
+  // Phase 3 (consultProfessional=true)
+  "hazmat-temporary-use",
+  "hazmat-temporary-storage",
+  "hazmat-name-quantity-change",
+  "hazmat-facility-change-permit",
+  "hazmat-prevention-rules-approval",
+  "hazmat-comprehensive-safety-supervisor",
+  "hazmat-facility-safety-officer",
+  "hazmat-transfer",
+] as const;
+
+const PHASE_3_PACKS = [
+  "hazmat-temporary-use",
+  "hazmat-temporary-storage",
+  "hazmat-name-quantity-change",
+  "hazmat-facility-change-permit",
+  "hazmat-prevention-rules-approval",
+  "hazmat-comprehensive-safety-supervisor",
+  "hazmat-facility-safety-officer",
+  "hazmat-transfer",
 ] as const;
 
 describe("national pack registry", () => {
-  it("registers all Phase-1 + Phase-2 packs (15 total)", () => {
-    expect(NATIONAL_PACK_NAMES).toHaveLength(15);
+  it("registers all Phase-1 + Phase-2 + Phase-3 packs (23 total)", () => {
+    expect(NATIONAL_PACK_NAMES).toHaveLength(23);
     for (const name of EXPECTED_PACKS) {
       expect(NATIONAL_PACK_NAMES).toContain(name);
+    }
+  });
+
+  it("all Phase-3 packs have consultProfessional=true", () => {
+    for (const name of PHASE_3_PACKS) {
+      const pack = getNationalPack(name);
+      expect(pack, `pack ${name} not found`).toBeDefined();
+      expect(pack!.consultProfessional, `${name} missing consultProfessional`).toBe(true);
     }
   });
 
