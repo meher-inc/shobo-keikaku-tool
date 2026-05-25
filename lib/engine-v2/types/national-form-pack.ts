@@ -87,6 +87,9 @@ export function isRowTableSection(section: FormSection): section is RowTableSect
   return (section as { type?: string }).type === "row-table";
 }
 
+export const DateFormatSchema = z.enum(["wareki", "seireki"]);
+export type DateFormat = z.infer<typeof DateFormatSchema>;
+
 export const NationalFormPackSchema = z.object({
   version: z.literal("1.0"),
   packName: z.string().min(1),
@@ -106,6 +109,11 @@ export const NationalFormPackSchema = z.object({
    * 専門的な判断が必要な書類向けの導線フラグ。
    */
   consultProfessional: z.boolean().optional(),
+  /**
+   * docx 出力時の date 型フィールドのフォーマット。
+   * 未指定なら wareki (和暦)。
+   */
+  dateFormat: DateFormatSchema.optional(),
 });
 export type NationalFormPack = z.infer<typeof NationalFormPackSchema>;
 

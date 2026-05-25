@@ -1,6 +1,7 @@
 import { renderNationalDocx } from "../national/render-docx";
 import { getNationalPack, NATIONAL_PACK_NAMES } from "../national/registry";
 import type { NationalFormData } from "../types/national-form-pack";
+import { applyPackNormalizers } from "../national/normalizers";
 
 export class UnknownNationalPackError extends Error {
   constructor(packName: string) {
@@ -25,7 +26,8 @@ export async function generateNationalDocument(
   if (!pack) {
     throw new UnknownNationalPackError(packName);
   }
-  return renderNationalDocx(pack, form);
+  const normalized = applyPackNormalizers(packName, form);
+  return renderNationalDocx(pack, normalized);
 }
 
 export { NATIONAL_PACK_NAMES };
