@@ -21,9 +21,9 @@ export default async function NationalIndexPage() {
   // middleware を通り抜けたあとも server component で再検証する (defense-in-depth)。
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (!token) redirect("/mypage?from=national");
+  if (!token) redirect("/national/login");
   const verified = await verifyToken(token, "session");
-  if (!verified.ok) redirect("/mypage?from=national");
+  if (!verified.ok) redirect("/national/login");
 
   const decision = await checkAccess(verified.payload.email);
   if (!decision.allowed) {

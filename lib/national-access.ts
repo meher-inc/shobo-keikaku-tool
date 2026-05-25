@@ -70,12 +70,13 @@ export async function checkAccess(email: string): Promise<AccessDecision> {
 
 /**
  * Build the redirect target path for a non-allowed access decision.
- *   no_subscription           → /pricing
- *   past_due_or_unpaid        → /pricing
- *   canceled                  → /pricing
- *   db_error                  → /pricing (fail-closed; avoid leaking access on DB outage)
+ *   no_subscription           → /pricing  (新規契約導線)
+ *   past_due_or_unpaid        → /mypage   (Stripe Portal でカード再登録が必要)
+ *   canceled                  → /pricing  (再契約導線)
+ *   db_error                  → /pricing  (fail-closed)
  */
 export function redirectPathForDecision(decision: AccessDecision): string {
   if (decision.allowed) return "/national";
+  if (decision.reason === "past_due_or_unpaid") return "/mypage";
   return "/pricing";
 }

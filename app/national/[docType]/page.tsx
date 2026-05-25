@@ -29,9 +29,9 @@ export default async function NationalDocPage({ params }: Props) {
   // 2nd of 3 access guards (middleware が 1st、API が 3rd)。
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (!token) redirect("/mypage?from=national");
+  if (!token) redirect("/national/login");
   const verified = await verifyToken(token, "session");
-  if (!verified.ok) redirect("/mypage?from=national");
+  if (!verified.ok) redirect("/national/login");
 
   const decision = await checkAccess(verified.payload.email);
   if (!decision.allowed) {

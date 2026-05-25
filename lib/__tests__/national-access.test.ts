@@ -95,13 +95,14 @@ describe("redirectPathForDecision", () => {
     ).toBe("/national");
   });
 
-  it("returns /pricing for all denial reasons", () => {
-    for (const reason of [
-      "no_subscription",
-      "past_due_or_unpaid",
-      "canceled",
-      "db_error",
-    ] as const) {
+  it("returns /mypage for past_due_or_unpaid (Stripe Portal でカード再登録)", () => {
+    expect(
+      redirectPathForDecision({ allowed: false, reason: "past_due_or_unpaid" })
+    ).toBe("/mypage");
+  });
+
+  it("returns /pricing for new-contract denial reasons", () => {
+    for (const reason of ["no_subscription", "canceled", "db_error"] as const) {
       expect(redirectPathForDecision({ allowed: false, reason })).toBe(
         "/pricing"
       );

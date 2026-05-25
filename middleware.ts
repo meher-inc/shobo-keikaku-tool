@@ -63,7 +63,7 @@ function unauthorized(req: NextRequest, isApi: boolean): NextResponse {
     );
   }
   const url = req.nextUrl.clone();
-  url.pathname = "/mypage";
-  url.searchParams.set("from", "national");
+  url.pathname = "/national/login";
+  url.search = "";
   return NextResponse.redirect(url);
 }
