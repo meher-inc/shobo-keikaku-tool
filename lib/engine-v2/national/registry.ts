@@ -20,6 +20,15 @@ import hazmatFacilityAbolition from "./templates/hazmat-facility-abolition.json"
 import hazmatSafetySupervisor from "./templates/hazmat-safety-supervisor.json";
 import minorHazmatNotification from "./templates/minor-hazmat-notification.json";
 import eventHostingNotification from "./templates/event-hosting-notification.json";
+// Phase 3 (consultProfessional=true)
+import hazmatTemporaryUse from "./templates/hazmat-temporary-use.json";
+import hazmatTemporaryStorage from "./templates/hazmat-temporary-storage.json";
+import hazmatNameQuantityChange from "./templates/hazmat-name-quantity-change.json";
+import hazmatFacilityChangePermit from "./templates/hazmat-facility-change-permit.json";
+import hazmatPreventionRulesApproval from "./templates/hazmat-prevention-rules-approval.json";
+import hazmatComprehensiveSafetySupervisor from "./templates/hazmat-comprehensive-safety-supervisor.json";
+import hazmatFacilitySafetyOfficer from "./templates/hazmat-facility-safety-officer.json";
+import hazmatTransfer from "./templates/hazmat-transfer.json";
 
 const RAW_PACKS: unknown[] = [
   // Phase 1
@@ -39,6 +48,15 @@ const RAW_PACKS: unknown[] = [
   hazmatSafetySupervisor,
   minorHazmatNotification,
   eventHostingNotification,
+  // Phase 3
+  hazmatTemporaryUse,
+  hazmatTemporaryStorage,
+  hazmatNameQuantityChange,
+  hazmatFacilityChangePermit,
+  hazmatPreventionRulesApproval,
+  hazmatComprehensiveSafetySupervisor,
+  hazmatFacilitySafetyOfficer,
+  hazmatTransfer,
 ];
 
 const PACKS: Record<string, NationalFormPack> = RAW_PACKS.reduce<

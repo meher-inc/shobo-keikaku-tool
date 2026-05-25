@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "packName": "hazmat-name-quantity-change",
+  "title": "危険物製造所等 品名・数量又は指定数量の倍数変更届出書",
+  "legalRef": "様式第16（第7条の3関係）",
+  "summary": "危険物製造所・貯蔵所・取扱所で貯蔵または取り扱う危険物の品名、数量、または指定数量の倍数を変更する際に、市町村長等へ提出する全国統一様式。変更予定日の10日前までに届出が必要。",
+  "consultProfessional": true,
+  "preamble": "下記のとおり、危険物の品名・数量又は指定数量の倍数を変更したいので届け出ます。",
+  "submitToTemplate": "{{municipality}}長　殿",
+  "submitterTitle": "届出者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "owner",
+      "heading": "設置者",
+      "fields": [
+        { "key": "ownerAddress", "label": "住所", "type": "text", "required": true },
+        { "key": "ownerPhone", "label": "電話番号", "type": "text" },
+        { "key": "ownerName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "facility",
+      "heading": "対象施設",
+      "fields": [
+        { "key": "facilityLocation", "label": "設置場所", "type": "text", "required": true },
+        { "key": "permitDate", "label": "設置の許可年月日", "type": "date", "required": true },
+        { "key": "permitNumber", "label": "設置の許可番号", "type": "text", "required": true },
+        { "key": "facilityKind", "label": "製造所等の別", "type": "text", "required": true },
+        { "key": "facilityCategory", "label": "貯蔵所又は取扱所の区分", "type": "text" }
+      ]
+    },
+    {
+      "id": "change",
+      "heading": "変更内容",
+      "fields": [
+        { "key": "hazmatBefore", "label": "変更前 危険物の類、品名（指定数量）、最大数量", "type": "multiline", "required": true },
+        { "key": "hazmatAfter", "label": "変更後 危険物の類、品名（指定数量）、最大数量", "type": "multiline", "required": true },
+        { "key": "multipleBefore", "label": "変更前 指定数量の倍数", "type": "text", "required": true },
+        { "key": "multipleAfter", "label": "変更後 指定数量の倍数", "type": "text", "required": true },
+        { "key": "scheduledChangeDate", "label": "変更予定期日", "type": "date", "required": true }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "法人にあっては名称、代表者氏名及び主たる事務所の所在地を記入すること。",
+    "品名（指定数量）の記載については、当該危険物の指定数量が品名の記載のみでは明確でない場合に（ ）内に指定数量を併記すること。",
+    "受付欄・経過欄は記入しないこと。"
+  ]
+}

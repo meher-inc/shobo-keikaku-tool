@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "packName": "hazmat-temporary-use",
+  "title": "危険物製造所等 仮使用承認申請書",
+  "legalRef": "様式第7（第5条の2関係）",
+  "summary": "危険物製造所・貯蔵所・取扱所の変更工事中、変更工事に係る部分以外の部分を仮使用しようとする際に、市町村長等の承認を受けるための申請書。",
+  "consultProfessional": true,
+  "preamble": "下記のとおり、危険物製造所等の仮使用の承認を受けたいので申請します。",
+  "submitToTemplate": "{{municipality}}長　殿",
+  "submitterTitle": "申請者",
+  "submitterFields": [
+    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
+    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
+    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+  ],
+  "headerFields": [
+    { "key": "submitDate", "label": "申請日", "type": "date", "required": true },
+    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true }
+  ],
+  "sections": [
+    {
+      "id": "facility",
+      "heading": "対象施設",
+      "fields": [
+        { "key": "facilityLocation", "label": "設置場所", "type": "text", "required": true },
+        { "key": "facilityKind", "label": "製造所等の別", "type": "text", "required": true },
+        { "key": "facilityCategory", "label": "貯蔵所又は取扱所の区分", "type": "text" }
+      ]
+    },
+    {
+      "id": "change",
+      "heading": "変更許可",
+      "description": "変更の許可前に申請する場合は変更許可申請年月日、変更の許可後に申請する場合は変更の許可年月日・許可番号を記入してください。",
+      "fields": [
+        { "key": "changePermitApplicationDate", "label": "変更許可申請年月日（変更許可前申請の場合）", "type": "date" },
+        { "key": "changePermitDate", "label": "変更の許可年月日（変更許可後申請の場合）", "type": "date" },
+        { "key": "changePermitNumber", "label": "変更の許可番号", "type": "text", "placeholder": "例：第〇〇号" },
+        { "key": "temporaryUsePart", "label": "仮使用の承認を申請する部分", "type": "multiline", "required": true, "placeholder": "別添図面の通り（部分の概要を記入）" }
+      ]
+    }
+  ],
+  "footnotes": [
+    "この用紙の大きさは、日本産業規格Ａ4とすること。",
+    "法人にあっては名称、代表者氏名及び主たる事務所の所在地を記入すること。",
+    "変更許可前/後のいずれかの欄に記入し、記入しない欄には斜線を入れること。",
+    "受付欄・経過欄・手数料欄・承認年月日・承認番号は記入しないこと。"
+  ]
+}
