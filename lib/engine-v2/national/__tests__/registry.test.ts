@@ -4,6 +4,7 @@ import {
   listNationalPacks,
   NATIONAL_PACK_NAMES,
 } from "../registry";
+import { isRowTableSection } from "../../types/national-form-pack";
 
 const EXPECTED_PACKS = [
   // Phase 1
@@ -80,13 +81,65 @@ describe("national pack registry", () => {
 
   it("all field keys are unique within a pack", () => {
     for (const pack of listNationalPacks()) {
-      const keys = [
+      const keys: string[] = [
         ...(pack.headerFields ?? []).map((f) => f.key),
         ...pack.submitterFields.map((f) => f.key),
-        ...pack.sections.flatMap((s) => s.fields.map((f) => f.key)),
       ];
+      for (const section of pack.sections) {
+        if (isRowTableSection(section)) {
+          // row-table のセルキーは ${row.key}${col.key} で組み立てる
+          for (const row of section.rows) {
+            for (const col of section.columns) {
+              keys.push(`${row.key}${col.key}`);
+            }
+          }
+        } else {
+          for (const f of section.fields) {
+            keys.push(f.key);
+          }
+        }
+      }
       const dupes = keys.filter((k, i) => keys.indexOf(k) !== i);
       expect(dupes, `duplicates in ${pack.packName}: ${dupes.join(",")}`).toEqual([]);
+    }
+  });
+
+  it("row-table sections have non-empty rows and columns", () => {
+    for (const pack of listNationalPacks()) {
+      for (const section of pack.sections) {
+        if (isRowTableSection(section)) {
+          expect(section.rows.length).toBeGreaterThan(0);
+          expect(section.columns.length).toBeGreaterThan(0);
+          // row.key + col.key で組み立てたキーが空文字でないこと
+          for (const row of section.rows) {
+            for (const col of section.columns) {
+              const k = `${row.key}${col.key}`;
+              expect(k.length).toBeGreaterThan(0);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  it("fire-manager-appointment includes the rule-application row-table", () => {
+    const pack = getNationalPack("fire-manager-appointment");
+    expect(pack).toBeDefined();
+    const ruleSection = pack!.sections.find((s) => s.id === "rule-application");
+    expect(ruleSection).toBeDefined();
+    expect(isRowTableSection(ruleSection!)).toBe(true);
+    if (isRowTableSection(ruleSection!)) {
+      // 4 行 (令第2条適用 2 + 令第3条第3項適用 2)、3 列 (名称・令別表第1・収容人員)
+      expect(ruleSection.rows).toHaveLength(4);
+      expect(ruleSection.columns).toHaveLength(3);
+      const rowKeys = ruleSection.rows.map((r) => r.key);
+      expect(rowKeys).toEqual([
+        "rule2Building1",
+        "rule2Building2",
+        "rule3p3Part1",
+        "rule3p3Part2",
+      ]);
+      expect(ruleSection.columns.map((c) => c.key)).toEqual(["Name", "Category", "Capacity"]);
     }
   });
 });

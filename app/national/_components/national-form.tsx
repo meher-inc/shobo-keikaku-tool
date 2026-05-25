@@ -3,23 +3,46 @@
 import { useMemo, useState, type FormEvent } from "react";
 import type {
   FormField,
+  FormSection,
   NationalFormData,
   NationalFormPack,
+  RowTableSection,
 } from "@/lib/engine-v2/types/national-form-pack";
+import { isRowTableSection } from "@/lib/engine-v2/types/national-form-pack";
 
 interface Props {
   pack: NationalFormPack;
 }
 
+function rowTableKeys(section: RowTableSection): string[] {
+  const keys: string[] = [];
+  for (const row of section.rows) {
+    for (const col of section.columns) {
+      keys.push(`${row.key}${col.key}`);
+    }
+  }
+  return keys;
+}
+
 function initialFormState(pack: NationalFormPack): NationalFormData {
   const out: NationalFormData = {};
-  const all: FormField[] = [
+  const flatFields: FormField[] = [
     ...(pack.headerFields ?? []),
     ...pack.submitterFields,
-    ...pack.sections.flatMap((s) => s.fields),
+    ...pack.sections.flatMap((s) =>
+      isRowTableSection(s) ? [] : s.fields
+    ),
   ];
-  for (const f of all) {
+  for (const f of flatFields) {
     out[f.key] = f.type === "checkbox-group" ? [] : "";
+  }
+  // row-table セルは全て optional の text 値
+  for (const s of pack.sections) {
+    if (isRowTableSection(s)) {
+      for (const key of rowTableKeys(s)) {
+        out[key] = "";
+      }
+    }
   }
   return out;
 }
@@ -36,11 +59,14 @@ export function NationalForm({ pack }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const allFields = useMemo<FormField[]>(
+  // required validation は key-value セクションのフィールドのみ対象 (row-table はすべて optional)
+  const requiredFields = useMemo<FormField[]>(
     () => [
       ...(pack.headerFields ?? []),
       ...pack.submitterFields,
-      ...pack.sections.flatMap((s) => s.fields),
+      ...pack.sections.flatMap((s) =>
+        isRowTableSection(s) ? [] : s.fields
+      ),
     ],
     [pack]
   );
@@ -63,7 +89,7 @@ export function NationalForm({ pack }: Props) {
     e.preventDefault();
     setError(null);
 
-    const missing = allFields.filter((f) => isMissing(f, data[f.key]));
+    const missing = requiredFields.filter((f) => isMissing(f, data[f.key]));
     if (missing.length > 0) {
       setError(`必須項目が未入力です: ${missing.map((m) => m.label).join(" / ")}`);
       return;
@@ -98,6 +124,36 @@ export function NationalForm({ pack }: Props) {
     }
   }
 
+  function renderSection(section: FormSection) {
+    if (isRowTableSection(section)) {
+      return (
+        <RowTableSectionView
+          key={section.id}
+          section={section}
+          data={data}
+          onCellChange={update}
+        />
+      );
+    }
+    return (
+      <FieldGroup
+        key={section.id}
+        title={section.heading ?? section.id}
+        description={section.description}
+      >
+        {section.fields.map((f) => (
+          <Field
+            key={f.key}
+            field={f}
+            value={data[f.key]}
+            onChange={update}
+            onToggle={toggleCheckbox}
+          />
+        ))}
+      </FieldGroup>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
       {error && <div style={styles.error}>{error}</div>}
@@ -116,17 +172,7 @@ export function NationalForm({ pack }: Props) {
         ))}
       </FieldGroup>
 
-      {pack.sections.map((section) => (
-        <FieldGroup
-          key={section.id}
-          title={section.heading ?? section.id}
-          description={section.description}
-        >
-          {section.fields.map((f) => (
-            <Field key={f.key} field={f} value={data[f.key]} onChange={update} onToggle={toggleCheckbox} />
-          ))}
-        </FieldGroup>
-      ))}
+      {pack.sections.map(renderSection)}
 
       <button type="submit" disabled={submitting} style={styles.submit}>
         {submitting ? "生成中..." : "Wordファイルをダウンロード"}
@@ -149,6 +195,63 @@ function FieldGroup({
       <legend style={styles.legend}>{title}</legend>
       {description && <p style={styles.description}>{description}</p>}
       <div style={styles.grid}>{children}</div>
+    </fieldset>
+  );
+}
+
+function RowTableSectionView({
+  section,
+  data,
+  onCellChange,
+}: {
+  section: RowTableSection;
+  data: NationalFormData;
+  onCellChange: (key: string, value: string) => void;
+}) {
+  return (
+    <fieldset style={styles.fieldset}>
+      <legend style={styles.legend}>{section.heading ?? section.id}</legend>
+      {section.description && <p style={styles.description}>{section.description}</p>}
+      <div style={{ overflowX: "auto" }}>
+        <table style={tableStyles.table}>
+          <thead>
+            <tr>
+              <th style={tableStyles.headerCell}>{section.rowHeaderLabel ?? ""}</th>
+              {section.columns.map((col) => (
+                <th key={col.key} style={tableStyles.headerCell}>
+                  {col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {section.rows.map((row) => (
+              <tr key={row.key}>
+                <th scope="row" style={tableStyles.rowHeader}>
+                  {row.label}
+                </th>
+                {section.columns.map((col) => {
+                  const dataKey = `${row.key}${col.key}`;
+                  const value = data[dataKey];
+                  const stringValue = typeof value === "string" ? value : "";
+                  return (
+                    <td key={col.key} style={tableStyles.dataCell}>
+                      <input
+                        type="text"
+                        value={stringValue}
+                        placeholder={col.placeholder}
+                        onChange={(e) => onCellChange(dataKey, e.target.value)}
+                        style={tableStyles.input}
+                        aria-label={`${row.label} - ${col.label}`}
+                      />
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </fieldset>
   );
 }
@@ -317,5 +420,48 @@ const styles: Record<string, React.CSSProperties> = {
     border: "none",
     borderRadius: 8,
     cursor: "pointer",
+  },
+};
+
+const tableStyles: Record<string, React.CSSProperties> = {
+  table: {
+    width: "100%",
+    minWidth: 480,
+    borderCollapse: "collapse",
+    fontSize: 13,
+  },
+  headerCell: {
+    padding: "10px 8px",
+    border: "1px solid #d1d5db",
+    background: "#e8e8e8",
+    fontWeight: 700,
+    color: "#1a1a1a",
+    textAlign: "left",
+    fontSize: 12,
+  },
+  rowHeader: {
+    padding: "10px 8px",
+    border: "1px solid #d1d5db",
+    background: "#f2f2f2",
+    fontWeight: 700,
+    color: "#1a1a1a",
+    textAlign: "left",
+    fontSize: 13,
+    whiteSpace: "nowrap",
+  },
+  dataCell: {
+    padding: 4,
+    border: "1px solid #d1d5db",
+    verticalAlign: "middle",
+  },
+  input: {
+    width: "100%",
+    padding: "6px 8px",
+    border: "1px solid #c7c7cc",
+    borderRadius: 3,
+    background: "#fff",
+    color: "#1a1a1a",
+    fontSize: 13,
+    boxSizing: "border-box",
   },
 };

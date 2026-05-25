@@ -15,9 +15,12 @@ import {
 import type {
   FormField,
   FormSection,
+  KeyValueSection,
   NationalFormData,
   NationalFormPack,
+  RowTableSection,
 } from "../types/national-form-pack";
+import { isRowTableSection } from "../types/national-form-pack";
 
 const FONT = "MS Mincho";
 const TABLE_WIDTH = 9026;
@@ -79,7 +82,7 @@ function renderFieldValue(field: FormField, data: NationalFormData): string {
   return raw;
 }
 
-function buildSectionTable(section: FormSection, data: NationalFormData): Table {
+function buildKeyValueTable(section: KeyValueSection, data: NationalFormData): Table {
   const labelWidth = Math.floor(TABLE_WIDTH * 0.32);
   const valueWidth = TABLE_WIDTH - labelWidth;
 
@@ -97,6 +100,69 @@ function buildSectionTable(section: FormSection, data: NationalFormData): Table 
     width: { size: TABLE_WIDTH, type: WidthType.DXA },
     rows,
   });
+}
+
+/**
+ * row-table セクション: 行ベース複数列テーブル。
+ *
+ * 出力構造:
+ *               | columns[0].label | columns[1].label | ...
+ *   rows[0].label| <value>          | <value>          | ...
+ *   rows[1].label| <value>          | <value>          | ...
+ *
+ * データキーは `${row.key}${column.key}` で組み立てる。
+ */
+function buildRowTable(section: RowTableSection, data: NationalFormData): Table {
+  const rowLabelWidth = Math.floor(TABLE_WIDTH * 0.28);
+  const dataColWidth = Math.floor((TABLE_WIDTH - rowLabelWidth) / section.columns.length);
+
+  // ヘッダ行 (左上は空欄 or rowHeaderLabel)
+  const headerRow = new TableRow({
+    tableHeader: true,
+    children: [
+      cell(section.rowHeaderLabel ?? "", {
+        width: rowLabelWidth,
+        shading: "E8E8E8",
+        bold: true,
+      }),
+      ...section.columns.map((col) =>
+        cell(col.label, { width: dataColWidth, shading: "E8E8E8", bold: true })
+      ),
+    ],
+  });
+
+  // データ行
+  const dataRows: TableRow[] = section.rows.map((row) => {
+    return new TableRow({
+      children: [
+        cell(row.label, { width: rowLabelWidth, shading: "F2F2F2", bold: true }),
+        ...section.columns.map((col) => {
+          const dataKey = `${row.key}${col.key}`;
+          const raw = data[dataKey];
+          const value =
+            raw === undefined || raw === ""
+              ? ""
+              : Array.isArray(raw)
+                ? raw.join("、")
+                : raw;
+          return cell(value, { width: dataColWidth });
+        }),
+      ],
+    });
+  });
+
+  return new Table({
+    width: { size: TABLE_WIDTH, type: WidthType.DXA },
+    columnWidths: [rowLabelWidth, ...section.columns.map(() => dataColWidth)],
+    rows: [headerRow, ...dataRows],
+  });
+}
+
+function buildSectionTable(section: FormSection, data: NationalFormData): Table {
+  if (isRowTableSection(section)) {
+    return buildRowTable(section, data);
+  }
+  return buildKeyValueTable(section, data);
 }
 
 function buildSubmitterTable(pack: NationalFormPack, data: NationalFormData): Table {

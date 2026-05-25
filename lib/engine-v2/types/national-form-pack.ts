@@ -4,17 +4,11 @@ import { z } from "zod";
  * 全国統一様式（消防法施行規則別記様式・火災予防条例準拠様式）の
  * 届出書テンプレートスキーマ。
  *
- * 既存 TemplatePackSchema は消防計画書（章立て・長文）専用なので、
- * 届出書（A4 1枚・ラベル+値の表形式）は別系統として定義する。
+ * セクションは2系統:
+ *   - "key-value" (default)  ラベル列+値列の縦並び2列テーブル (大多数のセクション)
+ *   - "row-table"            行ベース複数列テーブル (区分マトリクス等)
  *
- * Phase 1 で扱うのは 7 書類:
- *   - fire-manager-appointment        (別記様式第1号の2の2)
- *   - fire-plan-notification          (別記様式第1号の2)
- *   - self-defense-org-establishment  (別記様式第1号の2の2の3の3)
- *   - building-use-start              (東京消防庁 第3号様式の2)
- *   - building-construction-plan      (東京消防庁 第3号様式)
- *   - equipment-construction-start    (別記様式第1号の7)
- *   - equipment-installation          (別記様式第1号の2の3)
+ * セクション type は optional。未指定なら "key-value" として扱う (後方互換)。
  */
 
 export const FormFieldTypes = [
@@ -38,13 +32,60 @@ export const FormFieldSchema = z.object({
 });
 export type FormField = z.infer<typeof FormFieldSchema>;
 
-export const FormSectionSchema = z.object({
+// ── key-value section (既存) ────────────────────────────────────────────
+export const KeyValueSectionSchema = z.object({
   id: z.string().min(1),
+  type: z.literal("key-value").optional(),
   heading: z.string().optional(),
   description: z.string().optional(),
   fields: z.array(FormFieldSchema),
 });
+export type KeyValueSection = z.infer<typeof KeyValueSectionSchema>;
+
+// ── row-table section (新規) ────────────────────────────────────────────
+// 構造:
+//                | columns[0].label | columns[1].label | ...
+//   rows[0].label| <input>          | <input>          | ...
+//   rows[1].label| <input>          | <input>          | ...
+//
+// データキーは `${row.key}${column.key}` で組み立てる (連結後の文字列がフラットな
+// NationalFormData のキーになる)。後方互換のため key-value 形式のフィールド名と
+// 衝突させないこと。
+export const RowTableColumnSchema = z.object({
+  key: z.string().min(1),
+  label: z.string().min(1),
+  placeholder: z.string().optional(),
+});
+export type RowTableColumn = z.infer<typeof RowTableColumnSchema>;
+
+export const RowTableRowSchema = z.object({
+  key: z.string().min(1),
+  label: z.string().min(1),
+});
+export type RowTableRow = z.infer<typeof RowTableRowSchema>;
+
+export const RowTableSectionSchema = z.object({
+  id: z.string().min(1),
+  type: z.literal("row-table"),
+  heading: z.string().optional(),
+  description: z.string().optional(),
+  rowHeaderLabel: z.string().optional(),
+  columns: z.array(RowTableColumnSchema).min(1),
+  rows: z.array(RowTableRowSchema).min(1),
+});
+export type RowTableSection = z.infer<typeof RowTableSectionSchema>;
+
+// section は2系統の union
+export const FormSectionSchema = z.union([
+  KeyValueSectionSchema,
+  RowTableSectionSchema,
+]);
 export type FormSection = z.infer<typeof FormSectionSchema>;
+
+/** 型ガード: row-table セクションか? */
+export function isRowTableSection(section: FormSection): section is RowTableSection {
+  return (section as { type?: string }).type === "row-table";
+}
 
 export const NationalFormPackSchema = z.object({
   version: z.literal("1.0"),

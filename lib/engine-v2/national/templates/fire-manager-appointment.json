@@ -36,6 +36,24 @@
       ]
     },
     {
+      "id": "rule-application",
+      "type": "row-table",
+      "heading": "令第2条 / 令第3条第3項 適用区分（該当時のみ）",
+      "description": "令第2条適用＝同一敷地内に複数の防火対象物がある場合に、対象ごとに記入。令第3条第3項適用＝複数権原で管理権原に属する部分ごとに記入。最大2行ずつ。3行以上必要な場合は任意の別紙で添付すること。",
+      "rowHeaderLabel": "区分",
+      "columns": [
+        { "key": "Name", "label": "名称" },
+        { "key": "Category", "label": "令別表第1", "placeholder": "例：（15）項" },
+        { "key": "Capacity", "label": "収容人員" }
+      ],
+      "rows": [
+        { "key": "rule2Building1", "label": "令第2条を適用するもの 1" },
+        { "key": "rule2Building2", "label": "令第2条を適用するもの 2" },
+        { "key": "rule3p3Part1", "label": "令第3条第3項を適用するもの 1" },
+        { "key": "rule3p3Part2", "label": "令第3条第3項を適用するもの 2" }
+      ]
+    },
+    {
       "id": "appointment",
       "heading": "選任の場合",
       "description": "選任の場合に該当欄を記入してください。",
