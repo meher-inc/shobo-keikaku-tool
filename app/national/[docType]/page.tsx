@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import {
-  getNationalPack,
-  listNationalPacks,
-} from "@/lib/engine-v2/national/registry";
+import { cookies } from "next/headers";
+import { notFound, redirect } from "next/navigation";
+import { getNationalPack } from "@/lib/engine-v2/national/registry";
 import { NationalForm } from "../_components/national-form";
+import {
+  SESSION_COOKIE_NAME,
+  verifyToken,
+} from "@/lib/session-token";
+import { checkAccess, redirectPathForDecision } from "@/lib/national-access";
 
 interface Props {
   params: Promise<{ docType: string }>;
-}
-
-export async function generateStaticParams() {
-  return listNationalPacks().map((p) => ({ docType: p.packName }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -22,10 +21,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${pack.title} 自動生成 ｜ トドケデ消防計画`,
     description: pack.summary ?? `${pack.title}（${pack.legalRef}）を自動生成します。`,
+    robots: { index: false, follow: false },
   };
 }
 
 export default async function NationalDocPage({ params }: Props) {
+  // 2nd of 3 access guards (middleware が 1st、API が 3rd)。
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  if (!token) redirect("/mypage?from=national");
+  const verified = await verifyToken(token, "session");
+  if (!verified.ok) redirect("/mypage?from=national");
+
+  const decision = await checkAccess(verified.payload.email);
+  if (!decision.allowed) {
+    redirect(`${redirectPathForDecision(decision)}?from=national&reason=${decision.reason}`);
+  }
+
   const { docType } = await params;
   const pack = getNationalPack(docType);
   if (!pack) notFound();

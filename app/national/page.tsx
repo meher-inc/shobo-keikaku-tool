@@ -1,14 +1,35 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { listNationalPacks } from "@/lib/engine-v2/national/registry";
+import {
+  SESSION_COOKIE_NAME,
+  verifyToken,
+} from "@/lib/session-token";
+import { checkAccess, redirectPathForDecision } from "@/lib/national-access";
 
 export const metadata: Metadata = {
   title: "全国統一様式 届出書 自動生成 ｜ トドケデ消防計画",
   description:
     "消防法施行規則および火災予防条例に基づく届出書（防火管理者選任届、消防計画届、消防用設備等設置届ほか）を、入力ベースでWord形式で自動生成します。",
+  robots: { index: false, follow: false },
 };
 
-export default function NationalIndexPage() {
+export default async function NationalIndexPage() {
+  // 2nd of 3 access guards (middleware が 1st、API が 3rd)。
+  // middleware を通り抜けたあとも server component で再検証する (defense-in-depth)。
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  if (!token) redirect("/mypage?from=national");
+  const verified = await verifyToken(token, "session");
+  if (!verified.ok) redirect("/mypage?from=national");
+
+  const decision = await checkAccess(verified.payload.email);
+  if (!decision.allowed) {
+    redirect(`${redirectPathForDecision(decision)}?from=national&reason=${decision.reason}`);
+  }
+
   const packs = listNationalPacks();
 
   return (
