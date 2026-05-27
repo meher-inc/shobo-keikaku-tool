@@ -8,33 +8,100 @@
   "submitToTemplate": "{{fireAuthorityName}}　{{fireDeptName}}消防署長　殿",
   "submitterTitle": "届出者",
   "submitterFields": [
-    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
-    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true },
-    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true }
+    {
+      "key": "submitterAddress",
+      "label": "住所",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterName",
+      "label": "氏名（法人の場合は名称及び代表者氏名）",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterPhone",
+      "label": "電話番号",
+      "type": "text",
+      "required": true
+    }
   ],
   "headerFields": [
-    { "key": "submitDate", "label": "報告日", "type": "date", "required": true },
-    { "key": "fireAuthorityName", "label": "提出先（消防本部・庁名）", "type": "text", "required": true, "placeholder": "例：東京消防庁" },
-    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true }
+    {
+      "key": "submitDate",
+      "label": "報告日",
+      "type": "date",
+      "required": true
+    },
+    {
+      "key": "fireAuthorityName",
+      "label": "提出先（消防本部・庁名）",
+      "type": "text",
+      "required": true,
+      "placeholder": "例：東京消防庁"
+    },
+    {
+      "key": "fireDeptName",
+      "label": "提出先（管轄消防署）",
+      "type": "text",
+      "required": true
+    }
   ],
   "sections": [
     {
       "id": "building",
       "heading": "防火対象物",
       "fields": [
-        { "key": "buildingAddress", "label": "所在地", "type": "text", "required": true },
-        { "key": "buildingName", "label": "名称", "type": "text", "required": true },
-        { "key": "buildingUse", "label": "用途", "type": "text", "required": true, "placeholder": "例：（16）項イ" },
-        { "key": "floorsAbove", "label": "地上階数", "type": "text", "required": true },
-        { "key": "floorsBelow", "label": "地下階数", "type": "text" },
-        { "key": "totalArea", "label": "延べ面積（㎡）", "type": "text", "required": true }
+        {
+          "key": "buildingAddress",
+          "label": "所在地",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "buildingName",
+          "label": "名称",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "mainUse",
+          "label": "用途",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：（16）項イ"
+        },
+        {
+          "key": "floorsAbove",
+          "label": "地上階数",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "floorsBelow",
+          "label": "地下階数",
+          "type": "text"
+        },
+        {
+          "key": "totalArea",
+          "label": "延べ面積（㎡）",
+          "type": "text",
+          "required": true
+        }
       ]
     },
     {
       "id": "equipment",
       "heading": "点検した消防用設備等の種類",
       "fields": [
-        { "key": "equipmentKinds", "label": "種類等（複数の場合は改行区切り）", "type": "multiline", "required": true, "placeholder": "例：消火器具\nスプリンクラー設備\n自動火災報知設備\n避難器具\n誘導灯及び誘導標識" }
+        {
+          "key": "equipmentKinds",
+          "label": "種類等（複数の場合は改行区切り）",
+          "type": "multiline",
+          "required": true,
+          "placeholder": "例：消火器具\nスプリンクラー設備\n自動火災報知設備\n避難器具\n誘導灯及び誘導標識"
+        }
       ]
     }
   ],

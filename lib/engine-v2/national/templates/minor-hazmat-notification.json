@@ -8,52 +8,144 @@
   "submitToTemplate": "{{municipality}} {{fireDeptName}}消防署長　殿",
   "submitterTitle": "届出者",
   "submitterFields": [
-    { "key": "submitterAddress", "label": "住所（法人の場合は主たる事務所の所在地）", "type": "text", "required": true },
-    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者名）", "type": "text", "required": true },
-    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true }
+    {
+      "key": "submitterAddress",
+      "label": "申請者・届出者 住所",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterName",
+      "label": "申請者・届出者 氏名",
+      "type": "text",
+      "required": true,
+      "placeholder": "法人の場合は名称及び代表者氏名"
+    },
+    {
+      "key": "submitterPhone",
+      "label": "申請者・届出者 電話番号",
+      "type": "text",
+      "required": true
+    }
   ],
   "headerFields": [
-    { "key": "hazmatKind", "label": "対象種別", "type": "radio", "options": ["少量危険物", "指定可燃物"], "required": true },
-    { "key": "operationKind", "label": "届出区分", "type": "radio", "options": ["貯蔵", "取扱い"], "required": true },
-    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
-    { "key": "municipality", "label": "提出先（市区町村）", "type": "text", "required": true },
-    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true }
+    {
+      "key": "submitDate",
+      "label": "提出日",
+      "type": "date",
+      "required": true
+    }
   ],
   "sections": [
     {
-      "id": "location",
+      "id": "facility",
       "heading": "貯蔵又は取扱いの場所",
       "fields": [
-        { "key": "siteAddress", "label": "場所の地名及び地番", "type": "text", "required": true },
-        { "key": "buildingName", "label": "防火対象物の名称", "type": "text", "required": true }
+        {
+          "key": "facilityLocation",
+          "label": "設置場所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "facilityName",
+          "label": "名称",
+          "type": "text",
+          "required": true
+        }
       ]
     },
     {
       "id": "hazmat",
-      "heading": "対象物",
+      "heading": "危険物の類・品名・数量",
       "fields": [
-        { "key": "hazmatClass", "label": "類", "type": "text", "required": true, "placeholder": "例：第4類" },
-        { "key": "hazmatItemName", "label": "品名", "type": "text", "required": true },
-        { "key": "designatedQuantity", "label": "指定数量", "type": "text", "required": true },
-        { "key": "maxQuantity", "label": "最大数量", "type": "text", "required": true },
-        { "key": "operationSummary", "label": "貯蔵又は取扱いの方法の概要", "type": "multiline", "required": true }
+        {
+          "key": "hazmatClass",
+          "label": "類",
+          "type": "text",
+          "required": true,
+          "placeholder": "例: 第4類"
+        },
+        {
+          "key": "hazmatName",
+          "label": "品名",
+          "type": "text",
+          "required": true,
+          "placeholder": "例: ガソリン"
+        },
+        {
+          "key": "maxStorageAmount",
+          "label": "最大貯蔵数量",
+          "type": "text",
+          "required": true,
+          "placeholder": "例: 200L"
+        },
+        {
+          "key": "maxDailyHandlingAmount",
+          "label": "1日最大取扱数量",
+          "type": "text",
+          "required": true,
+          "placeholder": "例: 50L"
+        },
+        {
+          "key": "extraColumn5",
+          "label": "追加項目",
+          "type": "text",
+          "helpText": "テンプレ余裕列。通常は空欄。"
+        }
       ]
     },
     {
-      "id": "facility",
-      "heading": "貯蔵又は取扱いの場所の構造等",
+      "id": "ops",
+      "heading": "貯蔵・取扱い方法・設備",
       "fields": [
-        { "key": "facilityPosition", "label": "位置", "type": "multiline", "required": true },
-        { "key": "facilityStructure", "label": "構造", "type": "multiline", "required": true },
-        { "key": "facilityEquipment", "label": "設備の概要", "type": "multiline", "required": true },
-        { "key": "fireEquipmentSummary", "label": "消防用設備等又は特殊消防用設備等の概要", "type": "multiline" }
+        {
+          "key": "operationSummary",
+          "label": "貯蔵又は取扱方法の概要",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "key": "structureSummary",
+          "label": "貯蔵又は取扱場所の位置、構造及び設備の概要",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "key": "fireEquipment",
+          "label": "消防用設備等の概要",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "key": "startPeriod",
+          "label": "貯蔵又は取扱いの開始予定期日又は期間",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "otherMatters",
+          "label": "その他必要な事項",
+          "type": "multiline"
+        }
       ]
     },
     {
-      "id": "schedule",
-      "heading": "予定",
+      "id": "official",
+      "heading": "※ 行政記入欄",
       "fields": [
-        { "key": "startDate", "label": "貯蔵又は取扱いの開始予定年月日", "type": "date", "required": true }
+        {
+          "key": "officialUseReceipt",
+          "label": "※受付欄 (行政記入)",
+          "type": "text",
+          "helpText": "行政側で記入されます。通常は空欄のままで提出。"
+        },
+        {
+          "key": "officialUseProgress",
+          "label": "※経過欄 (行政記入)",
+          "type": "text",
+          "helpText": "行政側で記入されます。"
+        }
       ]
     }
   ],

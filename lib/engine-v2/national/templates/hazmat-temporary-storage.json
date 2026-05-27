@@ -9,69 +9,188 @@
   "submitToTemplate": "{{authority}}　殿",
   "submitterTitle": "申請者",
   "submitterFields": [
-    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
-    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
-    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+    {
+      "key": "submitterAddress",
+      "label": "申請者・届出者 住所",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterName",
+      "label": "申請者・届出者 氏名",
+      "type": "text",
+      "required": true,
+      "placeholder": "法人の場合は名称及び代表者氏名"
+    },
+    {
+      "key": "submitterPhone",
+      "label": "申請者・届出者 電話番号",
+      "type": "text",
+      "required": true
+    }
   ],
   "headerFields": [
-    { "key": "operationKind", "label": "申請区分", "type": "radio", "options": ["仮貯蔵", "仮取扱い"], "required": true },
-    { "key": "submitDate", "label": "申請日", "type": "date", "required": true },
-    { "key": "authority", "label": "提出先（消防長または消防署長）", "type": "text", "required": true, "placeholder": "例：京都市消防局長 殿" }
+    {
+      "key": "submitDate",
+      "label": "提出日",
+      "type": "date",
+      "required": true
+    },
+    {
+      "key": "municipality",
+      "label": "市町村",
+      "type": "text",
+      "required": true,
+      "placeholder": "例: 京都市"
+    },
+    {
+      "key": "recipientTitle",
+      "label": "提出先肩書",
+      "type": "text",
+      "required": true,
+      "placeholder": "例: 消防署長"
+    }
   ],
   "sections": [
     {
       "id": "owner",
-      "heading": "危険物の所有者・管理者又は占有者",
+      "heading": "危険物の所有者・管理者・占有者",
       "fields": [
-        { "key": "ownerAddress", "label": "住所", "type": "text", "required": true },
-        { "key": "ownerPhone", "label": "電話番号", "type": "text" },
-        { "key": "ownerName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+        {
+          "key": "ownerAddress",
+          "label": "設置者 住所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "ownerName",
+          "label": "設置者 氏名",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "ownerPhone",
+          "label": "設置者 電話番号",
+          "type": "text"
+        },
+        {
+          "key": "ownerExtraInfo",
+          "label": "補助情報",
+          "type": "text"
+        }
       ]
     },
     {
-      "id": "site",
-      "heading": "仮貯蔵・仮取扱いの場所",
+      "id": "temporary",
+      "heading": "仮貯蔵・仮取扱い情報",
       "fields": [
-        { "key": "siteAddress", "label": "所在地", "type": "text", "required": true },
-        { "key": "siteName", "label": "名称", "type": "text", "required": true }
+        {
+          "key": "temporaryLocation",
+          "label": "仮貯蔵・仮取扱いの場所 (所在地・名称)",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "hazmatClassAndName",
+          "label": "危険物の類、品名（指定数量）、最大数量",
+          "type": "multiline",
+          "required": true,
+          "placeholder": "例: 第4類 第1石油類（200L） 最大1,000L"
+        },
+        {
+          "key": "designatedQuantityMultiple",
+          "label": "指定数量の倍数",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "temporaryMethod",
+          "label": "仮貯蔵・仮取扱いの方法",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "key": "temporaryPeriod",
+          "label": "仮貯蔵・仮取扱いの期間",
+          "type": "text",
+          "required": true,
+          "placeholder": "例: 令和8年6月1日から令和8年6月10日まで 10日間"
+        },
+        {
+          "key": "managementStatus",
+          "label": "管理の状況 (消火設備の設置状況を含む)",
+          "type": "multiline",
+          "required": true
+        }
       ]
     },
     {
-      "id": "hazmat",
-      "heading": "対象危険物・方法",
-      "fields": [
-        { "key": "hazmatClassNameMax", "label": "危険物の類、品名及び最大数量", "type": "multiline", "required": true, "placeholder": "例：第4類 第1石油類（200L） 最大1,000L" },
-        { "key": "designatedQuantityMultiple", "label": "指定数量の倍数", "type": "text", "required": true, "placeholder": "例：5倍" },
-        { "key": "operationMethod", "label": "仮貯蔵・仮取扱いの方法", "type": "multiline", "required": true }
-      ]
-    },
-    {
-      "id": "schedule",
-      "heading": "期間・管理",
-      "fields": [
-        { "key": "startDate", "label": "仮貯蔵・仮取扱いの期間（開始日）", "type": "date", "required": true },
-        { "key": "endDate", "label": "仮貯蔵・仮取扱いの期間（終了日）", "type": "date", "required": true },
-        { "key": "durationDays", "label": "期間（日数）", "type": "text", "required": true, "placeholder": "例：10日間" },
-        { "key": "managementStatus", "label": "管理の状況（消火設備の設置状況含む）", "type": "multiline", "required": true }
-      ]
-    },
-    {
-      "id": "site-supervisor",
+      "id": "manager",
       "heading": "現場管理責任者",
       "fields": [
-        { "key": "supervisorAddress", "label": "住所", "type": "text", "required": true },
-        { "key": "supervisorEmergencyPhone", "label": "緊急連絡先", "type": "text", "required": true },
-        { "key": "supervisorName", "label": "氏名", "type": "text", "required": true },
-        { "key": "supervisorLicense", "label": "危険物取扱者免状", "type": "radio", "options": ["有", "無"], "required": true },
-        { "key": "supervisorLicenseKind", "label": "免状の種類（免状有の場合）", "type": "text", "placeholder": "例：甲種／乙種第4類" }
+        {
+          "key": "siteManagerAddress",
+          "label": "現場管理責任者 住所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "siteManagerName",
+          "label": "現場管理責任者 氏名",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "siteManagerEmergencyContact",
+          "label": "緊急連絡先",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "siteManagerLicense",
+          "label": "危険物取扱者免状の種類",
+          "type": "text",
+          "placeholder": "例: 甲種、または 無"
+        }
       ]
     },
     {
-      "id": "reason",
-      "heading": "理由・処理",
+      "id": "other",
+      "heading": "理由・その他",
       "fields": [
-        { "key": "reasonAndPostHandling", "label": "仮貯蔵・仮取扱いの理由及び期間経過後の処理", "type": "multiline", "required": true },
-        { "key": "otherMatters", "label": "その他必要事項", "type": "multiline" }
+        {
+          "key": "temporaryReason",
+          "label": "仮貯蔵・仮取扱いの理由及び期間経過後の処理",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "key": "otherMatters",
+          "label": "その他必要な事項",
+          "type": "multiline"
+        }
+      ]
+    },
+    {
+      "id": "official",
+      "heading": "※ 行政記入欄",
+      "fields": [
+        {
+          "key": "officialUseReceipt",
+          "label": "※受付欄 (行政記入)",
+          "type": "text",
+          "helpText": "行政側で記入されます。通常は空欄のままで提出。"
+        },
+        {
+          "key": "officialApprovalDateAndNumber",
+          "label": "※承認年月日・承認番号 (行政記入)",
+          "type": "text"
+        },
+        {
+          "key": "officialUseFee",
+          "label": "※手数料欄 (行政記入)",
+          "type": "text"
+        }
       ]
     }
   ],

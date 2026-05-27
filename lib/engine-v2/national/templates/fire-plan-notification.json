@@ -8,33 +8,110 @@
   "submitToTemplate": "{{municipality}} {{fireDeptName}}消防署長　殿",
   "submitterTitle": "{{kind}}管理者",
   "submitterFields": [
-    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
-    { "key": "submitterName", "label": "氏名", "type": "text", "required": true }
+    {
+      "key": "submitterAddress",
+      "label": "住所",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterName",
+      "label": "氏名",
+      "type": "text",
+      "required": true
+    }
   ],
   "headerFields": [
-    { "key": "kind", "label": "種別", "type": "radio", "options": ["防火", "防災"], "required": true },
-    { "key": "operationType", "label": "作成／変更", "type": "radio", "options": ["作成", "変更"], "required": true },
-    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
-    { "key": "municipality", "label": "提出先（市区町村）", "type": "text", "required": true, "placeholder": "例：京都市" },
-    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true, "placeholder": "例：中京" }
+    {
+      "key": "kind",
+      "label": "種別",
+      "type": "radio",
+      "options": [
+        "防火",
+        "防災"
+      ],
+      "required": true
+    },
+    {
+      "key": "operationType",
+      "label": "作成／変更",
+      "type": "radio",
+      "options": [
+        "作成",
+        "変更"
+      ],
+      "required": true
+    },
+    {
+      "key": "submitDate",
+      "label": "届出日",
+      "type": "date",
+      "required": true
+    },
+    {
+      "key": "municipality",
+      "label": "提出先（市区町村）",
+      "type": "text",
+      "required": true,
+      "placeholder": "例：京都市"
+    },
+    {
+      "key": "fireDeptName",
+      "label": "提出先（管轄消防署）",
+      "type": "text",
+      "required": true,
+      "placeholder": "例：中京"
+    }
   ],
   "sections": [
     {
       "id": "authority-name",
       "heading": "管理権原者",
       "fields": [
-        { "key": "authorityName", "label": "管理権原者の氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+        {
+          "key": "authorityName",
+          "label": "管理権原者の氏名（法人の場合は名称及び代表者氏名）",
+          "type": "text",
+          "required": true
+        }
       ]
     },
     {
       "id": "building",
       "heading": "防火対象物又は建築物その他の工作物",
       "fields": [
-        { "key": "buildingAddress", "label": "所在地", "type": "text", "required": true },
-        { "key": "buildingName", "label": "名称（変更の場合は、変更後の名称）", "type": "text", "required": true },
-        { "key": "multipleAuthorityPart", "label": "複数権原の場合に管理権原に属する部分の名称", "type": "text", "helpText": "複数権原の場合のみ" },
-        { "key": "buildingUse", "label": "用途（変更の場合は、変更後の用途）", "type": "text", "required": true, "placeholder": "例：事務所" },
-        { "key": "buildingCategory", "label": "令別表第1の項番", "type": "text", "required": true, "placeholder": "例：（15）項" }
+        {
+          "key": "buildingAddress",
+          "label": "所在地",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "buildingName",
+          "label": "名称（変更の場合は、変更後の名称）",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "multipleAuthorityPart",
+          "label": "複数権原の場合に管理権原に属する部分の名称",
+          "type": "text",
+          "helpText": "複数権原の場合のみ"
+        },
+        {
+          "key": "mainUse",
+          "label": "用途（変更の場合は、変更後の用途）",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：事務所"
+        },
+        {
+          "key": "buildingCategory",
+          "label": "令別表第1の項番",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：（15）項"
+        }
       ]
     },
     {
@@ -42,7 +119,11 @@
       "heading": "その他必要な事項",
       "description": "変更届の場合は主要な変更事項を記載してください。",
       "fields": [
-        { "key": "otherMatters", "label": "その他必要な事項／主要な変更事項", "type": "multiline" }
+        {
+          "key": "otherMatters",
+          "label": "その他必要な事項／主要な変更事項",
+          "type": "multiline"
+        }
       ]
     }
   ],

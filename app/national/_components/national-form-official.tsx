@@ -35,9 +35,16 @@ function buildSchema(meta: OfficialPackMeta) {
         s = z
           .string()
           .regex(/^[\d,.]*$/, { message: "数値を入力してください" });
+      } else if (field.type === "checkbox") {
+        // チェックボックス は "true" / "false" の文字列で保持
+        s = z.enum(["true", "false"]);
       }
       if (required) {
-        s = (s as z.ZodString).min(1, { message: "必須項目です" });
+        if (field.type === "checkbox") {
+          // checkbox は required でも空文字許容しない (デフォルト false)
+        } else {
+          s = (s as z.ZodString).min(1, { message: "必須項目です" });
+        }
       } else {
         s = s.optional().or(z.literal(""));
       }
@@ -53,7 +60,7 @@ function buildDefaults(meta: OfficialPackMeta): FormValues {
   const out: FormValues = {};
   for (const section of meta.sections) {
     for (const field of section.fields) {
-      out[field.key] = "";
+      out[field.key] = field.type === "checkbox" ? "false" : "";
     }
   }
   return out;
@@ -256,6 +263,7 @@ function Field({
   const id = `f-${field.key}`;
   const reg = register(field.key);
   const isMultiline = field.type === "multiline";
+  const isCheckbox = field.type === "checkbox";
   const inputType =
     field.type === "date" ? "date" :
     field.type === "phone" ? "tel" :
@@ -264,12 +272,31 @@ function Field({
 
   return (
     <div className={`nfo-field ${isMultiline ? "nfo-field--full" : ""}`}>
-      <label htmlFor={id} className="nfo-label">
-        {field.label}
-        {field.required ? <span className="nfo-required"> *</span> : <span className="nfo-optional">（任意）</span>}
-      </label>
+      {!isCheckbox && (
+        <label htmlFor={id} className="nfo-label">
+          {field.label}
+          {field.required ? <span className="nfo-required"> *</span> : <span className="nfo-optional">（任意）</span>}
+        </label>
+      )}
 
-      {isMultiline ? (
+      {isCheckbox ? (
+        <label htmlFor={id} className="nfo-checkbox-label">
+          <input
+            id={id}
+            type="checkbox"
+            className="nfo-checkbox"
+            defaultChecked={false}
+            onChange={(e) => reg.onChange({ target: { name: field.key, value: e.target.checked ? "true" : "false" } })}
+            onBlur={reg.onBlur}
+            name={reg.name}
+            ref={reg.ref}
+          />
+          <span>
+            {field.label}
+            {field.required && <span className="nfo-required"> *</span>}
+          </span>
+        </label>
+      ) : isMultiline ? (
         <textarea
           id={id}
           rows={3}
@@ -349,6 +376,23 @@ function Field({
           color: #c8261e;
           margin: 2px 0 0;
           line-height: 1.4;
+        }
+        .nfo-checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          color: #222;
+          line-height: 1.5;
+          padding: 8px 0;
+          cursor: pointer;
+          min-height: 44px;
+        }
+        .nfo-checkbox {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          flex-shrink: 0;
         }
       `}</style>
     </div>
