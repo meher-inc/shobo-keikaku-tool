@@ -9,44 +9,161 @@
   "submitToTemplate": "{{municipality}}長　殿",
   "submitterTitle": "届出者",
   "submitterFields": [
-    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
-    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
-    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+    {
+      "key": "submitterAddress",
+      "label": "申請者・届出者 住所",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterName",
+      "label": "申請者・届出者 氏名",
+      "type": "text",
+      "required": true,
+      "placeholder": "法人の場合は名称及び代表者氏名"
+    },
+    {
+      "key": "submitterPhone",
+      "label": "申請者・届出者 電話番号",
+      "type": "text",
+      "required": true
+    }
   ],
   "headerFields": [
-    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
-    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true }
+    {
+      "key": "submitDate",
+      "label": "提出日",
+      "type": "date",
+      "required": true
+    },
+    {
+      "key": "municipality",
+      "label": "市町村",
+      "type": "text",
+      "required": true,
+      "placeholder": "例: 京都市"
+    },
+    {
+      "key": "recipientTitle",
+      "label": "提出先肩書",
+      "type": "text",
+      "required": true,
+      "placeholder": "例: 消防署長"
+    }
   ],
   "sections": [
     {
       "id": "owner",
-      "heading": "設置者",
+      "heading": "設置者 (危険物の所有者)",
       "fields": [
-        { "key": "ownerAddress", "label": "住所", "type": "text", "required": true },
-        { "key": "ownerPhone", "label": "電話番号", "type": "text" },
-        { "key": "ownerName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+        {
+          "key": "ownerAddress",
+          "label": "設置者 住所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "ownerName",
+          "label": "設置者 氏名",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "ownerPhone",
+          "label": "設置者 電話番号",
+          "type": "text"
+        }
       ]
     },
     {
       "id": "facility",
       "heading": "対象施設",
       "fields": [
-        { "key": "facilityLocation", "label": "設置場所", "type": "text", "required": true },
-        { "key": "permitDate", "label": "設置の許可年月日", "type": "date", "required": true },
-        { "key": "permitNumber", "label": "設置の許可番号", "type": "text", "required": true },
-        { "key": "facilityKind", "label": "製造所等の別", "type": "text", "required": true },
-        { "key": "facilityCategory", "label": "貯蔵所又は取扱所の区分", "type": "text" }
+        {
+          "key": "facilityLocation",
+          "label": "設置場所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "permitInfo",
+          "label": "設置の許可年月日及び許可番号",
+          "type": "text",
+          "placeholder": "例: 令和7年1月1日 第1号"
+        },
+        {
+          "key": "facilityKind",
+          "label": "製造所等の別",
+          "type": "text",
+          "required": true,
+          "placeholder": "例: 屋内貯蔵所"
+        },
+        {
+          "key": "facilityCategory",
+          "label": "貯蔵所又は取扱所の区分",
+          "type": "text",
+          "placeholder": "例: 一般取扱所"
+        }
       ]
     },
     {
       "id": "change",
-      "heading": "変更内容",
+      "heading": "品名・数量変更",
       "fields": [
-        { "key": "hazmatBefore", "label": "変更前 危険物の類、品名（指定数量）、最大数量", "type": "multiline", "required": true },
-        { "key": "hazmatAfter", "label": "変更後 危険物の類、品名（指定数量）、最大数量", "type": "multiline", "required": true },
-        { "key": "multipleBefore", "label": "変更前 指定数量の倍数", "type": "text", "required": true },
-        { "key": "multipleAfter", "label": "変更後 指定数量の倍数", "type": "text", "required": true },
-        { "key": "scheduledChangeDate", "label": "変更予定期日", "type": "date", "required": true }
+        {
+          "key": "hazmatClassAndNameBefore",
+          "label": "変更前 危険物の類、品名、最大数量",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "key": "designatedQuantityMultipleBefore",
+          "label": "変更前 指定数量の倍数",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "hazmatClassAndNameAfter",
+          "label": "変更後 危険物の類、品名、最大数量",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "key": "designatedQuantityMultipleAfter",
+          "label": "変更後 指定数量の倍数",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "afterColumn4",
+          "label": "変更後 追加情報",
+          "type": "text",
+          "helpText": "通常は空欄。"
+        },
+        {
+          "key": "changeDate",
+          "label": "変更予定期日",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "official",
+      "heading": "※ 行政記入欄",
+      "fields": [
+        {
+          "key": "officialUseReceipt",
+          "label": "※受付欄 (行政記入)",
+          "type": "text",
+          "helpText": "行政側で記入されます。通常は空欄のままで提出。"
+        },
+        {
+          "key": "officialUseProgress",
+          "label": "※経過欄 (行政記入)",
+          "type": "text",
+          "helpText": "行政側で記入されます。"
+        }
       ]
     }
   ],

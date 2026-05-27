@@ -8,31 +8,136 @@
   "submitToTemplate": "{{municipality}} {{fireDeptName}}消防署長　殿",
   "submitterTitle": "管理権原者",
   "submitterFields": [
-    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
-    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true },
-    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true }
+    {
+      "key": "submitterAddress",
+      "label": "住所",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterName",
+      "label": "氏名（法人の場合は名称及び代表者氏名）",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterPhone",
+      "label": "電話番号",
+      "type": "text",
+      "required": true
+    }
   ],
   "headerFields": [
-    { "key": "kind", "label": "種別", "type": "radio", "options": ["防火", "防災"], "required": true },
-    { "key": "operationType", "label": "選任／解任", "type": "radio", "options": ["選任", "解任"], "required": true },
-    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
-    { "key": "municipality", "label": "提出先（市区町村）", "type": "text", "required": true, "placeholder": "例：京都市" },
-    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true, "placeholder": "例：中京" }
+    {
+      "key": "kind",
+      "label": "種別",
+      "type": "radio",
+      "options": [
+        "防火",
+        "防災"
+      ],
+      "required": true
+    },
+    {
+      "key": "operationType",
+      "label": "選任／解任",
+      "type": "radio",
+      "options": [
+        "選任",
+        "解任"
+      ],
+      "required": true
+    },
+    {
+      "key": "submitDate",
+      "label": "届出日",
+      "type": "date",
+      "required": true
+    },
+    {
+      "key": "municipality",
+      "label": "提出先（市区町村）",
+      "type": "text",
+      "required": true,
+      "placeholder": "例：京都市"
+    },
+    {
+      "key": "fireDeptName",
+      "label": "提出先（管轄消防署）",
+      "type": "text",
+      "required": true,
+      "placeholder": "例：中京"
+    }
   ],
   "sections": [
     {
       "id": "building",
       "heading": "防火対象物（建築物その他の工作物）",
       "fields": [
-        { "key": "buildingAddress", "label": "所在地", "type": "text", "required": true },
-        { "key": "buildingPhone", "label": "電話番号", "type": "text" },
-        { "key": "buildingName", "label": "名称", "type": "text", "required": true },
-        { "key": "managementAuthority", "label": "管理権原", "type": "radio", "options": ["単一権原", "複数権原"], "required": true },
-        { "key": "multipleAuthorityPart", "label": "複数権原の場合に管理権原に属する部分の名称", "type": "text", "helpText": "管理権原が「複数権原」の場合のみ記入" },
-        { "key": "buildingUse", "label": "用途", "type": "text", "required": true, "placeholder": "例：事務所" },
-        { "key": "buildingCategory", "label": "令別表第1の項番", "type": "text", "required": true, "placeholder": "例：（15）項" },
-        { "key": "capacity", "label": "収容人員", "type": "text", "required": true, "placeholder": "例：120人" },
-        { "key": "managerKind", "label": "種別（甲種／乙種）", "type": "radio", "options": ["甲種", "乙種"], "helpText": "防火管理者の場合のみ選択" }
+        {
+          "key": "buildingAddress",
+          "label": "所在地",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "buildingPhone",
+          "label": "電話番号",
+          "type": "text"
+        },
+        {
+          "key": "buildingName",
+          "label": "名称",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "managementAuthority",
+          "label": "管理権原",
+          "type": "radio",
+          "options": [
+            "単一権原",
+            "複数権原"
+          ],
+          "required": true
+        },
+        {
+          "key": "multipleAuthorityPart",
+          "label": "複数権原の場合に管理権原に属する部分の名称",
+          "type": "text",
+          "helpText": "管理権原が「複数権原」の場合のみ記入"
+        },
+        {
+          "key": "mainUse",
+          "label": "用途",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：事務所"
+        },
+        {
+          "key": "buildingCategory",
+          "label": "令別表第1の項番",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：（15）項"
+        },
+        {
+          "key": "capacity",
+          "label": "収容人員",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：120人"
+        },
+        {
+          "key": "managerKind",
+          "label": "種別（甲種／乙種）",
+          "type": "radio",
+          "options": [
+            "甲種",
+            "乙種"
+          ],
+          "helpText": "防火管理者の場合のみ選択"
+        }
       ]
     },
     {
@@ -42,15 +147,37 @@
       "description": "令第2条適用＝同一敷地内に複数の防火対象物がある場合に、対象ごとに記入。令第3条第3項適用＝複数権原で管理権原に属する部分ごとに記入。最大2行ずつ。3行以上必要な場合は任意の別紙で添付すること。",
       "rowHeaderLabel": "区分",
       "columns": [
-        { "key": "Name", "label": "名称" },
-        { "key": "Category", "label": "令別表第1", "placeholder": "例：（15）項" },
-        { "key": "Capacity", "label": "収容人員" }
+        {
+          "key": "Name",
+          "label": "名称"
+        },
+        {
+          "key": "Category",
+          "label": "令別表第1",
+          "placeholder": "例：（15）項"
+        },
+        {
+          "key": "Capacity",
+          "label": "収容人員"
+        }
       ],
       "rows": [
-        { "key": "rule2Building1", "label": "令第2条を適用するもの 1" },
-        { "key": "rule2Building2", "label": "令第2条を適用するもの 2" },
-        { "key": "rule3p3Part1", "label": "令第3条第3項を適用するもの 1" },
-        { "key": "rule3p3Part2", "label": "令第3条第3項を適用するもの 2" }
+        {
+          "key": "rule2Building1",
+          "label": "令第2条を適用するもの 1"
+        },
+        {
+          "key": "rule2Building2",
+          "label": "令第2条を適用するもの 2"
+        },
+        {
+          "key": "rule3p3Part1",
+          "label": "令第3条第3項を適用するもの 1"
+        },
+        {
+          "key": "rule3p3Part2",
+          "label": "令第3条第3項を適用するもの 2"
+        }
       ]
     },
     {
@@ -58,15 +185,59 @@
       "heading": "選任の場合",
       "description": "選任の場合に該当欄を記入してください。",
       "fields": [
-        { "key": "managerName", "label": "氏名", "type": "text" },
-        { "key": "managerNameKana", "label": "フリガナ", "type": "text" },
-        { "key": "managerAddress", "label": "住所", "type": "text" },
-        { "key": "appointmentDate", "label": "選任年月日", "type": "date" },
-        { "key": "positionTitle", "label": "職務上の地位", "type": "text" },
-        { "key": "qualificationKind", "label": "資格区分", "type": "checkbox-group", "options": ["防火管理（甲種）新規講習", "防火管理（甲種）再講習", "防火管理（乙種）", "防災管理 新規講習", "防災管理 再講習"] },
-        { "key": "qualificationInstitution", "label": "講習機関", "type": "text" },
-        { "key": "qualificationCompletionDate", "label": "修了年月日", "type": "date" },
-        { "key": "otherQualification", "label": "その他資格根拠条文", "type": "text", "placeholder": "例：令第3条第1項第1号" }
+        {
+          "key": "managerName",
+          "label": "氏名",
+          "type": "text"
+        },
+        {
+          "key": "managerNameKana",
+          "label": "フリガナ",
+          "type": "text"
+        },
+        {
+          "key": "managerAddress",
+          "label": "住所",
+          "type": "text"
+        },
+        {
+          "key": "appointmentDate",
+          "label": "選任年月日",
+          "type": "date"
+        },
+        {
+          "key": "positionTitle",
+          "label": "職務上の地位",
+          "type": "text"
+        },
+        {
+          "key": "qualificationKind",
+          "label": "資格区分",
+          "type": "checkbox-group",
+          "options": [
+            "防火管理（甲種）新規講習",
+            "防火管理（甲種）再講習",
+            "防火管理（乙種）",
+            "防災管理 新規講習",
+            "防災管理 再講習"
+          ]
+        },
+        {
+          "key": "qualificationInstitution",
+          "label": "講習機関",
+          "type": "text"
+        },
+        {
+          "key": "qualificationCompletionDate",
+          "label": "修了年月日",
+          "type": "date"
+        },
+        {
+          "key": "otherQualification",
+          "label": "その他資格根拠条文",
+          "type": "text",
+          "placeholder": "例：令第3条第1項第1号"
+        }
       ]
     },
     {
@@ -74,16 +245,32 @@
       "heading": "解任の場合",
       "description": "解任の場合に該当欄を記入してください。",
       "fields": [
-        { "key": "dismissedManagerName", "label": "氏名", "type": "text" },
-        { "key": "dismissalDate", "label": "解任年月日", "type": "date" },
-        { "key": "dismissalReason", "label": "解任理由", "type": "multiline" }
+        {
+          "key": "dismissedManagerName",
+          "label": "氏名",
+          "type": "text"
+        },
+        {
+          "key": "dismissalDate",
+          "label": "解任年月日",
+          "type": "date"
+        },
+        {
+          "key": "dismissalReason",
+          "label": "解任理由",
+          "type": "multiline"
+        }
       ]
     },
     {
       "id": "remarks",
       "heading": "その他必要事項",
       "fields": [
-        { "key": "remarks", "label": "備考・特記事項", "type": "multiline" }
+        {
+          "key": "remarks",
+          "label": "備考・特記事項",
+          "type": "multiline"
+        }
       ]
     }
   ],

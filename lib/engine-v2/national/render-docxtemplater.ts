@@ -20,11 +20,26 @@ import path from "node:path";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import type { NationalFormData } from "../types/national-form-pack";
+import { getOfficialPackMeta } from "./templates-official-metadata";
 
 const TEMPLATES_DIR = path.join(
   process.cwd(),
   "lib/engine-v2/national/templates-official"
 );
+
+/** チェックボックス変数 (true → ☑、false → □) */
+export const CHECKED_MARK = "☑";  // ☑
+export const UNCHECKED_MARK = "□"; // □
+
+/** truthy/falsy 判定 (string "true"/"false", boolean, "on"/"off" 等を許容) */
+function toBoolean(v: unknown): boolean {
+  if (typeof v === "boolean") return v;
+  if (typeof v === "string") {
+    const s = v.toLowerCase().trim();
+    return s === "true" || s === "1" || s === "on" || s === "yes" || s === CHECKED_MARK;
+  }
+  return Boolean(v);
+}
 
 /** 公式 docx テンプレートが存在するかチェック (自動経路選択用)。 */
 export function hasOfficialTemplate(packName: string): boolean {
@@ -62,13 +77,26 @@ export async function renderWithOfficialTemplate(
     delimiters: { start: "{{", end: "}}" },
   });
 
-  // undefined → 空文字、配列 → 連結 (チェックボックス Mark 系を意識)
+  // metadata から checkbox 型 field を抽出
+  const meta = getOfficialPackMeta(packName);
+  const checkboxKeys = new Set<string>();
+  if (meta) {
+    for (const section of meta.sections) {
+      for (const field of section.fields) {
+        if (field.type === "checkbox") checkboxKeys.add(field.key);
+      }
+    }
+  }
+
+  // undefined → 空文字、配列 → 連結 (改行区切りで複数行値)、checkbox → ☑/□
   const normalized: Record<string, string> = {};
   for (const [key, value] of Object.entries(data)) {
-    if (value === undefined) {
+    if (checkboxKeys.has(key)) {
+      normalized[key] = toBoolean(value) ? CHECKED_MARK : UNCHECKED_MARK;
+    } else if (value === undefined) {
       normalized[key] = "";
     } else if (Array.isArray(value)) {
-      normalized[key] = value.join("、");
+      normalized[key] = value.join("\n");
     } else {
       normalized[key] = String(value);
     }

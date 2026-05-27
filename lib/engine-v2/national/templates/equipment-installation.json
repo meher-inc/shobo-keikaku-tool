@@ -8,74 +8,238 @@
   "submitToTemplate": "{{fireAuthorityName}}　{{fireDeptName}}消防署長　殿",
   "submitterTitle": "届出者",
   "submitterFields": [
-    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
-    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+    {
+      "key": "submitterAddress",
+      "label": "住所",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterName",
+      "label": "氏名（法人の場合は名称及び代表者氏名）",
+      "type": "text",
+      "required": true
+    }
   ],
   "headerFields": [
-    { "key": "submitDate", "label": "届出日", "type": "date", "required": true },
-    { "key": "fireAuthorityName", "label": "提出先（消防本部・庁名）", "type": "text", "required": true, "placeholder": "例：東京消防庁" },
-    { "key": "fireDeptName", "label": "提出先（管轄消防署）", "type": "text", "required": true, "placeholder": "例：千代田" }
+    {
+      "key": "submitDate",
+      "label": "届出日",
+      "type": "date",
+      "required": true
+    },
+    {
+      "key": "fireAuthorityName",
+      "label": "提出先（消防本部・庁名）",
+      "type": "text",
+      "required": true,
+      "placeholder": "例：東京消防庁"
+    },
+    {
+      "key": "fireDeptName",
+      "label": "提出先（管轄消防署）",
+      "type": "text",
+      "required": true,
+      "placeholder": "例：千代田"
+    }
   ],
   "sections": [
     {
       "id": "installer",
       "heading": "設置者（防火対象物の関係者）",
       "fields": [
-        { "key": "installerAddress", "label": "住所", "type": "text", "required": true },
-        { "key": "installerPhone", "label": "電話番号", "type": "text", "required": true },
-        { "key": "installerName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+        {
+          "key": "installerAddress",
+          "label": "住所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "installerPhone",
+          "label": "電話番号",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "installerName",
+          "label": "氏名（法人の場合は名称及び代表者氏名）",
+          "type": "text",
+          "required": true
+        }
       ]
     },
     {
       "id": "building",
       "heading": "防火対象物",
       "fields": [
-        { "key": "buildingAddress", "label": "所在地", "type": "text", "required": true },
-        { "key": "buildingName", "label": "名称", "type": "text", "required": true, "helpText": "テナント単位の場合は「○○ビル2階（△△テナント）」のように記入" },
-        { "key": "buildingUse", "label": "用途", "type": "text", "required": true, "placeholder": "例：（15）項（事務所）" },
-        { "key": "structureKind", "label": "構造", "type": "text", "required": true, "placeholder": "例：耐火造" },
-        { "key": "floorsAbove", "label": "地上階数", "type": "text", "required": true },
-        { "key": "floorsBelow", "label": "地下階数", "type": "text" },
-        { "key": "floorArea", "label": "床面積（㎡）", "type": "text" },
-        { "key": "totalArea", "label": "延べ面積（㎡）", "type": "text", "required": true }
+        {
+          "key": "buildingAddress",
+          "label": "所在地",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "buildingName",
+          "label": "名称",
+          "type": "text",
+          "required": true,
+          "helpText": "テナント単位の場合は「○○ビル2階（△△テナント）」のように記入"
+        },
+        {
+          "key": "mainUse",
+          "label": "用途",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：（15）項（事務所）"
+        },
+        {
+          "key": "structureKind",
+          "label": "構造",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：耐火造"
+        },
+        {
+          "key": "floorsAbove",
+          "label": "地上階数",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "floorsBelow",
+          "label": "地下階数",
+          "type": "text"
+        },
+        {
+          "key": "floorArea",
+          "label": "床面積（㎡）",
+          "type": "text"
+        },
+        {
+          "key": "totalArea",
+          "label": "延べ面積（㎡）",
+          "type": "text",
+          "required": true
+        }
       ]
     },
     {
       "id": "equipment",
       "heading": "消防用設備等（特殊消防用設備等）",
       "fields": [
-        { "key": "equipmentKind", "label": "種類", "type": "text", "required": true, "placeholder": "例：自動火災報知設備" },
-        { "key": "workKind", "label": "工事の種別", "type": "radio", "options": ["新設", "増設", "移設", "取替え", "改造", "その他"], "required": true }
+        {
+          "key": "equipmentKind",
+          "label": "種類",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：自動火災報知設備"
+        },
+        {
+          "key": "workKind",
+          "label": "工事の種別",
+          "type": "radio",
+          "options": [
+            "新設",
+            "増設",
+            "移設",
+            "取替え",
+            "改造",
+            "その他"
+          ],
+          "required": true
+        }
       ]
     },
     {
       "id": "constructor",
       "heading": "施工者",
       "fields": [
-        { "key": "constructorAddress", "label": "住所", "type": "text", "required": true },
-        { "key": "constructorPhone", "label": "電話番号", "type": "text" },
-        { "key": "constructorName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+        {
+          "key": "constructorAddress",
+          "label": "住所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "constructorPhone",
+          "label": "電話番号",
+          "type": "text"
+        },
+        {
+          "key": "constructorName",
+          "label": "氏名（法人の場合は名称及び代表者氏名）",
+          "type": "text",
+          "required": true
+        }
       ]
     },
     {
       "id": "fire-equipment-officer",
       "heading": "消防設備士",
       "fields": [
-        { "key": "officerAddress", "label": "住所", "type": "text", "required": true },
-        { "key": "officerName", "label": "氏名（法人の場合は名称及び役職）", "type": "text", "required": true },
-        { "key": "officerLicenseKind", "label": "免状の種類（甲種／乙種）", "type": "radio", "options": ["甲種", "乙種"], "required": true },
-        { "key": "officerLicenseClass", "label": "免状の指定区分", "type": "text", "required": true, "placeholder": "例：第4類" },
-        { "key": "officerLicensePrefecture", "label": "交付知事（都道府県）", "type": "text", "required": true },
-        { "key": "officerLicenseNumber", "label": "免状交付番号", "type": "text", "required": true },
-        { "key": "officerCoursePrefecture", "label": "講習受講地（都道府県）", "type": "text" },
-        { "key": "officerCourseDate", "label": "講習受講年月", "type": "text" }
+        {
+          "key": "officerAddress",
+          "label": "住所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "officerName",
+          "label": "氏名（法人の場合は名称及び役職）",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "officerLicenseKind",
+          "label": "免状の種類（甲種／乙種）",
+          "type": "radio",
+          "options": [
+            "甲種",
+            "乙種"
+          ],
+          "required": true
+        },
+        {
+          "key": "officerLicenseClass",
+          "label": "免状の指定区分",
+          "type": "text",
+          "required": true,
+          "placeholder": "例：第4類"
+        },
+        {
+          "key": "officerLicensePrefecture",
+          "label": "交付知事（都道府県）",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "officerLicenseNumber",
+          "label": "免状交付番号",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "officerCoursePrefecture",
+          "label": "講習受講地（都道府県）",
+          "type": "text"
+        },
+        {
+          "key": "officerCourseDate",
+          "label": "講習受講年月",
+          "type": "text"
+        }
       ]
     },
     {
       "id": "completion",
       "heading": "完成年月日",
       "fields": [
-        { "key": "completionDate", "label": "完成年月日", "type": "date", "required": true }
+        {
+          "key": "completionDate",
+          "label": "完成年月日",
+          "type": "date",
+          "required": true
+        }
       ]
     }
   ],

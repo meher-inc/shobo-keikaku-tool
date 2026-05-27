@@ -15,7 +15,13 @@
  * 変更時は対応する templates-official/*.docx と整合性を確認すること。
  */
 
-export type FieldType = "text" | "multiline" | "date" | "phone" | "number";
+export type FieldType =
+  | "text"
+  | "multiline"
+  | "date"
+  | "phone"
+  | "number"
+  | "checkbox";  // boolean → ☑/□ (renderer converts at substitution time)
 
 export interface OfficialFieldMeta {
   key: string;
@@ -441,13 +447,14 @@ const META: Record<string, OfficialPackMeta> = {
       {
         id: "appointment",
         heading: "統括管理者 選任・解任",
+        description: "複数名の場合は各欄に改行区切りで入力してください (例: 山田 太郎\\n佐藤 次郎)。",
         fields: [
-          { key: "appointedName", label: "選任 氏名", type: "text", required: false },
-          { key: "appointedPosition", label: "選任 職務上の地位", type: "text", required: false },
-          { key: "appointmentDate", label: "選任年月日", type: "date", required: false },
-          { key: "dismissedName", label: "解任 氏名", type: "text", required: false },
-          { key: "dismissedPosition", label: "解任 職務上の地位", type: "text", required: false },
-          { key: "dismissalDate", label: "解任年月日", type: "date", required: false },
+          { key: "appointedName", label: "選任 氏名 (複数可)", type: "multiline", required: false, helpText: "複数名の場合は改行で区切ってください" },
+          { key: "appointedPosition", label: "選任 職務上の地位 (複数可)", type: "multiline", required: false, helpText: "複数名の場合は改行で区切り、氏名と同じ順序で入力" },
+          { key: "appointmentDate", label: "選任年月日 (複数可)", type: "multiline", required: false, helpText: "例: 令和8年4月1日 / 複数の場合は改行区切り" },
+          { key: "dismissedName", label: "解任 氏名 (複数可)", type: "multiline", required: false, helpText: "複数名の場合は改行で区切ってください" },
+          { key: "dismissedPosition", label: "解任 職務上の地位 (複数可)", type: "multiline", required: false, helpText: "複数名の場合は改行で区切り、氏名と同じ順序で入力" },
+          { key: "dismissalDate", label: "解任年月日 (複数可)", type: "multiline", required: false, helpText: "例: 令和8年3月31日 / 複数の場合は改行区切り" },
         ],
       },
       {
@@ -472,13 +479,14 @@ const META: Record<string, OfficialPackMeta> = {
       {
         id: "appointment",
         heading: "保安監督者 選任・解任",
+        description: "複数名の場合は各欄に改行区切りで入力してください。",
         fields: [
-          { key: "appointedName", label: "選任 氏名", type: "text", required: false },
-          { key: "appointedLicense", label: "選任 免状の種類", type: "text", required: false, placeholder: "例: 甲種危険物取扱者" },
-          { key: "appointmentDate", label: "選任年月日", type: "date", required: false },
-          { key: "dismissedName", label: "解任 氏名", type: "text", required: false },
-          { key: "dismissedLicense", label: "解任 免状の種類", type: "text", required: false },
-          { key: "dismissalDate", label: "解任年月日", type: "date", required: false },
+          { key: "appointedName", label: "選任 氏名 (複数可)", type: "multiline", required: false, helpText: "複数名の場合は改行で区切ってください" },
+          { key: "appointedLicense", label: "選任 免状の種類 (複数可)", type: "multiline", required: false, helpText: "例: 甲種危険物取扱者 / 複数の場合は改行区切り、氏名と同じ順序で入力" },
+          { key: "appointmentDate", label: "選任年月日 (複数可)", type: "multiline", required: false, helpText: "例: 令和8年4月1日 / 複数の場合は改行区切り" },
+          { key: "dismissedName", label: "解任 氏名 (複数可)", type: "multiline", required: false, helpText: "複数名の場合は改行で区切ってください" },
+          { key: "dismissedLicense", label: "解任 免状の種類 (複数可)", type: "multiline", required: false, helpText: "複数名の場合は改行で区切り、氏名と同じ順序で入力" },
+          { key: "dismissalDate", label: "解任年月日 (複数可)", type: "multiline", required: false, helpText: "例: 令和8年3月31日 / 複数の場合は改行区切り" },
         ],
       },
       {

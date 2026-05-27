@@ -9,67 +9,209 @@
   "submitToTemplate": "{{municipality}}長　殿",
   "submitterTitle": "申請者",
   "submitterFields": [
-    { "key": "submitterAddress", "label": "住所", "type": "text", "required": true },
-    { "key": "submitterPhone", "label": "電話番号", "type": "text", "required": true },
-    { "key": "submitterName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
+    {
+      "key": "submitterAddress",
+      "label": "申請者・届出者 住所",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "submitterName",
+      "label": "申請者・届出者 氏名",
+      "type": "text",
+      "required": true,
+      "placeholder": "法人の場合は名称及び代表者氏名"
+    },
+    {
+      "key": "submitterPhone",
+      "label": "申請者・届出者 電話番号",
+      "type": "text",
+      "required": true
+    }
   ],
   "headerFields": [
-    { "key": "submitDate", "label": "申請日", "type": "date", "required": true },
-    { "key": "municipality", "label": "提出先（市町村長等）", "type": "text", "required": true }
+    {
+      "key": "submitDate",
+      "label": "提出日",
+      "type": "date",
+      "required": true
+    },
+    {
+      "key": "municipality",
+      "label": "市町村",
+      "type": "text",
+      "required": true,
+      "placeholder": "例: 京都市"
+    },
+    {
+      "key": "recipientTitle",
+      "label": "提出先肩書",
+      "type": "text",
+      "required": true,
+      "placeholder": "例: 消防署長"
+    }
   ],
   "sections": [
     {
       "id": "owner",
       "heading": "設置者",
       "fields": [
-        { "key": "ownerAddress", "label": "住所", "type": "text", "required": true },
-        { "key": "ownerPhone", "label": "電話番号", "type": "text" },
-        { "key": "ownerName", "label": "氏名（法人の場合は名称及び代表者氏名）", "type": "text", "required": true }
-      ]
-    },
-    {
-      "id": "location",
-      "heading": "設置場所",
-      "fields": [
-        { "key": "facilityLocation", "label": "設置場所", "type": "text", "required": true },
-        { "key": "fireZone", "label": "防火地域別", "type": "text" },
-        { "key": "useZone", "label": "用途地域別", "type": "text" }
-      ]
-    },
-    {
-      "id": "existing-permit",
-      "heading": "既存設置許可",
-      "fields": [
-        { "key": "permitDate", "label": "設置の許可年月日", "type": "date", "required": true },
-        { "key": "permitNumber", "label": "設置の許可番号", "type": "text", "required": true }
+        {
+          "key": "ownerAddress",
+          "label": "設置者 住所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "ownerName",
+          "label": "設置者 氏名",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "ownerPhone",
+          "label": "設置者 電話番号",
+          "type": "text"
+        },
+        {
+          "key": "ownerNameField",
+          "label": "設置者氏名 (補助欄)",
+          "type": "text",
+          "helpText": "氏名欄の右側に表示される追加情報。空欄可。"
+        }
       ]
     },
     {
       "id": "facility",
-      "heading": "施設区分・危険物",
+      "heading": "設置場所・施設区分",
       "fields": [
-        { "key": "facilityKind", "label": "製造所等の別", "type": "text", "required": true },
-        { "key": "facilityCategory", "label": "貯蔵所又は取扱所の区分", "type": "text" },
-        { "key": "hazmatClassAndName", "label": "危険物の類、品名（指定数量）、最大数量", "type": "multiline", "required": true },
-        { "key": "designatedQuantityMultiple", "label": "指定数量の倍数", "type": "text", "required": true },
-        { "key": "regulationCategory", "label": "位置、構造及び設備の基準に係る区分", "type": "text", "required": true, "placeholder": "例：令第10条第1項（規則第13条の2第1項）" }
+        {
+          "key": "facilityLocation",
+          "label": "設置場所",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "fireZone",
+          "label": "防火地域別",
+          "type": "text",
+          "placeholder": "例: 準防火地域"
+        },
+        {
+          "key": "useZone",
+          "label": "用途地域別",
+          "type": "text",
+          "placeholder": "例: 工業地域"
+        },
+        {
+          "key": "zoneExtraInfo",
+          "label": "地域別補足情報",
+          "type": "text"
+        },
+        {
+          "key": "permitInfo",
+          "label": "設置の許可年月日及び許可番号",
+          "type": "text",
+          "placeholder": "例: 令和7年1月1日 第1号"
+        },
+        {
+          "key": "facilityKind",
+          "label": "製造所等の別",
+          "type": "text",
+          "required": true,
+          "placeholder": "例: 屋内貯蔵所"
+        },
+        {
+          "key": "facilityCategory",
+          "label": "貯蔵所又は取扱所の区分",
+          "type": "text",
+          "placeholder": "例: 一般取扱所"
+        }
       ]
     },
     {
-      "id": "change",
-      "heading": "変更内容",
+      "id": "hazmat",
+      "heading": "危険物・変更内容",
       "fields": [
-        { "key": "changeContent", "label": "変更の内容", "type": "multiline", "required": true },
-        { "key": "changeReason", "label": "変更の理由", "type": "multiline", "required": true }
+        {
+          "key": "hazmatClassAndName",
+          "label": "危険物の類、品名（指定数量）、最大数量",
+          "type": "multiline",
+          "required": true,
+          "placeholder": "例: 第4類 第1石油類（200L） 最大1,000L"
+        },
+        {
+          "key": "designatedQuantityMultiple",
+          "label": "指定数量の倍数",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "regulationCategory",
+          "label": "位置、構造及び設備の基準に係る区分",
+          "type": "text"
+        },
+        {
+          "key": "changeContent",
+          "label": "変更の内容",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "key": "changeReason",
+          "label": "変更の理由",
+          "type": "multiline",
+          "required": true
+        }
       ]
     },
     {
       "id": "schedule",
-      "heading": "工程",
+      "heading": "工期",
       "fields": [
-        { "key": "constructionStartDate", "label": "着工予定期日", "type": "date", "required": true },
-        { "key": "completionDate", "label": "完成予定期日", "type": "date", "required": true },
-        { "key": "otherMatters", "label": "その他必要な事項", "type": "multiline" }
+        {
+          "key": "constructionStartDate",
+          "label": "着工予定期日",
+          "type": "date"
+        },
+        {
+          "key": "completionDate",
+          "label": "完成予定期日",
+          "type": "date"
+        },
+        {
+          "key": "otherMatters",
+          "label": "その他必要な事項",
+          "type": "multiline"
+        }
+      ]
+    },
+    {
+      "id": "official",
+      "heading": "※ 行政記入欄",
+      "fields": [
+        {
+          "key": "officialUseReceipt",
+          "label": "※受付欄 (行政記入)",
+          "type": "text",
+          "helpText": "行政側で記入されます。通常は空欄のままで提出。"
+        },
+        {
+          "key": "officialPermitDateAndNumber",
+          "label": "※許可年月日・許可番号 (行政記入)",
+          "type": "text"
+        },
+        {
+          "key": "officialUseFee",
+          "label": "※手数料欄 (行政記入)",
+          "type": "text"
+        },
+        {
+          "key": "extraNote1",
+          "label": "注釈欄",
+          "type": "text",
+          "helpText": "テンプレート余白行。通常は空欄。"
+        }
       ]
     }
   ],
