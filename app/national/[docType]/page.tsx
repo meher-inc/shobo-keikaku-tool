@@ -3,7 +3,9 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { getNationalPack } from "@/lib/engine-v2/national/registry";
+import { getOfficialPackMeta } from "@/lib/engine-v2/national/templates-official-metadata";
 import { NationalForm } from "../_components/national-form";
+import { NationalFormOfficial } from "../_components/national-form-official";
 import {
   SESSION_COOKIE_NAME,
   verifyToken,
@@ -99,7 +101,13 @@ export default async function NationalDocPage({ params }: Props) {
         </aside>
       )}
 
-      <NationalForm pack={pack} />
+      {(() => {
+        const officialMeta = getOfficialPackMeta(pack.packName);
+        if (officialMeta) {
+          return <NationalFormOfficial meta={officialMeta} packTitle={pack.title} />;
+        }
+        return <NationalForm pack={pack} />;
+      })()}
 
       <aside
         style={{
