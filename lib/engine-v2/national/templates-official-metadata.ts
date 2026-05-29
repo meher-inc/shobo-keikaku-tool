@@ -570,6 +570,99 @@ const META: Record<string, OfficialPackMeta> = {
       },
     ],
   },
+
+  "fire-manager-appointment": {
+    packName: "fire-manager-appointment",
+    sections: [
+      {
+        id: "header",
+        heading: "届出基本情報",
+        fields: [
+          { key: "submitDate", label: "提出日", type: "date", required: true },
+          { key: "municipality", label: "市区町村", type: "text", required: true, placeholder: "例: 京都市" },
+          { key: "fireDeptName", label: "管轄消防署", type: "text", required: true, placeholder: "例: 中京" },
+          { key: "kind", label: "種別（防火／防災）", type: "text", required: true, helpText: "「防火」または「防災」を選択した値が転記される。" },
+          { key: "operationType", label: "選任／解任", type: "text", required: true, helpText: "「選任」または「解任」を選択した値が転記される。" },
+        ],
+      },
+      {
+        id: "submitter",
+        heading: "管理権原者（届出者）",
+        fields: [
+          { key: "submitterAddress", label: "住所", type: "text", required: true },
+          { key: "submitterName", label: "氏名（法人の場合は名称及び代表者氏名）", type: "text", required: true },
+          { key: "submitterPhone", label: "電話番号", type: "phone", required: true },
+        ],
+      },
+      {
+        id: "building",
+        heading: "防火対象物（建築物その他の工作物）",
+        fields: [
+          { key: "buildingAddress", label: "所在地", type: "text", required: true },
+          { key: "buildingPhone", label: "電話番号", type: "phone", required: false },
+          { key: "buildingName", label: "名称", type: "text", required: true },
+          { key: "managementAuthority", label: "管理権原", type: "text", required: true, helpText: "「単一権原」または「複数権原」を選択した値が転記される。" },
+          { key: "multipleAuthorityPart", label: "複数権原の場合に管理権原に属する部分の名称", type: "text", required: false, helpText: "管理権原が「複数権原」の場合のみ記入。" },
+          { key: "mainUse", label: "用途", type: "text", required: true, placeholder: "例: 事務所" },
+          { key: "buildingCategory", label: "令別表第1の項番", type: "text", required: true, placeholder: "例: （15）項" },
+          { key: "capacity", label: "収容人員", type: "text", required: true, placeholder: "例: 120人" },
+          { key: "managerKind", label: "種別（甲種／乙種）", type: "text", required: false, helpText: "防火管理者の場合のみ。「甲種」または「乙種」を選択した値が転記される。" },
+        ],
+      },
+      {
+        id: "rule-application",
+        heading: "令第2条 / 令第3条第3項 適用区分（該当時のみ）",
+        description: "同一敷地内に複数の防火対象物がある場合（令第2条）、または複数権原で部分ごとに管理権原がある場合（令第3条第3項）に記入。",
+        fields: [
+          { key: "rule2Building1Name", label: "令第2条適用 1 — 名称", type: "text", required: false },
+          { key: "rule2Building1Category", label: "令第2条適用 1 — 令別表第1", type: "text", required: false, placeholder: "例: （15）項" },
+          { key: "rule2Building1Capacity", label: "令第2条適用 1 — 収容人員", type: "text", required: false },
+          { key: "rule2Building2Name", label: "令第2条適用 2 — 名称", type: "text", required: false },
+          { key: "rule2Building2Category", label: "令第2条適用 2 — 令別表第1", type: "text", required: false },
+          { key: "rule2Building2Capacity", label: "令第2条適用 2 — 収容人員", type: "text", required: false },
+          { key: "rule3p3Part1Name", label: "令第3条第3項適用 1 — 名称", type: "text", required: false },
+          { key: "rule3p3Part1Category", label: "令第3条第3項適用 1 — 令別表第1", type: "text", required: false },
+          { key: "rule3p3Part1Capacity", label: "令第3条第3項適用 1 — 収容人員", type: "text", required: false },
+          { key: "rule3p3Part2Name", label: "令第3条第3項適用 2 — 名称", type: "text", required: false },
+          { key: "rule3p3Part2Category", label: "令第3条第3項適用 2 — 令別表第1", type: "text", required: false },
+          { key: "rule3p3Part2Capacity", label: "令第3条第3項適用 2 — 収容人員", type: "text", required: false },
+        ],
+      },
+      {
+        id: "appointment",
+        heading: "選任の場合",
+        description: "選任の場合のみ記入。",
+        fields: [
+          { key: "managerName", label: "氏名", type: "text", required: false },
+          { key: "managerNameKana", label: "フリガナ", type: "text", required: false },
+          { key: "managerAddress", label: "住所", type: "text", required: false },
+          { key: "appointmentDate", label: "選任年月日", type: "date", required: false },
+          { key: "positionTitle", label: "職務上の地位", type: "text", required: false },
+          { key: "qualificationKind", label: "資格区分", type: "text", required: false, helpText: "甲種新規／甲種再講習／乙種／防災新規／防災再講習 のいずれか。" },
+          { key: "qualificationInstitution", label: "講習機関", type: "text", required: false },
+          { key: "qualificationCompletionDate", label: "修了年月日", type: "date", required: false },
+          { key: "otherQualification", label: "その他資格根拠条文", type: "text", required: false, placeholder: "例: 令第3条第1項第1号" },
+        ],
+      },
+      {
+        id: "dismissal",
+        heading: "解任の場合",
+        description: "解任の場合のみ記入。",
+        fields: [
+          { key: "dismissedManagerName", label: "氏名", type: "text", required: false },
+          { key: "dismissalDate", label: "解任年月日", type: "date", required: false },
+          { key: "dismissalReason", label: "解任理由", type: "multiline", required: false },
+        ],
+      },
+      {
+        id: "remarks",
+        heading: "その他必要事項",
+        fields: [
+          { key: "remarks", label: "備考・特記事項", type: "multiline", required: false },
+        ],
+      },
+    ],
+  },
 };
 
 export function getOfficialPackMeta(packName: string): OfficialPackMeta | undefined {
