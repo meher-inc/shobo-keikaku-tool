@@ -34,6 +34,7 @@ const EXPECTED_PACKS = [
   "hazmat-prevention-rules-approval",
   "minor-hazmat-notification",
   "hazmat-temporary-storage",
+  "fire-manager-appointment",
 ];
 
 const rowRe = /<w:tr\b[^>]*>[\s\S]*?<\/w:tr>/g;

@@ -17,6 +17,7 @@ const EXPECTED_PACKS = [
   "hazmat-prevention-rules-approval",
   "minor-hazmat-notification",
   "hazmat-temporary-storage",
+  "fire-manager-appointment",
 ];
 
 // docx zip files start with PK\x03\x04
