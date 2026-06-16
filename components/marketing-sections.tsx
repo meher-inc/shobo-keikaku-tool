@@ -1,5 +1,6 @@
 import { SPOT_PLANS } from "../lib/spot-plans";
-import { UPDATES, NEWLY_ADDED_DEPTS, formatUpdateDate } from "../lib/updates";
+import { NEWLY_ADDED_DEPTS } from "../lib/updates";
+import { NoteUpdates } from "./note-updates";
 
 const BRAND = "#2E5F9E";
 
@@ -52,31 +53,8 @@ function formatPrice(n: number): string {
 export function MarketingSections() {
   return (
     <div>
-      {/* 更新情報（お知らせ） */}
-      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 clamp(16px,4vw,24px)" }}>
-        <div style={{ background: "#EEF4FA", border: "1px solid #DCE8F5", borderRadius: 16, padding: "20px 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, color: BRAND, letterSpacing: "0.04em" }}>更新情報</span>
-            <span style={{ flex: 1, height: 1, background: "#DCE8F5" }} />
-          </div>
-          <ul style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {UPDATES.map((u) => (
-              <li key={u.date + u.title} style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "baseline" }}>
-                <time style={{ fontSize: 13, color: "#6e6e73", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
-                  {formatUpdateDate(u.date)}
-                </time>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", background: BRAND, borderRadius: 999, padding: "2px 10px", whiteSpace: "nowrap" }}>
-                  {u.tag}
-                </span>
-                <div style={{ flex: 1, minWidth: 220 }}>
-                  <p style={{ fontSize: 15, fontWeight: 700, color: "#1d1d1f", marginBottom: 4 }}>{u.title}</p>
-                  <p style={{ fontSize: 13, lineHeight: 1.8, color: "#6e6e73" }}>{u.body}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* 更新情報（note.com マガジン連携） */}
+      <NoteUpdates />
 
       {/* 特長 */}
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
