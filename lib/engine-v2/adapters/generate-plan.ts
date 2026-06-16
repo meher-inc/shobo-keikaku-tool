@@ -14,6 +14,7 @@ import { buildSaitamaFull } from "./saitama-full";
 import { buildHiroshimaFull } from "./hiroshima-full";
 import { buildSendaiFull } from "./sendai-full";
 import { buildChibaFull } from "./chiba-full";
+import { buildKitakyushuFull } from "./kitakyushu-full";
 
 /**
  * v2 experimental adapter for /api/generate-plan.
@@ -59,7 +60,8 @@ export type V2Pack =
   | "saitama-full"
   | "hiroshima-full"
   | "sendai-full"
-  | "chiba-full";
+  | "chiba-full"
+  | "kitakyushu-full";
 
 export async function runV2Adapter(
   form: AnyForm,
@@ -117,6 +119,10 @@ export async function runV2Adapter(
 
   if (packName === "chiba-full") {
     return buildChibaFull(form);
+  }
+
+  if (packName === "kitakyushu-full") {
+    return buildKitakyushuFull(form);
   }
 
   // sample path — unchanged from Step 3.
