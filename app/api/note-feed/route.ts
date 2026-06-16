@@ -54,7 +54,12 @@ function parseFeed(xml: string): NoteItem[] {
     const iso = d && !Number.isNaN(d.getTime()) ? d.toISOString() : "";
     const date =
       d && !Number.isNaN(d.getTime())
-        ? `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
+        ? d.toLocaleDateString("ja-JP", {
+            timeZone: "Asia/Tokyo",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
         : "";
     out.push({ title, link, iso, date, thumbnail: tag(b, "media:thumbnail") });
   }
