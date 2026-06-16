@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
       packParam === "kawasaki-full" ||
       packParam === "kobe-full" ||
       packParam === "saitama-full" ||
+      packParam === "hiroshima-full" ||
       packParam === "sample"
     ) {
       // Explicit pack from query string.
@@ -70,6 +71,7 @@ export async function POST(request: NextRequest) {
         : prefecture === "北海道" && city === "札幌市" ? "sapporo-full"
         : prefecture === "兵庫県" && city === "神戸市" ? "kobe-full"
         : prefecture === "埼玉県" && city === "さいたま市" ? "saitama-full"
+        : prefecture === "広島県" && city === "広島市" ? "hiroshima-full"
         : "full";
     }
 
@@ -89,7 +91,8 @@ export async function POST(request: NextRequest) {
         | "sapporo-full"
         | "kawasaki-full"
         | "kobe-full"
-        | "saitama-full",
+        | "saitama-full"
+        | "hiroshima-full",
     });
 
     return new NextResponse(new Uint8Array(buffer), {
