@@ -35,6 +35,7 @@ const supportedDepts = [
   "神戸市消防局",
   "さいたま市消防局",
   "広島市消防局",
+  "仙台市消防局",
 ];
 
 function formatPrice(n: number): string {
