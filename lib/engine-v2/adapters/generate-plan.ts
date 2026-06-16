@@ -8,6 +8,7 @@ import { buildYokohamaFull } from "./yokohama-full";
 import { buildFukuokaFull } from "./fukuoka-full";
 import { buildNagoyaFull } from "./nagoya-full";
 import { buildSapporoFull } from "./sapporo-full";
+import { buildKawasakiFull } from "./kawasaki-full";
 
 /**
  * v2 experimental adapter for /api/generate-plan.
@@ -47,7 +48,8 @@ export type V2Pack =
   | "yokohama-full"
   | "fukuoka-full"
   | "nagoya-full"
-  | "sapporo-full";
+  | "sapporo-full"
+  | "kawasaki-full";
 
 export async function runV2Adapter(
   form: AnyForm,
@@ -81,6 +83,10 @@ export async function runV2Adapter(
 
   if (packName === "sapporo-full") {
     return buildSapporoFull(form);
+  }
+
+  if (packName === "kawasaki-full") {
+    return buildKawasakiFull(form);
   }
 
   // sample path — unchanged from Step 3.
