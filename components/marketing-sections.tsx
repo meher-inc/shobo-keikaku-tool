@@ -41,6 +41,7 @@ const supportedDepts = [
   "新潟市消防局",
   "熊本市消防局",
   "相模原市消防局",
+  "静岡市消防局",
 ];
 
 function formatPrice(n: number): string {
