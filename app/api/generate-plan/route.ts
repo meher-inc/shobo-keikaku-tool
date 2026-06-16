@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
       packParam === "yokohama-full" ||
       packParam === "fukuoka-full" ||
       packParam === "nagoya-full" ||
+      packParam === "sapporo-full" ||
       packParam === "sample"
     ) {
       // Explicit pack from query string.
@@ -55,12 +56,14 @@ export async function POST(request: NextRequest) {
       // Auto-select from form data (same routing logic as v1's
       // city/prefecture dispatch at the former L98-113).
       const prefecture = form.prefecture || "";
+      const city = form.city || "";
       pack =
         prefecture === "東京都" ? "tokyo-full"
         : prefecture === "大阪府" ? "osaka-full"
         : prefecture === "神奈川県" ? "yokohama-full"
         : prefecture === "福岡県" ? "fukuoka-full"
         : prefecture === "愛知県" ? "nagoya-full"
+        : prefecture === "北海道" && city === "札幌市" ? "sapporo-full"
         : "full";
     }
 
@@ -76,7 +79,8 @@ export async function POST(request: NextRequest) {
         | "osaka-full"
         | "yokohama-full"
         | "fukuoka-full"
-        | "nagoya-full",
+        | "nagoya-full"
+        | "sapporo-full",
     });
 
     return new NextResponse(new Uint8Array(buffer), {

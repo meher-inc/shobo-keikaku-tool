@@ -35,7 +35,7 @@ export default async function NationalIndexPage() {
   return (
     <div style={{ maxWidth: 880, margin: "0 auto", padding: "40px 20px 80px" }}>
       <header style={{ marginBottom: 32 }}>
-        <p style={{ fontSize: 13, fontWeight: 700, color: "#E8332A", letterSpacing: "0.1em" }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: "#2E5F9E", letterSpacing: "0.1em" }}>
           NATIONAL FORMS
         </p>
         <h1 style={{ fontSize: 32, fontWeight: 900, margin: "8px 0 12px", color: "#1a1a1a" }}>

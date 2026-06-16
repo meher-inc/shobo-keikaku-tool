@@ -29,7 +29,7 @@ export function PricingToggle({ isYearly, setIsYearly }: PricingToggleProps) {
               : "text-gray-600 hover:text-gray-900"
           )}
         >
-          年額 <span className="text-red-600">2ヶ月分お得</span>
+          年額 <span className="text-[#2E5F9E]">2ヶ月分お得</span>
         </button>
       </div>
     </div>

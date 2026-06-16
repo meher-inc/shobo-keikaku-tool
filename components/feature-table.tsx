@@ -1,36 +1,43 @@
 import { Check, Minus } from "lucide-react"
 
-const featureGroups = [
+type PlanKey = "light" | "standard" | "premium"
+
+const planLabels: { key: PlanKey; label: string; highlight?: boolean }[] = [
+  { key: "light", label: "ライト" },
+  { key: "standard", label: "スタンダード", highlight: true },
+  { key: "premium", label: "プレミアム" },
+]
+
+const featureGroups: {
+  name: string
+  features: { name: string; light: boolean; standard: boolean; premium: boolean }[]
+}[] = [
   {
-    name: "基本機能",
+    name: "消防計画の作成",
     features: [
-      { name: "消防計画の作成・出力", minimum: true, standard: true },
-      { name: "年次レビュー機能", minimum: true, standard: true },
-      { name: "法改正通知", minimum: true, standard: true },
-      { name: "基本テンプレート", minimum: true, standard: true },
+      { name: "消防計画Word出力", light: true, standard: true, premium: true },
+      { name: "所轄消防本部の様式に準拠", light: true, standard: true, premium: true },
     ],
   },
   {
-    name: "訓練・点検管理",
+    name: "別表・ガイド",
     features: [
-      { name: "訓練計画・記録管理", minimum: false, standard: true },
-      { name: "定期点検リマインド", minimum: false, standard: true },
-      { name: "訓練リマインド", minimum: false, standard: true },
+      { name: "別表すべて出力", light: false, standard: true, premium: true },
+      { name: "記入ガイドPDF付き", light: false, standard: true, premium: true },
     ],
   },
   {
-    name: "書類出力・変更届",
+    name: "内容チェック",
     features: [
-      { name: "PDF出力", minimum: true, standard: true },
-      { name: "PDF一括出力", minimum: false, standard: true },
-      { name: "変更届の自動生成", minimum: false, standard: true },
+      { name: "元消防士による内容チェック", light: false, standard: false, premium: true },
+      { name: "修正1回対応", light: false, standard: false, premium: true },
     ],
   },
 ]
 
 function FeatureCheck({ included }: { included: boolean }) {
   if (included) {
-    return <Check className="mx-auto h-5 w-5 text-red-600" />
+    return <Check className="mx-auto h-5 w-5 text-[#2E5F9E]" />
   }
   return <Minus className="mx-auto h-5 w-5 text-gray-300" />
 }
@@ -47,7 +54,8 @@ export function FeatureTable() {
         <div className="hidden overflow-hidden rounded-2xl border border-gray-200 bg-white md:block">
           <table className="w-full" style={{ tableLayout: "fixed" }}>
             <colgroup>
-              <col style={{ width: "60%" }} />
+              <col style={{ width: "40%" }} />
+              <col style={{ width: "20%" }} />
               <col style={{ width: "20%" }} />
               <col style={{ width: "20%" }} />
             </colgroup>
@@ -56,19 +64,23 @@ export function FeatureTable() {
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
                   機能
                 </th>
-                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
-                  ミニマム
-                </th>
-                <th className="px-6 py-4 text-center text-sm font-semibold text-red-600">
-                  スタンダード
-                </th>
+                {planLabels.map((p) => (
+                  <th
+                    key={p.key}
+                    className={`px-6 py-4 text-center text-sm font-semibold ${
+                      p.highlight ? "text-[#2E5F9E]" : "text-gray-900"
+                    }`}
+                  >
+                    {p.label}
+                  </th>
+                ))}
               </tr>
             </thead>
             {featureGroups.map((group) => (
               <tbody key={group.name}>
                 <tr className="bg-gray-50">
                   <td
-                    colSpan={3}
+                    colSpan={4}
                     className="px-6 py-3 text-sm font-semibold text-gray-700"
                   >
                     {group.name}
@@ -80,10 +92,13 @@ export function FeatureTable() {
                       {feature.name}
                     </td>
                     <td className="px-6 py-3">
-                      <FeatureCheck included={feature.minimum} />
+                      <FeatureCheck included={feature.light} />
                     </td>
-                    <td className="bg-red-50/50 px-6 py-3">
+                    <td className="bg-[#EEF4FA]/50 px-6 py-3">
                       <FeatureCheck included={feature.standard} />
+                    </td>
+                    <td className="px-6 py-3">
+                      <FeatureCheck included={feature.premium} />
                     </td>
                   </tr>
                 ))}
@@ -108,23 +123,17 @@ export function FeatureTable() {
                     <p className="mb-2 text-sm font-medium text-gray-900">
                       {feature.name}
                     </p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="flex items-center gap-1">
-                        {feature.minimum ? (
-                          <Check className="h-4 w-4 text-red-600" />
-                        ) : (
-                          <Minus className="h-4 w-4 text-gray-300" />
-                        )}
-                        <span className="text-gray-500">ミニマム</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {feature.standard ? (
-                          <Check className="h-4 w-4 text-red-600" />
-                        ) : (
-                          <Minus className="h-4 w-4 text-gray-300" />
-                        )}
-                        <span className="text-gray-500">スタンダード</span>
-                      </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      {planLabels.map((p) => (
+                        <div key={p.key} className="flex items-center gap-1">
+                          {feature[p.key] ? (
+                            <Check className="h-4 w-4 text-[#2E5F9E]" />
+                          ) : (
+                            <Minus className="h-4 w-4 text-gray-300" />
+                          )}
+                          <span className="text-gray-500">{p.label}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}

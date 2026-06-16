@@ -112,7 +112,7 @@ export default function MyPage() {
                 }}
               />
               {status === "error" && (
-                <p style={{ color: "#E8332A", fontSize: 13, margin: "0 0 12px" }}>
+                <p style={{ color: "#2E5F9E", fontSize: 13, margin: "0 0 12px" }}>
                   送信に失敗しました。時間をおいて再度お試しください。
                 </p>
               )}
@@ -123,7 +123,7 @@ export default function MyPage() {
                   display: "block",
                   width: "100%",
                   padding: "14px 0",
-                  background: "#E8332A",
+                  background: "#2E5F9E",
                   color: "#fff",
                   border: "none",
                   borderRadius: 12,
@@ -149,7 +149,7 @@ export default function MyPage() {
           }}
         >
           ご不明点は{" "}
-          <a href="mailto:plan@todokede.jp" style={{ color: "#E8332A", textDecoration: "none" }}>
+          <a href="mailto:plan@todokede.jp" style={{ color: "#2E5F9E", textDecoration: "none" }}>
             plan@todokede.jp
           </a>{" "}
           までご連絡ください。

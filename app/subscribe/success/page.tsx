@@ -149,7 +149,7 @@ function SuccessContent() {
           <a href="/mypage"
           style={{
             display: "block", width: "100%", padding: 14, borderRadius: 14,
-            background: "#E8332A", color: "#fff", fontSize: 16, fontWeight: 600,
+            background: "#2E5F9E", color: "#fff", fontSize: 16, fontWeight: 600,
             textDecoration: "none", marginBottom: 12, textAlign: "center",
           }}
         >
@@ -160,7 +160,7 @@ function SuccessContent() {
           <a href="/"
           style={{
             display: "block", padding: 14, borderRadius: 14,
-            background: "#f5f5f7", color: "#E8332A", fontSize: 15, fontWeight: 600,
+            background: "#f5f5f7", color: "#2E5F9E", fontSize: 15, fontWeight: 600,
             textDecoration: "none", textAlign: "center",
           }}
         >

@@ -60,7 +60,7 @@ export default async function NationalLoginPage({
             ご契約中のメールアドレスにログインリンクをお送りします。
             <br />
             <span style={{ fontSize: 12, color: "#888" }}>
-              （未契約の方は <a href="/pricing" style={{ color: "#E8332A" }}>料金プラン</a> をご確認ください）
+              （未契約の方は <a href="/pricing" style={{ color: "#2E5F9E" }}>料金プラン</a> をご確認ください）
             </span>
           </p>
 

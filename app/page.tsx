@@ -1,6 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
+import { SPOT_PLANS, isSpotPlanId } from "../lib/spot-plans";
+import { MarketingSections } from "../components/marketing-sections";
 
 const USE_CATEGORIES = [
   { value: "1-イ", label: "1項イ 劇場等", specific: true },
@@ -40,11 +42,11 @@ const STEPS = [
 const FAQ_ITEMS = [
   {
     q: "出力された消防計画はそのまま消防署に提出できますか?",
-    a: "はい。京都市消防局・東京消防庁・大阪市消防局・横浜市消防局・福岡市消防局・名古屋市消防局の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。",
+    a: "はい。京都市消防局・東京消防庁・大阪市消防局・横浜市消防局・福岡市消防局・名古屋市消防局・札幌市消防局の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。",
   },
   {
     q: "対応している消防本部を教えてください。",
-    a: "現在は京都市消防局・東京消防庁・大阪市消防局・横浜市消防局・福岡市消防局・名古屋市消防局に正式対応しています。それ以外のエリアは標準様式(京都ベース)で出力されますので、ご利用前に管轄消防署の様式と照合することをお勧めします。",
+    a: "現在は京都市消防局・東京消防庁・大阪市消防局・横浜市消防局・福岡市消防局・名古屋市消防局・札幌市消防局に正式対応しています。それ以外のエリアは標準様式(京都ベース)で出力されますので、ご利用前に管轄消防署の様式と照合することをお勧めします。",
   },
   {
     q: "どのプランを選べばいいかわかりません。",
@@ -83,7 +85,7 @@ const FAQ_ITEMS = [
           href="https://todokede.jp"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: "#E8332A", textDecoration: "underline" }}
+          style={{ color: "#2E5F9E", textDecoration: "underline" }}
         >
           トドケデ本体の消防計画作成支援サービス
         </a>
@@ -93,36 +95,7 @@ const FAQ_ITEMS = [
   },
 ];
 
-const PLANS = [
-  {
-    id: "light",
-    name: "ライト",
-    price: 4980,
-    priceLabel: "¥4,980",
-    description: "消防計画のみ",
-    features: ["消防計画Word出力", "所轄消防本部の様式に準拠"],
-    missing: ["別表", "記入ガイド", "内容チェック"],
-  },
-  {
-    id: "standard",
-    name: "スタンダード",
-    price: 9800,
-    priceLabel: "¥9,800",
-    description: "計画＋別表＋ガイド",
-    badge: "おすすめ",
-    features: ["消防計画Word出力", "所轄消防本部の様式に準拠", "別表すべて出力", "記入ガイドPDF付き"],
-    missing: ["内容チェック"],
-  },
-  {
-    id: "premium",
-    name: "プレミアム",
-    price: 29800,
-    priceLabel: "¥29,800",
-    description: "チェック＋修正付き",
-    features: ["消防計画Word出力", "所轄消防本部の様式に準拠", "別表すべて出力", "記入ガイドPDF付き", "元消防士による内容チェック", "修正1回対応"],
-    missing: [],
-  },
-];
+const PLANS = SPOT_PLANS;
 
 function Field({ label, value, onChange, placeholder, type = "text", required = false }: any) {
   return (
@@ -153,6 +126,14 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     drill_months: "4月・10月", education_months: "4月・10月",
   });
 
+  // Preselect plan when arriving from the pricing page (/?plan=standard など).
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get("plan");
+    if (param && isSpotPlanId(param)) {
+      setSelectedPlan(param);
+    }
+  }, []);
+
   const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }));
   const toggleEquip = (e: string) => set("equipment", form.equipment.includes(e) ? form.equipment.filter((x: string) => x !== e) : [...form.equipment, e]);
   const selectedUse = USE_CATEGORIES.find(u => u.value === form.use_category);
@@ -164,6 +145,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     : form.city === "横浜市" ? "横浜市消防局"
     : form.city === "福岡市" ? "福岡市消防局"
     : form.city === "名古屋市" ? "名古屋市消防局"
+    : form.prefecture === "北海道" && form.city === "札幌市" ? "札幌市消防局"
     : form.city ? "標準様式"
     : "";
 
@@ -204,35 +186,36 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   return (
     <>
-    <div style={{ maxWidth: 640, margin: "0 auto", padding: "20px 16px 40px" }}>
-
-      <div style={{ textAlign: "center", padding: "48px 24px 40px" }}>
-        <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 8 }}>消防計画を、自動作成。</h1>
-        <p style={{ fontSize: 17, color: "#86868b", fontWeight: 400 }}>建物情報を入力するだけ。所轄消防本部の様式に準拠した計画書をWordで生成します。</p>
+    {/* Hero */}
+    <section style={{ textAlign: "center", padding: "clamp(56px,9vw,96px) clamp(16px,4vw,24px) clamp(40px,6vw,64px)", maxWidth: 760, margin: "0 auto" }}>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#EEF4FA", color: "#2E5F9E", fontSize: 13, fontWeight: 700, padding: "8px 16px", borderRadius: 999, marginBottom: 24 }}>
+        所轄消防本部の様式に準拠・1件ごとの買い切り
       </div>
-
-      {/* Hero Sample CTA */}
-      <div style={{ textAlign: "center", marginBottom: 32, marginTop: -16 }}>
+      <h1 style={{ fontSize: "clamp(30px,6vw,46px)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 16 }}>消防計画を、自動作成。</h1>
+      <p style={{ fontSize: "clamp(15px,2.5vw,18px)", color: "#6e6e73", fontWeight: 400, lineHeight: 1.7, maxWidth: 560, margin: "0 auto" }}>
+        建物情報を入力するだけ。所轄消防本部の様式に準拠した計画書をWordで生成します。月額・更新料はかかりません。
+      </p>
+      <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 32 }}>
+        <a href="#form" style={{ background: "#2E5F9E", color: "#fff", padding: "15px 36px", borderRadius: 12, fontSize: 16, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.25)" }}>
+          作成をはじめる
+        </a>
         <button
           onClick={() => setShowSample(true)}
-          style={{
-            background: "#fff",
-            border: "2px solid #E8332A",
-            color: "#E8332A",
-            padding: "14px 32px",
-            borderRadius: 12,
-            fontSize: 15,
-            fontWeight: 700,
-            cursor: "pointer",
-            boxShadow: "0 2px 8px rgba(232, 51, 42, 0.12)",
-          }}
+          style={{ background: "#fff", border: "2px solid #2E5F9E", color: "#2E5F9E", padding: "13px 32px", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer" }}
         >
-          📄 まずはサンプルを見る
+          サンプルを見る
         </button>
-        <p style={{ fontSize: 12, color: "#86868b", marginTop: 10 }}>
-          実際に生成される消防計画(飲食店320㎡・別表付き)をご確認いただけます
-        </p>
       </div>
+      <p style={{ fontSize: 12, color: "#86868b", marginTop: 14 }}>
+        実際に生成される消防計画（飲食店320㎡・別表付き）をご確認いただけます
+      </p>
+    </section>
+
+    <MarketingSections />
+
+    <div id="form" style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(48px,8vw,80px) 16px 40px", scrollMarginTop: 24 }}>
+      <h2 style={{ fontSize: "clamp(22px,4.5vw,30px)", fontWeight: 800, textAlign: "center", letterSpacing: "-0.01em", marginBottom: 8 }}>消防計画をつくる</h2>
+      <p style={{ fontSize: 15, color: "#86868b", textAlign: "center", marginBottom: 32 }}>6ステップの入力で、提出できる計画書が完成します。</p>
 
       <div style={{ display: "flex", gap: 4, marginBottom: 24, padding: 4, background: "#e8e8ed", borderRadius: 12 }}>
         {STEPS.map((s, i) => (
@@ -241,7 +224,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             background: i === step ? "#fff" : "transparent", color: i === step ? "#1d1d1f" : i < step ? "#34c759" : "#86868b",
             boxShadow: i === step ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
           }}>
-            <div style={{ fontSize: 18, marginBottom: 2 }}>{i < step ? "✓" : s.icon}</div>
+            <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 2 }}>{i < step ? "✓" : i + 1}</div>
             {s.title}
           </button>
         ))}
@@ -261,7 +244,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <Field label="以降の住所" value={form.address_detail} onChange={(e: any) => set("address_detail", e.target.value)} placeholder="○○通○○町123" />
             {deptName && (
               <div style={{ padding: "16px 20px", borderRadius: 14, marginTop: 8, background: deptName === "標準様式" ? "#fff9f0" : "#f0faf0", border: deptName === "標準様式" ? "1px solid #ffd9a0" : "1px solid #b8e6b8" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: deptName === "標準様式" ? "#af6800" : "#1a7a1a" }}>{deptName === "標準様式" ? "⚠️ 未対応（標準様式で作成）" : "✅ 所轄消防本部を特定しました"}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: deptName === "標準様式" ? "#af6800" : "#1a7a1a" }}>{deptName === "標準様式" ? "未対応（標準様式で作成）" : "所轄消防本部を特定しました"}</div>
                 <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4, color: deptName === "標準様式" ? "#8a5200" : "#0d5e0d" }}>{deptName}</div>
               </div>
             )}
@@ -319,10 +302,10 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                 return (
                   <button key={e} onClick={() => toggleEquip(e)} style={{
                     display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, border: "none", cursor: "pointer",
-                    background: active ? "#FDECEA" : "#f5f5f7", outline: active ? "2px solid #E8332A" : "1px solid transparent",
+                    background: active ? "#EEF4FA" : "#f5f5f7", outline: active ? "2px solid #2E5F9E" : "1px solid transparent",
                     fontSize: 14, fontWeight: 500, textAlign: "left" as const,
                   }}>
-                    <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: active ? "#E8332A" : "#fff", border: active ? "none" : "2px solid #d2d2d7", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: active ? "#2E5F9E" : "#fff", border: active ? "none" : "2px solid #d2d2d7", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {active && <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>✓</span>}
                     </div>
                     {e}
@@ -369,8 +352,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                       borderRadius: 16,
                       border: "none",
                       cursor: "pointer",
-                      background: isSelected ? "#FDECEA" : "#f5f5f7",
-                      outline: isSelected ? "2.5px solid #E8332A" : "1.5px solid transparent",
+                      background: isSelected ? "#EEF4FA" : "#f5f5f7",
+                      outline: isSelected ? "2.5px solid #2E5F9E" : "1.5px solid transparent",
                       textAlign: "left" as const,
                       transition: "all 0.15s ease",
                     }}
@@ -378,7 +361,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     {/* Radio indicator */}
                     <div style={{
                       width: 22, height: 22, borderRadius: 11, flexShrink: 0, marginTop: 2,
-                      background: isSelected ? "#E8332A" : "#fff",
+                      background: isSelected ? "#2E5F9E" : "#fff",
                       border: isSelected ? "none" : "2px solid #d2d2d7",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
@@ -391,17 +374,17 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                         <span style={{ fontSize: 16, fontWeight: 700, color: "#1d1d1f" }}>{plan.name}</span>
-                        {plan.badge && (
+                        {plan.recommended && (
                           <span style={{
                             fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10,
-                            background: "#E8332A", color: "#fff", letterSpacing: "0.02em",
-                          }}>{plan.badge}</span>
+                            background: "#2E5F9E", color: "#fff", letterSpacing: "0.02em",
+                          }}>おすすめ</span>
                         )}
                       </div>
                       <div style={{ fontSize: 13, color: "#86868b", marginBottom: 8 }}>{plan.description}</div>
                       <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
                         {plan.features.map(f => (
-                          <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "#FADAD6" : "#e8e8ed", color: isSelected ? "#C8261E" : "#6e6e73" }}>
+                          <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "#DCE8F5" : "#e8e8ed", color: isSelected ? "#234B7D" : "#6e6e73" }}>
                             ✓ {f}
                           </span>
                         ))}
@@ -415,7 +398,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
                     {/* Price */}
                     <div style={{ flexShrink: 0, textAlign: "right" as const }}>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "#E8332A" : "#1d1d1f", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "#2E5F9E" : "#1d1d1f", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
                       <div style={{ fontSize: 11, color: "#86868b" }}>税込</div>
                     </div>
                   </button>
@@ -428,8 +411,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                 onClick={() => setShowSample(true)}
                 style={{
                   background: "#fff",
-                  border: "2px solid #E8332A",
-                  color: "#E8332A",
+                  border: "2px solid #2E5F9E",
+                  color: "#2E5F9E",
                   padding: "12px 28px",
                   borderRadius: 12,
                   fontSize: 14,
@@ -437,7 +420,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   cursor: "pointer",
                 }}
               >
-                📄 サンプルをもう一度見る
+                サンプルをもう一度見る
               </button>
               <p style={{ fontSize: 12, color: "#86868b", marginTop: 8 }}>
                 スタンダードプランで生成される内容のサンプルです
@@ -467,7 +450,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <button onClick={handleGenerate} disabled={completeness < 100 || loading} style={{
               width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
               cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
-              background: completeness === 100 && !loading ? "#E8332A" : "#d2d2d7", color: "#fff",
+              background: completeness === 100 && !loading ? "#2E5F9E" : "#d2d2d7", color: "#fff",
             }}>
               {loading ? "決済画面に移動中..." : `${currentPlan.priceLabel} で生成する`}
             </button>
@@ -475,8 +458,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
             {/* Trust badges */}
             <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "#86868b" }}>
-              <span>🔒 SSL暗号化通信</span>
-              <span>💳 Stripe安全決済</span>
+              <span>SSL暗号化通信</span>
+              <span>Stripe安全決済</span>
             </div>
           </div>
         )}
@@ -484,7 +467,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
       <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
         {step > 0 && <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#e8e8ed", color: "#1d1d1f", fontSize: 15, fontWeight: 600 }}>← 戻る</button>}
-        {step < STEPS.length - 1 && <button onClick={() => setStep(step + 1)} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
+        {step < STEPS.length - 1 && <button onClick={() => setStep(step + 1)} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#2E5F9E", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
       </div>
 {/* Sample preview modal */}
       {showSample && (
@@ -624,7 +607,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     style={{
                       fontSize: 18,
                       fontWeight: 900,
-                      color: "#E8332A",
+                      color: "#2E5F9E",
                       flexShrink: 0,
                     }}
                   >
@@ -657,7 +640,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   style={{
                     marginTop: 16,
                     padding: "clamp(14px, 4vw, 20px)",
-                    background: "#FDECEA",
+                    background: "#EEF4FA",
                     borderRadius: 8,
                     display: "flex",
                     gap: 10,
@@ -689,28 +672,28 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       </div>
     </section>
 
-    {/* Subscription CTA */}
+    {/* Plan comparison CTA */}
     <section style={{ maxWidth: 720, margin: "0 auto", padding: "64px 20px 0" }}>
       <div style={{
-        background: "linear-gradient(135deg, #FFF5F5 0%, #FFF 100%)",
-        border: "1px solid #FDECEA",
+        background: "linear-gradient(135deg, #F2F7FC 0%, #FFF 100%)",
+        border: "1px solid #EEF4FA",
         borderRadius: 20, padding: "40px 32px", textAlign: "center",
       }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
-          毎年の更新作業から解放されませんか？
+          プランをじっくり比較したい方へ
         </h2>
         <p style={{ fontSize: 15, color: "#86868b", lineHeight: 1.7, marginBottom: 24 }}>
-          月額プラン提供中。元消防士・現役防災士が監修する消防計画作成サービスです。
+          ライト・スタンダード・プレミアムの違いを一覧でご確認いただけます。料金は1件ごとの都度払い（買い切り）です。
         </p>
         <a
           href="/pricing"
           style={{
             display: "inline-block", padding: "14px 36px", borderRadius: 12,
-            background: "#E8332A", color: "#fff", fontSize: 15, fontWeight: 600,
+            background: "#2E5F9E", color: "#fff", fontSize: 15, fontWeight: 600,
             textDecoration: "none",
           }}
         >
-          サブスクプランを見る
+          プランを比較する
         </a>
       </div>
     </section>
