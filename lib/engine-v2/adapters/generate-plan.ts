@@ -10,6 +10,7 @@ import { buildNagoyaFull } from "./nagoya-full";
 import { buildSapporoFull } from "./sapporo-full";
 import { buildKawasakiFull } from "./kawasaki-full";
 import { buildKobeFull } from "./kobe-full";
+import { buildSaitamaFull } from "./saitama-full";
 
 /**
  * v2 experimental adapter for /api/generate-plan.
@@ -51,7 +52,8 @@ export type V2Pack =
   | "nagoya-full"
   | "sapporo-full"
   | "kawasaki-full"
-  | "kobe-full";
+  | "kobe-full"
+  | "saitama-full";
 
 export async function runV2Adapter(
   form: AnyForm,
@@ -93,6 +95,10 @@ export async function runV2Adapter(
 
   if (packName === "kobe-full") {
     return buildKobeFull(form);
+  }
+
+  if (packName === "saitama-full") {
+    return buildSaitamaFull(form);
   }
 
   // sample path — unchanged from Step 3.
