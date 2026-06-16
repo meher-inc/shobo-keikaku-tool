@@ -1,4 +1,5 @@
 import { SPOT_PLANS } from "../lib/spot-plans";
+import { UPDATES, NEWLY_ADDED_DEPTS, formatUpdateDate } from "../lib/updates";
 
 const BRAND = "#2E5F9E";
 
@@ -51,6 +52,32 @@ function formatPrice(n: number): string {
 export function MarketingSections() {
   return (
     <div>
+      {/* 更新情報（お知らせ） */}
+      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 clamp(16px,4vw,24px)" }}>
+        <div style={{ background: "#EEF4FA", border: "1px solid #DCE8F5", borderRadius: 16, padding: "20px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+            <span style={{ fontSize: 13, fontWeight: 800, color: BRAND, letterSpacing: "0.04em" }}>更新情報</span>
+            <span style={{ flex: 1, height: 1, background: "#DCE8F5" }} />
+          </div>
+          <ul style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {UPDATES.map((u) => (
+              <li key={u.date + u.title} style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "baseline" }}>
+                <time style={{ fontSize: 13, color: "#6e6e73", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+                  {formatUpdateDate(u.date)}
+                </time>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", background: BRAND, borderRadius: 999, padding: "2px 10px", whiteSpace: "nowrap" }}>
+                  {u.tag}
+                </span>
+                <div style={{ flex: 1, minWidth: 220 }}>
+                  <p style={{ fontSize: 15, fontWeight: 700, color: "#1d1d1f", marginBottom: 4 }}>{u.title}</p>
+                  <p style={{ fontSize: 13, lineHeight: 1.8, color: "#6e6e73" }}>{u.body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* 特長 */}
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
         <h2 style={sectionHeading}>入力するだけで、提出できる計画書に</h2>
@@ -86,14 +113,34 @@ export function MarketingSections() {
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
         <h2 style={sectionHeading}>対応している消防本部</h2>
         <p style={{ textAlign: "center", fontSize: 15, color: "#6e6e73", marginTop: 12 }}>
-          政令指定都市の様式に順次対応しています。対応エリア外は標準様式で出力されます。
+          2026年6月、政令指定都市の対応を拡大し、計{supportedDepts.length}本部に対応しました。対応エリア外は標準様式で出力されます。
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12, marginTop: 32 }}>
-          {supportedDepts.map((d) => (
-            <span key={d} style={{ fontSize: 14, fontWeight: 600, color: "#1d1d1f", background: "#EEF4FA", borderRadius: 999, padding: "10px 20px" }}>
-              {d}
-            </span>
-          ))}
+          {supportedDepts.map((d) => {
+            const isNew = NEWLY_ADDED_DEPTS.has(d);
+            return (
+              <span
+                key={d}
+                style={{
+                  position: "relative",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: "#1d1d1f",
+                  background: "#EEF4FA",
+                  borderRadius: 999,
+                  padding: "10px 20px",
+                  outline: isNew ? `1.5px solid ${BRAND}` : "none",
+                }}
+              >
+                {d}
+                {isNew && (
+                  <span style={{ position: "absolute", top: -8, right: -6, fontSize: 9, fontWeight: 800, color: "#fff", background: BRAND, borderRadius: 999, padding: "1px 6px", letterSpacing: "0.04em" }}>
+                    NEW
+                  </span>
+                )}
+              </span>
+            );
+          })}
         </div>
       </section>
 
