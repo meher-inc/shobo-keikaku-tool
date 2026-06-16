@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
       packParam === "kawasaki-full" ||
       packParam === "kobe-full" ||
       packParam === "saitama-full" ||
+      packParam === "sakai-full" ||
       packParam === "hiroshima-full" ||
       packParam === "sendai-full" ||
       packParam === "chiba-full" ||
@@ -70,6 +71,7 @@ export async function POST(request: NextRequest) {
       const city = form.city || "";
       pack =
         prefecture === "東京都" ? "tokyo-full"
+        : prefecture === "大阪府" && city === "堺市" ? "sakai-full"
         : prefecture === "大阪府" ? "osaka-full"
         : prefecture === "神奈川県" && city === "川崎市" ? "kawasaki-full"
         : prefecture === "神奈川県" && city === "相模原市" ? "sagamihara-full"
@@ -106,6 +108,7 @@ export async function POST(request: NextRequest) {
         | "kawasaki-full"
         | "kobe-full"
         | "saitama-full"
+        | "sakai-full"
         | "hiroshima-full"
         | "sendai-full"
         | "chiba-full"

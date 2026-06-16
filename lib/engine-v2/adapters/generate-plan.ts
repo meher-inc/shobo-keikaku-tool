@@ -11,6 +11,7 @@ import { buildSapporoFull } from "./sapporo-full";
 import { buildKawasakiFull } from "./kawasaki-full";
 import { buildKobeFull } from "./kobe-full";
 import { buildSaitamaFull } from "./saitama-full";
+import { buildSakaiFull } from "./sakai-full";
 import { buildHiroshimaFull } from "./hiroshima-full";
 import { buildSendaiFull } from "./sendai-full";
 import { buildChibaFull } from "./chiba-full";
@@ -62,6 +63,7 @@ export type V2Pack =
   | "kawasaki-full"
   | "kobe-full"
   | "saitama-full"
+  | "sakai-full"
   | "hiroshima-full"
   | "sendai-full"
   | "chiba-full"
@@ -115,6 +117,10 @@ export async function runV2Adapter(
 
   if (packName === "saitama-full") {
     return buildSaitamaFull(form);
+  }
+
+  if (packName === "sakai-full") {
+    return buildSakaiFull(form);
   }
 
   if (packName === "hiroshima-full") {
