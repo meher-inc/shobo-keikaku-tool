@@ -159,7 +159,7 @@ export function NationalFormOfficial({ meta, packTitle }: Props) {
           font-size: 16px;
           font-weight: 700;
           color: #fff;
-          background: #e8332a;
+          background: #2E5F9E;
           border: none;
           border-radius: 8px;
           cursor: pointer;
@@ -357,7 +357,7 @@ function Field({
         }
         .nfo-input:focus,
         .nfo-textarea:focus {
-          outline: 2px solid #e8332a;
+          outline: 2px solid #2E5F9E;
           outline-offset: -1px;
           border-color: transparent;
         }

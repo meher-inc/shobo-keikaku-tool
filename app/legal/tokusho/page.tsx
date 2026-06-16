@@ -4,7 +4,7 @@ import styles from "./tokusho.module.css";
 export const metadata: Metadata = {
   title: "特定商取引法に基づく表記 | トドケデ消防計画",
   description:
-    "トドケデ消防計画の特定商取引法に基づく表記です。販売価格、支払方法、解約方法等をご確認いただけます。",
+    "トドケデ消防計画の特定商取引法に基づく表記です。販売価格、支払方法、返品・キャンセル等をご確認いただけます。",
   robots: { index: false },
 };
 
@@ -13,7 +13,7 @@ export default function TokushoPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <h1 className={styles.title}>特定商取引法に基づく表記</h1>
-        <p className={styles.updated}>最終更新日: 2026年4月20日</p>
+        <p className={styles.updated}>最終更新日: 2026年6月16日</p>
       </header>
 
       <Section heading="販売業者">
@@ -74,34 +74,22 @@ export default function TokushoPage() {
           すべて<strong>税込</strong>価格で表示しています。
         </p>
 
-        <h3 className={styles.sub}>月額プラン</h3>
+        <p className={styles.note}>
+          料金は1件ごとの都度払い（買い切り）です。月額料金・更新料はありません。
+        </p>
         <table className={styles.table}>
           <thead>
             <tr>
               <th>プラン</th>
-              <th className={styles.priceHeader}>月額（税込）</th>
+              <th className={styles.priceHeader}>販売価格（税込・1件あたり）</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td>ミニマム</td><td className={styles.price}>¥4,980</td></tr>
+            <tr><td>ライト</td><td className={styles.price}>¥4,980</td></tr>
             <tr><td>スタンダード</td><td className={styles.price}>¥9,800</td></tr>
+            <tr><td>プレミアム</td><td className={styles.price}>¥29,800</td></tr>
           </tbody>
         </table>
-
-        <h3 className={styles.sub}>年額プラン（2ヶ月分お得）</h3>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>プラン</th>
-              <th className={styles.priceHeader}>年額（税込）</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>ミニマム</td><td className={styles.price}>¥49,800</td></tr>
-            <tr><td>スタンダード</td><td className={styles.price}>¥98,000</td></tr>
-          </tbody>
-        </table>
-
       </Section>
 
       <Section heading="商品代金以外の必要料金">
@@ -129,97 +117,28 @@ export default function TokushoPage() {
       </Section>
 
       <Section heading="支払時期">
-        <h3 className={styles.sub}>月額プラン</h3>
-        <dl className={styles.detail}>
-          <dt>初回</dt>
-          <dd>お申込み手続き完了時に即時決済</dd>
-          <dt>2回目以降</dt>
-          <dd>毎月の契約更新日に自動決済</dd>
-        </dl>
-
-        <h3 className={styles.sub}>年額プラン</h3>
-        <dl className={styles.detail}>
-          <dt>初回</dt>
-          <dd>お申込み手続き完了時に一括決済</dd>
-          <dt>更新時</dt>
-          <dd>1年後の契約更新日に一括自動決済</dd>
-        </dl>
-
+        <p>お申込み手続き完了時に、1件ごとに即時決済されます（都度払い・買い切り）。</p>
       </Section>
 
       <Section heading="役務の提供時期">
-        <p>決済完了後、ただちに本サービスをご利用いただけます。</p>
+        <p>決済完了後、ただちに消防計画ファイルを生成・ダウンロードいただけます。</p>
       </Section>
 
-      <Section heading="自動更新について">
+      <Section heading="申込みのキャンセル・返品について">
         <p>
-          本サービスは
-          <strong>継続課金型のサブスクリプションサービス</strong>
-          です。お客様からの解約手続きがない限り、契約は自動的に更新されます。
-        </p>
-        <ul className={styles.list}>
-          <li>月額プラン: 毎月の契約更新日に自動更新</li>
-          <li>年額プラン: 1年後の契約更新日に自動更新</li>
-        </ul>
-      </Section>
-
-      <Section heading="解約方法">
-        <p>
-          <a href="mailto:plan@todokede.jp">plan@todokede.jp</a>
-          宛にメールで解約のお申し出をお送りください。解約のお手続きを24時間以内（土日祝日を除く）に行い、完了のご連絡を差し上げます。
-        </p>
-        <ul className={styles.list}>
-          <li>
-            解約手続き完了後、
-            <strong>次回の契約更新日をもって課金が停止</strong>されます
-          </li>
-          <li>
-            解約手続き後も、現在の契約期間満了までは引き続きサービスをご利用いただけます
-          </li>
-        </ul>
-      </Section>
-
-      <Section heading="返金について">
-        <p>
-          役務の性質上、
-          <strong>
-            原則として既にお支払いいただいた料金の返金は承っておりません。
-          </strong>
+          本サービスは、決済完了後ただちに消防計画ファイル（デジタルデータ）を生成・提供する役務です。その性質上、
+          <strong>データ生成後のキャンセル・返品は承っておりません。</strong>
+          決済完了前であれば、ブラウザを閉じることでお申込みを中止いただけます。
         </p>
         <p>
-          ただし、以下のいずれかに該当する場合は、個別にご相談のうえ対応いたします。
+          ただし、生成された消防計画の内容に不備があった場合は、内容を確認のうえ
+          <strong>返金または再発行</strong>で対応いたします。お客様のご都合（出力後に使用しなかった等）による返金は承っておりません。
         </p>
+        <p>このほか、以下のいずれかに該当する場合は、個別にご相談のうえ対応いたします。</p>
         <ul className={styles.listDash}>
           <li>当社の重大なシステム障害により、相当期間サービスをご利用いただけなかった場合</li>
           <li>当社に明らかな帰責事由がある場合</li>
           <li>その他、消費者契約法等の法令により返金が必要と判断される場合</li>
-        </ul>
-        <h3 className={styles.sub}>日割り計算について</h3>
-        <p>
-          月の途中で解約された場合でも、
-          <strong>日割り計算による返金は行っておりません</strong>
-          。次回更新日までは引き続きサービスをご利用いただけます。
-        </p>
-      </Section>
-
-      <Section heading="最低利用期間">
-        <p>設定しておりません。月額プランは解約手続き後、次回更新日をもって終了いたします。</p>
-      </Section>
-
-      <Section heading="プラン変更について">
-        <p>
-          <a href="mailto:plan@todokede.jp">plan@todokede.jp</a>
-          宛にメールでプラン変更のご希望をお送りください。変更手続きを24時間以内（土日祝日を除く）に行い、完了のご連絡を差し上げます。
-        </p>
-        <ul className={styles.list}>
-          <li>
-            <strong>アップグレード</strong>（例: ミニマム → スタンダード）:
-            変更時点で差額を日割り計算して即時適用
-          </li>
-          <li>
-            <strong>ダウングレード</strong>（例: スタンダード → ミニマム）:
-            次回更新日から新プラン適用
-          </li>
         </ul>
       </Section>
 

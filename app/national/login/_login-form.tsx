@@ -87,7 +87,7 @@ export function LoginForm() {
         }}
       />
       {status === "error" && (
-        <p style={{ color: "#E8332A", fontSize: 13, margin: "0 0 12px" }}>
+        <p style={{ color: "#2E5F9E", fontSize: 13, margin: "0 0 12px" }}>
           メールアドレスの形式が正しくないか、送信に失敗しました。
         </p>
       )}
@@ -98,7 +98,7 @@ export function LoginForm() {
           display: "block",
           width: "100%",
           padding: "14px 0",
-          background: "#E8332A",
+          background: "#2E5F9E",
           color: "#fff",
           border: "none",
           borderRadius: 12,

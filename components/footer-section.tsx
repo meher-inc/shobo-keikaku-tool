@@ -3,25 +3,23 @@ import { Button } from "@/components/ui/button"
 export function FooterSection() {
   return (
     <section className="bg-gray-50 px-4 py-20 md:px-8">
-      <div className="mx-auto max-w-3xl rounded-2xl bg-blue-50 p-8 text-center">
+      <div className="mx-auto max-w-3xl rounded-2xl bg-[#EEF4FA] p-8 text-center">
         <h2 className="mb-3 text-xl font-bold text-gray-900">
-          既に単発でご購入済みのお客様へ
+          まずは消防計画を作成してみる
         </h2>
         <p className="mb-6 text-sm text-gray-600">
-          特別な移行プランをご用意しています。
+          建物情報を入力するだけ。料金は1件ごとの都度払い（買い切り）です。
           <br />
-          お問い合わせ先: support@todokede.jp
+          ご不明な点は plan@todokede.jp までお問い合わせください。
         </p>
-        <Button variant="outline" asChild>
-          <a href="mailto:support@todokede.jp?subject=移行プランについて">
-            移行について問い合わせる
-          </a>
+        <Button asChild className="bg-[#2E5F9E] text-white hover:bg-[#234B7D]">
+          <a href="/">消防計画を作成する</a>
         </Button>
       </div>
 
       <footer className="mx-auto mt-16 max-w-6xl text-center">
         <div className="mb-4 flex items-center justify-center gap-0.5">
-          <span className="text-lg font-bold text-red-600">トドケデ</span>
+          <span className="text-lg font-bold text-[#2E5F9E]">トドケデ</span>
           <span className="text-lg font-bold text-gray-800">消防計画</span>
         </div>
         <p className="text-sm text-gray-500">
