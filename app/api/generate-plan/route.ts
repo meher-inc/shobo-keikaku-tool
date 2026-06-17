@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { selectPackByLocation } from "../../../lib/engine-v2/city-dispatch";
 
 /**
  * POST /api/generate-plan
@@ -6,30 +7,16 @@ import { NextRequest, NextResponse } from "next/server";
  * Generate a 消防計画 Word document (docx) from form data.
  *
  * Pack selection:
- *   ?pack=full          → kyoto-city full pack (explicit)
- *   ?pack=tokyo-full    → tokyo TFD full pack (explicit)
- *   ?pack=osaka-full    → osaka-city 中・小規模 pack (explicit)
- *   ?pack=yokohama-full → yokohama-city 一般用 pack (explicit)
- *   ?pack=fukuoka-full  → fukuoka-city 中規模防火対象物用 pack (explicit)
- *   ?pack=nagoya-full   → nagoya-city その他用《中規模》 pack (explicit)
- *   ?pack=sample        → kyoto-city sample (ch1 only, dev use)
- *   (no pack param)     → auto-select based on form.prefecture:
- *                          東京都   → tokyo-full
- *                          大阪府   → osaka-full
- *                          神奈川県 → yokohama-full
- *                          福岡県   → fukuoka-full
- *                          愛知県   → nagoya-full
- *                          else     → full (kyoto fallback)
- *
- * 対応都市カバレッジ (Tier 1 完成、6 都市並び):
- *   京都市・東京消防庁・大阪市消防局・横浜市消防局・福岡市消防局・名古屋市消防局
+ *   ?pack=<name>        → 明示指定（full / tokyo-full / osaka-full / … / sample）
+ *   (no pack param)     → フォームの都道府県・市から自動選択。
+ *                          ルーティングは lib/engine-v2/city-dispatch.ts の
+ *                          selectPackByLocation() に集約（旧 inline ternary を抽出）。
+ *                          政令市は「市」単位で判定し、対応エリア外（浜松等）は
+ *                          "full"（京都ベース標準様式）へフォールバックする。
+ *                          app/page.tsx の deptName（所轄ラベル）と判定基準を一致させている。
  *
  * The `engine` query param is accepted but ignored (v2 is the
  * only engine — v1 was retired).
- *
- * TODO(Phase 2B): VALID_PACKS const + selectPackByPrefecture() 関数の
- *                 抽出リファクタ。Tier 1 完成 (6 都市) で inline ternary
- *                 が 6-way になり可読性が低下、Phase 2B 序盤での実施候補。
  */
 export async function POST(request: NextRequest) {
   try {
@@ -66,31 +53,8 @@ export async function POST(request: NextRequest) {
       // Explicit pack from query string.
       pack = packParam;
     } else {
-      // Auto-select from form data (same routing logic as v1's
-      // city/prefecture dispatch at the former L98-113).
-      const prefecture = form.prefecture || "";
-      const city = form.city || "";
-      pack =
-        prefecture === "東京都" ? "tokyo-full"
-        : prefecture === "大阪府" && city === "堺市" ? "sakai-full"
-        : prefecture === "大阪府" ? "osaka-full"
-        : prefecture === "神奈川県" && city === "川崎市" ? "kawasaki-full"
-        : prefecture === "神奈川県" && city === "相模原市" ? "sagamihara-full"
-        : prefecture === "静岡県" && city === "静岡市" ? "shizuoka-full"
-        : prefecture === "神奈川県" ? "yokohama-full"
-        : prefecture === "福岡県" && city === "北九州市" ? "kitakyushu-full"
-        : prefecture === "新潟県" && city === "新潟市" ? "niigata-full"
-        : prefecture === "熊本県" && city === "熊本市" ? "kumamoto-full"
-        : prefecture === "福岡県" ? "fukuoka-full"
-        : prefecture === "愛知県" ? "nagoya-full"
-        : prefecture === "北海道" && city === "札幌市" ? "sapporo-full"
-        : prefecture === "兵庫県" && city === "神戸市" ? "kobe-full"
-        : prefecture === "埼玉県" && city === "さいたま市" ? "saitama-full"
-        : prefecture === "広島県" && city === "広島市" ? "hiroshima-full"
-        : prefecture === "宮城県" && city === "仙台市" ? "sendai-full"
-        : prefecture === "千葉県" && city === "千葉市" ? "chiba-full"
-        : prefecture === "岡山県" && city === "岡山市" ? "okayama-full"
-        : "full";
+      // Auto-select from form data. ルーティングは city-dispatch.ts に集約。
+      pack = selectPackByLocation(form.prefecture || "", form.city || "");
     }
 
     // ── generate ─────────────────────────────────────────────
