@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
 import { SPOT_PLANS, isSpotPlanId } from "../lib/spot-plans";
 import { MarketingSections } from "../components/marketing-sections";
+import { NoteUpdates } from "../components/note-updates";
 
 const USE_CATEGORIES = [
   { value: "1-イ", label: "1項イ 劇場等", specific: true },
@@ -726,6 +727,9 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         </a>
       </div>
     </section>
+
+    {/* 更新情報（note.com マガジン連携） — ページ下部 */}
+    <NoteUpdates />
     </>
   );
 }
