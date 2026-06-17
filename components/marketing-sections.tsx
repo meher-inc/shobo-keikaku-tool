@@ -1,6 +1,5 @@
 import { SPOT_PLANS } from "../lib/spot-plans";
 import { NEWLY_ADDED_DEPTS } from "../lib/updates";
-import { NoteUpdates } from "./note-updates";
 
 const BRAND = "#2E5F9E";
 
@@ -55,9 +54,6 @@ function formatPrice(n: number): string {
 export function MarketingSections() {
   return (
     <div>
-      {/* 更新情報（note.com マガジン連携） */}
-      <NoteUpdates />
-
       {/* 特長 */}
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
         <h2 style={sectionHeading}>入力するだけで、提出できる計画書に</h2>

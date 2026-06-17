@@ -40,7 +40,7 @@ export function NoteUpdates() {
   if (!items || items.length === 0) return null;
 
   return (
-    <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 clamp(16px,4vw,24px)" }}>
+    <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px,7vw,72px) clamp(16px,4vw,24px)" }}>
       <div style={{ background: "#EEF4FA", border: "1px solid #DCE8F5", borderRadius: 16, padding: "20px 24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
           <span style={{ fontSize: 13, fontWeight: 800, color: BRAND, letterSpacing: "0.04em" }}>更新情報</span>
