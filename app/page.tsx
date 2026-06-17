@@ -158,8 +158,18 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     : form.prefecture === "広島県" && form.city === "広島市" ? "広島市消防局"
     : form.prefecture === "宮城県" && form.city === "仙台市" ? "仙台市消防局"
     : form.prefecture === "千葉県" && form.city === "千葉市" ? "千葉市消防局"
+    : form.prefecture === "静岡県" && form.city === "浜松市" ? "浜松市消防局"
     : form.city ? "標準様式"
     : "";
+
+  // 専用様式はないが所轄が判明している消防本部（標準様式で作成する）。
+  // 画面では所轄名を出しつつ「標準様式で作成」と明示し、専用対応と誤認させない。
+  const NAMED_STANDARD_DEPTS = new Set(["浜松市消防局"]);
+  const deptKind: "official" | "named-standard" | "standard" | null =
+    !deptName ? null
+    : deptName === "標準様式" ? "standard"
+    : NAMED_STANDARD_DEPTS.has(deptName) ? "named-standard"
+    : "official";
 
   const checks = [form.building_name, form.use_category, form.total_area, form.capacity, form.owner_name, form.manager_name, form.manager_tel, form.equipment.length > 0, form.emergency_name, form.evacuation_site];
   const completeness = Math.round(checks.filter(Boolean).length / checks.length * 100);
@@ -254,10 +264,16 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             </div>
             <Field label="区" value={form.ward} onChange={(e: any) => set("ward", e.target.value)} />
             <Field label="以降の住所" value={form.address_detail} onChange={(e: any) => set("address_detail", e.target.value)} placeholder="○○通○○町123" />
-            {deptName && (
-              <div style={{ padding: "16px 20px", borderRadius: 14, marginTop: 8, background: deptName === "標準様式" ? "#fff9f0" : "#f0faf0", border: deptName === "標準様式" ? "1px solid #ffd9a0" : "1px solid #b8e6b8" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: deptName === "標準様式" ? "#af6800" : "#1a7a1a" }}>{deptName === "標準様式" ? "未対応（標準様式で作成）" : "所轄消防本部を特定しました"}</div>
-                <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4, color: deptName === "標準様式" ? "#8a5200" : "#0d5e0d" }}>{deptName}</div>
+            {deptKind && (
+              <div style={{ padding: "16px 20px", borderRadius: 14, marginTop: 8,
+                background: deptKind === "official" ? "#f0faf0" : deptKind === "named-standard" ? "#EEF4FA" : "#fff9f0",
+                border: deptKind === "official" ? "1px solid #b8e6b8" : deptKind === "named-standard" ? "1px solid #DCE8F5" : "1px solid #ffd9a0" }}>
+                <div style={{ fontSize: 13, fontWeight: 600,
+                  color: deptKind === "official" ? "#1a7a1a" : deptKind === "named-standard" ? "#2E5F9E" : "#af6800" }}>
+                  {deptKind === "official" ? "所轄消防本部を特定しました" : deptKind === "named-standard" ? "所轄消防本部（標準様式で作成）" : "未対応（標準様式で作成）"}
+                </div>
+                <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4,
+                  color: deptKind === "official" ? "#0d5e0d" : deptKind === "named-standard" ? "#234B7D" : "#8a5200" }}>{deptName}</div>
               </div>
             )}
           </div>
