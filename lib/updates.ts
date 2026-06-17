@@ -8,6 +8,7 @@
 /** 2026年6月の拡大で新たに対応した消防本部。 */
 export const NEWLY_ADDED_DEPTS: ReadonlySet<string> = new Set([
   "堺市消防局",
+  "岡山市消防局",
   "札幌市消防局",
   "川崎市消防局",
   "神戸市消防局",

@@ -20,6 +20,7 @@ import { buildNiigataFull } from "./niigata-full";
 import { buildKumamotoFull } from "./kumamoto-full";
 import { buildSagamiharaFull } from "./sagamihara-full";
 import { buildShizuokaFull } from "./shizuoka-full";
+import { buildOkayamaFull } from "./okayama-full";
 
 /**
  * v2 experimental adapter for /api/generate-plan.
@@ -71,7 +72,8 @@ export type V2Pack =
   | "niigata-full"
   | "kumamoto-full"
   | "sagamihara-full"
-  | "shizuoka-full";
+  | "shizuoka-full"
+  | "okayama-full";
 
 export async function runV2Adapter(
   form: AnyForm,
@@ -153,6 +155,10 @@ export async function runV2Adapter(
 
   if (packName === "shizuoka-full") {
     return buildShizuokaFull(form);
+  }
+
+  if (packName === "okayama-full") {
+    return buildOkayamaFull(form);
   }
 
   // sample path — unchanged from Step 3.
