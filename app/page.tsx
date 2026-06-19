@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
 import { SPOT_PLANS, isSpotPlanId } from "../lib/spot-plans";
 import { MarketingSections } from "../components/marketing-sections";
@@ -98,6 +98,22 @@ const FAQ_ITEMS = [
 
 const PLANS = SPOT_PLANS;
 
+// フォーム初期値。下書き復元時のリセット先としても使う。
+const INITIAL_FORM = {
+  postal: "",
+  prefecture: "京都府", city: "京都市", ward: "", address_detail: "",
+  building_name: "", use_category: "", total_area: "", num_floors: "", capacity: "",
+  owner_name: "", manager_name: "", manager_qual: "甲種", manager_date: "", manager_tel: "",
+  has_outsource: false, outsource_company: "",
+  equipment: [] as string[], inspection_company: "",
+  emergency_name: "", emergency_tel: "",
+  evacuation_site: "", assembly_point: "",
+  drill_months: "4月・10月", education_months: "4月・10月",
+};
+
+// 入力内容の下書き保存キー（ブラウザの localStorage のみ。サーバには送らない）。
+const DRAFT_KEY = "todokede-plan-draft-v1";
+
 function Field({ label, value, onChange, placeholder, type = "text", required = false }: any) {
   return (
     <div style={{ marginBottom: 20 }}>
@@ -117,17 +133,9 @@ const [selectedPlan, setSelectedPlan] = useState("standard");
 const [showSample, setShowSample] = useState(false);  // ← これを追加
 const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [postalStatus, setPostalStatus] = useState<"idle" | "loading" | "ok" | "notfound" | "error">("idle");
-  const [form, setForm] = useState({
-    postal: "",
-    prefecture: "京都府", city: "京都市", ward: "", address_detail: "",
-    building_name: "", use_category: "", total_area: "", num_floors: "", capacity: "",
-    owner_name: "", manager_name: "", manager_qual: "甲種", manager_date: "", manager_tel: "",
-    has_outsource: false, outsource_company: "",
-    equipment: [] as string[], inspection_company: "",
-    emergency_name: "", emergency_tel: "",
-    evacuation_site: "", assembly_point: "",
-    drill_months: "4月・10月", education_months: "4月・10月",
-  });
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [draftRestored, setDraftRestored] = useState(false);
+  const draftLoaded = useRef(false);
 
   // Preselect plan when arriving from the pricing page (/?plan=standard など).
   useEffect(() => {
@@ -136,6 +144,48 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       setSelectedPlan(param);
     }
   }, []);
+
+  // 入力内容の下書きをブラウザから復元（マウント時）。サーバには保存しない。
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        if (saved && typeof saved === "object") {
+          const merged = { ...INITIAL_FORM, ...saved };
+          setForm(merged);
+          // 初期値と異なる（＝実際に入力済み）場合のみ復元バナーを出す。
+          if (JSON.stringify(merged) !== JSON.stringify(INITIAL_FORM)) {
+            setDraftRestored(true);
+          }
+        }
+      }
+    } catch {
+      // 破損データ等は無視して通常入力にフォールバック。
+    }
+    draftLoaded.current = true;
+  }, []);
+
+  // 入力内容を下書きとして保存（復元完了後のみ。初回ロード前の上書きを防ぐ）。
+  useEffect(() => {
+    if (!draftLoaded.current) return;
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+    } catch {
+      // 容量超過・プライベートモード等は無視。
+    }
+  }, [form]);
+
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* noop */
+    }
+    setForm({ ...INITIAL_FORM, equipment: [] });
+    setDraftRestored(false);
+    setStep(0);
+  };
 
   const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }));
 
@@ -228,6 +278,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       });
       const data = await res.json();
       if (data.url) {
+        // 決済に進むので下書きを消す（生成後に古い入力が残らないように）。
+        try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
         window.location.href = data.url;
       } else {
         alert("決済セッションの作成に失敗しました");
@@ -286,6 +338,19 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       </div>
 
       <div style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", boxShadow: "0 2px 12px rgba(0,0,0,0.04)", minHeight: 380 }}>
+
+        {draftRestored && (
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", justifyContent: "space-between", marginBottom: 20, padding: "12px 16px", background: "#EEF4FA", border: "1px solid #DCE8F5", borderRadius: 12 }}>
+            <span style={{ fontSize: 13, color: "#2E5F9E", fontWeight: 600 }}>前回の入力内容を復元しました（この端末にのみ保存）。</span>
+            <button
+              type="button"
+              onClick={clearDraft}
+              style={{ fontSize: 13, fontWeight: 600, color: "#86868b", background: "#fff", border: "1px solid #d2d2d7", borderRadius: 8, padding: "6px 14px", cursor: "pointer", whiteSpace: "nowrap" }}
+            >
+              新しく入力する
+            </button>
+          </div>
+        )}
 
         {step === 0 && (
           <div>
