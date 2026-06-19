@@ -116,7 +116,9 @@ export default function Home() {
 const [selectedPlan, setSelectedPlan] = useState("standard");
 const [showSample, setShowSample] = useState(false);  // ← これを追加
 const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [postalStatus, setPostalStatus] = useState<"idle" | "loading" | "ok" | "notfound" | "error">("idle");
   const [form, setForm] = useState({
+    postal: "",
     prefecture: "京都府", city: "京都市", ward: "", address_detail: "",
     building_name: "", use_category: "", total_area: "", num_floors: "", capacity: "",
     owner_name: "", manager_name: "", manager_qual: "甲種", manager_date: "", manager_tel: "",
@@ -136,6 +138,35 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   }, []);
 
   const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }));
+
+  // 郵便番号 → 住所 自動入力（所轄判定の精度向上・入力短縮）。
+  // 政令市は address2 が「○○市××区」のため、所轄判定用に市と区へ分割する。
+  // 失敗時は何もせず手入力にフォールバック。
+  const lookupPostal = async (raw: string) => {
+    const zip = (raw || "").replace(/[^0-9]/g, "");
+    if (zip.length !== 7) return;
+    setPostalStatus("loading");
+    try {
+      const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${zip}`);
+      const data = await res.json();
+      const r = data && Array.isArray(data.results) ? data.results[0] : null;
+      if (!r) { setPostalStatus("notfound"); return; }
+      const a2 = String(r.address2 || "");
+      const m = a2.match(/^(.+?市)(.+区)$/); // 政令市の市/区を分割（特別区は市が無いので非該当）
+      const city = m ? m[1] : a2;
+      const ward = m ? m[2] : "";
+      setForm(f => ({
+        ...f,
+        prefecture: String(r.address1 || ""),
+        city,
+        ward,
+        address_detail: String(r.address3 || "") || f.address_detail,
+      }));
+      setPostalStatus("ok");
+    } catch {
+      setPostalStatus("error");
+    }
+  };
   const toggleEquip = (e: string) => set("equipment", form.equipment.includes(e) ? form.equipment.filter((x: string) => x !== e) : [...form.equipment, e]);
   const selectedUse = USE_CATEGORIES.find(u => u.value === form.use_category);
   const isSpecific = selectedUse?.specific ?? false;
@@ -260,6 +291,41 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>所在地</h2>
             <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>消防本部を自動で特定します</p>
+
+            {/* 郵便番号 → 住所 自動入力 */}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1d1d1f", marginBottom: 6 }}>郵便番号</label>
+              <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={form.postal}
+                  onChange={(e: any) => {
+                    const v = e.target.value;
+                    set("postal", v);
+                    if (postalStatus !== "idle") setPostalStatus("idle");
+                    if (v.replace(/[^0-9]/g, "").length === 7) lookupPostal(v);
+                  }}
+                  placeholder="6000000（ハイフン不要）"
+                  style={{ flex: 1, padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, outline: "none", background: "#fbfbfd" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => lookupPostal(form.postal)}
+                  disabled={postalStatus === "loading"}
+                  style={{ padding: "0 18px", fontSize: 14, fontWeight: 600, color: "#fff", background: "#2E5F9E", border: "none", borderRadius: 12, cursor: "pointer", whiteSpace: "nowrap", opacity: postalStatus === "loading" ? 0.6 : 1 }}
+                >
+                  {postalStatus === "loading" ? "検索中…" : "住所を入力"}
+                </button>
+              </div>
+              <p style={{ fontSize: 12, marginTop: 6, minHeight: 16, color: postalStatus === "ok" ? "#1a7a1a" : postalStatus === "notfound" || postalStatus === "error" ? "#af6800" : "#86868b" }}>
+                {postalStatus === "ok" ? "住所を自動入力しました。番地以降を追記してください。"
+                  : postalStatus === "notfound" ? "該当する住所が見つかりませんでした。手入力してください。"
+                  : postalStatus === "error" ? "住所の取得に失敗しました。手入力してください。"
+                  : "郵便番号を入力すると都道府県・市区町村を自動で補完します。"}
+              </p>
+            </div>
+
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Field label="都道府県" value={form.prefecture} onChange={(e: any) => set("prefecture", e.target.value)} required />
               <Field label="市区町村" value={form.city} onChange={(e: any) => set("city", e.target.value)} required />
