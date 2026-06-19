@@ -4,13 +4,13 @@ const BRAND = "#2E5F9E";
 // 正式ラインナップは todokede-shobo/app/components/site-footer.tsx と一致させる。
 const series: { name: string; url?: string; current?: boolean }[] = [
   { name: "トドケデ消防計画", url: "/", current: true },
-  { name: "トドケデ消防書類作成", url: "https://docs.todokede.jp" },
+  { name: "トドケデ消防書類作成", url: "https://docs.todokede.jp/" },
   { name: "トドケデ消防書類代行" },
-  { name: "トドケデ介護", url: "https://care.todokede.jp" },
-  { name: "トドケデ更新管理" },
-  { name: "トドケデ防火管理" },
+  { name: "トドケデ防火管理", url: "https://bouka.todokede.jp/" },
   { name: "トドケデ訓練支援" },
-  { name: "トドケデ消防設備点検" },
+  { name: "トドケデ消防設備点検", url: "https://tenken.todokede.jp/" },
+  { name: "トドケデ更新管理" },
+  { name: "トドケデ介護", url: "https://care.todokede.jp/" },
   { name: "トドケデ危険物" },
   { name: "トドケデBCP" },
 ];
