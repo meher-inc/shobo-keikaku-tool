@@ -114,16 +114,49 @@ const INITIAL_FORM = {
 // 入力内容の下書き保存キー（ブラウザの localStorage のみ。サーバには送らない）。
 const DRAFT_KEY = "todokede-plan-draft-v1";
 
-function Field({ label, value, onChange, placeholder, type = "text", required = false }: any) {
+// 専門用語の補足説明（クリックで開閉するツールチップ）。
+function Hint({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span style={{ position: "relative", display: "inline-block", marginLeft: 6, verticalAlign: "middle" }}>
+      <button
+        type="button"
+        aria-label="説明を表示"
+        onClick={() => setOpen((o) => !o)}
+        onBlur={() => setOpen(false)}
+        style={{ width: 16, height: 16, borderRadius: 999, border: "1px solid #c4c4c9", background: "#fff", color: "#86868b", fontSize: 11, fontWeight: 700, lineHeight: "14px", cursor: "pointer", padding: 0 }}
+      >
+        ?
+      </button>
+      {open && (
+        <span
+          role="tooltip"
+          style={{ position: "absolute", left: 0, top: 22, zIndex: 20, width: 248, padding: "10px 12px", background: "#1d1d1f", color: "#fff", fontSize: 12, lineHeight: 1.7, fontWeight: 400, borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.18)", textAlign: "left", whiteSpace: "normal" }}
+        >
+          {text}
+        </span>
+      )}
+    </span>
+  );
+}
+
+function Field({ label, value, onChange, placeholder, type = "text", required = false, hint, error }: any) {
   return (
     <div style={{ marginBottom: 20 }}>
       <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1d1d1f", marginBottom: 6 }}>
-        {label}{required && <span style={{ color: "#ff3b30" }}> *</span>}
+        {label}{required && <span style={{ color: "#ff3b30" }}> *</span>}{hint && <Hint text={hint} />}
       </label>
       <input type={type} value={value} onChange={onChange} placeholder={placeholder}
-        style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, outline: "none", background: "#fbfbfd" }} />
+        style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: error ? "1px solid #ff3b30" : "1px solid #d2d2d7", borderRadius: 12, outline: "none", background: "#fbfbfd" }} />
+      {error && <p style={{ fontSize: 12, color: "#ff3b30", margin: "4px 0 0" }}>{error}</p>}
     </div>
   );
+}
+
+// 電話番号は数字・ハイフン・括弧・空白のみ許容（全角数字も可）。空欄は検証しない。
+function telError(v: string): string | undefined {
+  if (!v) return undefined;
+  return /^[0-9０-９\-‐－ー()（）\s]+$/.test(v) ? undefined : "数字とハイフンで入力してください";
 }
 
 export default function Home() {
@@ -418,7 +451,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>テンプレートを自動で選定します</p>
             <Field label="建物名称" value={form.building_name} onChange={(e: any) => set("building_name", e.target.value)} placeholder="○○ビル" required />
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>用途（令別表第一）<span style={{ color: "#ff3b30" }}> *</span></label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>用途（令別表第一）<span style={{ color: "#ff3b30" }}> *</span><Hint text="建物の使い方の区分です（消防法施行令 別表第一の項）。劇場・飲食店・物販店・宿泊・病院・福祉施設などの『特定用途』は防火管理の基準が厳しくなります。わからない場合は最も近い用途を選んでください。" /></label>
               <select value={form.use_category} onChange={(e: any) => set("use_category", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, background: "#fbfbfd", cursor: "pointer" }}>
                 <option value="">選択してください</option>
                 {USE_CATEGORIES.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
@@ -426,9 +459,9 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               {selectedUse && <div style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 20, background: isSpecific ? "#fff3e0" : "#e3f2fd", color: isSpecific ? "#e65100" : "#1565c0" }}>{isSpecific ? "● 特定防火対象物" : "● 非特定防火対象物"}</div>}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-              <Field label="延べ面積（㎡）" value={form.total_area} onChange={(e: any) => set("total_area", e.target.value)} type="number" required />
-              <Field label="階数" value={form.num_floors} onChange={(e: any) => set("num_floors", e.target.value)} type="number" required />
-              <Field label="収容人員" value={form.capacity} onChange={(e: any) => set("capacity", e.target.value)} type="number" required />
+              <Field label="延べ面積（㎡）" value={form.total_area} onChange={(e: any) => set("total_area", e.target.value)} type="number" required hint="建物すべての階の床面積の合計（㎡）です。登記事項証明書や検査済証で確認できます。" />
+              <Field label="階数" value={form.num_floors} onChange={(e: any) => set("num_floors", e.target.value)} type="number" required hint="地上階数を入力します（地階がある場合は備考や以降の住所欄で補足してください）。" />
+              <Field label="収容人員" value={form.capacity} onChange={(e: any) => set("capacity", e.target.value)} type="number" required hint="その建物・テナントに通常いる人数（従業員＋利用者など）の合計です。消防法令の算定基準で求めた人数を入力します。" />
             </div>
           </div>
         )}
@@ -441,7 +474,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <Field label="防火管理者 氏名" value={form.manager_name} onChange={(e: any) => set("manager_name", e.target.value)} required />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>資格種別 *</label>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>資格種別 *<Hint text="防火管理者の資格区分です。特定用途で収容30人以上・延床300㎡以上などの場合は甲種、それ以外は乙種が目安です。選任済みの資格証でご確認ください。" /></label>
                 <select value={form.manager_qual} onChange={(e: any) => set("manager_qual", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, background: "#fbfbfd", cursor: "pointer" }}>
                   <option value="甲種">甲種</option>
                   <option value="乙種">乙種</option>
@@ -449,7 +482,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               </div>
               <Field label="選任年月日" value={form.manager_date} onChange={(e: any) => set("manager_date", e.target.value)} placeholder="令和6年4月1日" />
             </div>
-            <Field label="連絡先" value={form.manager_tel} onChange={(e: any) => set("manager_tel", e.target.value)} type="tel" required />
+            <Field label="連絡先" value={form.manager_tel} onChange={(e: any) => set("manager_tel", e.target.value)} type="tel" required error={telError(form.manager_tel)} />
           </div>
         )}
 
@@ -484,7 +517,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>緊急時の連絡先と避難場所</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Field label="緊急連絡先 氏名" value={form.emergency_name} onChange={(e: any) => set("emergency_name", e.target.value)} required />
-              <Field label="緊急連絡先 TEL" value={form.emergency_tel} onChange={(e: any) => set("emergency_tel", e.target.value)} type="tel" required />
+              <Field label="緊急連絡先 TEL" value={form.emergency_tel} onChange={(e: any) => set("emergency_tel", e.target.value)} type="tel" required error={telError(form.emergency_tel)} />
             </div>
             <Field label="広域避難場所" value={form.evacuation_site} onChange={(e: any) => set("evacuation_site", e.target.value)} placeholder="○○区○○町 ○○公園" required />
             <Field label="一時集合場所" value={form.assembly_point} onChange={(e: any) => set("assembly_point", e.target.value)} placeholder="ビル北側駐車場" />
