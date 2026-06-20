@@ -83,14 +83,12 @@ const FAQ_ITEMS = [
       <>
         現在は1件ずつの購入となっております。管理会社様・フランチャイズ本部様などで複数物件の一括対応をご希望の場合は、
         <a
-          href="https://todokede.jp"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/contact"
           style={{ color: "#2E5F9E", textDecoration: "underline" }}
         >
-          トドケデ本体の消防計画作成支援サービス
+          法人・複数物件のご相談
         </a>
-        (¥50,000〜)をご検討ください。
+        からお問い合わせください。担当より折り返しご案内いたします。
       </>
     ),
   },

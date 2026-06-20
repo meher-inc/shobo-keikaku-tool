@@ -75,6 +75,8 @@ export default function Footer() {
         </div>
 
         <p style={{ marginTop: 32, fontSize: 11 }}>
+          <a href="/contact" style={{ color: "#666", textDecoration: "none" }}>法人のご相談</a>
+          {" ・ "}
           <a href="/mypage" style={{ color: "#666", textDecoration: "none" }}>マイページ</a>
           {" ・ "}
           <a href="/legal/tokusho" style={{ color: "#666", textDecoration: "none" }}>特定商取引法に基づく表記</a>
