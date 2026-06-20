@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
 import { SPOT_PLANS, isSpotPlanId } from "../lib/spot-plans";
 import { MarketingSections } from "../components/marketing-sections";
@@ -114,13 +114,119 @@ const INITIAL_FORM = {
 // 入力内容の下書き保存キー（ブラウザの localStorage のみ。サーバには送らない）。
 const DRAFT_KEY = "todokede-plan-draft-v1";
 
-function Field({ label, value, onChange, placeholder, type = "text", required = false }: any) {
+const FIELD_HELP_TEXT = {
+  useCategory: "建物の主な使われ方を選ぶ項目です。迷う場合は賃貸契約書・確認済証・所轄消防署の案内などと照合してください。",
+  managerQual: "講習区分の種類です。建物の用途・規模で扱いが変わることがあるため、修了証などに記載された区分を入力してください。",
+  totalArea: "各階の床面積を合計した面積です。確認済証・検査済証・登記書類などの記載を参考にしてください。",
+  capacity: "従業員・利用者など、建物内に入る人数の目安です。数え方は用途により異なるため、わかる範囲で資料に合わせてください。",
+} as const;
+
+type TooltipAlign = "left" | "center" | "right";
+
+type FieldProps = {
+  label: string;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  type?: string;
+  required?: boolean;
+  helpText?: string;
+  helpAlign?: TooltipAlign;
+};
+
+function InfoTooltip({ text, align = "left" }: { text: string; align?: TooltipAlign }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <span
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      style={{ position: "relative", display: "inline-flex", alignItems: "center" }}
+    >
+      <button
+        type="button"
+        aria-label="説明を表示"
+        aria-expanded={open}
+        onClick={(e) => {
+          e.preventDefault();
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        style={{
+          width: 18,
+          height: 18,
+          borderRadius: 999,
+          border: "1px solid #8FB3DC",
+          background: "#EEF4FA",
+          color: "#2E5F9E",
+          fontSize: 12,
+          fontWeight: 800,
+          lineHeight: 1,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          padding: 0,
+        }}
+      >
+        ?
+      </button>
+      {open && (
+        <span
+          role="tooltip"
+          style={{
+            position: "absolute",
+            top: "calc(100% + 8px)",
+            ...(align === "right"
+              ? { right: 0 }
+              : align === "center"
+                ? { left: "50%", transform: "translateX(-50%)" }
+                : { left: 0 }),
+            zIndex: 30,
+            width: 260,
+            maxWidth: "min(260px, calc(100vw - 48px))",
+            padding: "10px 12px",
+            borderRadius: 10,
+            border: "1px solid #DCE8F5",
+            background: "#fff",
+            boxShadow: "0 8px 24px rgba(46, 95, 158, 0.16)",
+            color: "#424245",
+            fontSize: 12,
+            fontWeight: 500,
+            lineHeight: 1.6,
+            whiteSpace: "normal",
+          }}
+        >
+          {text}
+        </span>
+      )}
+    </span>
+  );
+}
+
+function LabelWithTooltip({ label, required = false, helpText, helpAlign = "left" }: {
+  label: string;
+  required?: boolean;
+  helpText?: string;
+  helpAlign?: TooltipAlign;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", fontSize: 13, fontWeight: 600, color: "#1d1d1f", marginBottom: 6 }}>
+      <span>
+        {label}{required && <span style={{ color: "#ff3b30" }}> *</span>}
+      </span>
+      {helpText && <InfoTooltip text={helpText} align={helpAlign} />}
+    </div>
+  );
+}
+
+function Field({ label, value, onChange, placeholder, type = "text", required = false, helpText, helpAlign }: FieldProps) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1d1d1f", marginBottom: 6 }}>
-        {label}{required && <span style={{ color: "#ff3b30" }}> *</span>}
-      </label>
+      <LabelWithTooltip label={label} required={required} helpText={helpText} helpAlign={helpAlign} />
       <input type={type} value={value} onChange={onChange} placeholder={placeholder}
+        aria-label={label}
         style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, outline: "none", background: "#fbfbfd" }} />
     </div>
   );
@@ -418,17 +524,17 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>テンプレートを自動で選定します</p>
             <Field label="建物名称" value={form.building_name} onChange={(e: any) => set("building_name", e.target.value)} placeholder="○○ビル" required />
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>用途（令別表第一）<span style={{ color: "#ff3b30" }}> *</span></label>
-              <select value={form.use_category} onChange={(e: any) => set("use_category", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, background: "#fbfbfd", cursor: "pointer" }}>
+              <LabelWithTooltip label="用途（令別表第一）" required helpText={FIELD_HELP_TEXT.useCategory} />
+              <select aria-label="用途（令別表第一）" value={form.use_category} onChange={(e: any) => set("use_category", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, background: "#fbfbfd", cursor: "pointer" }}>
                 <option value="">選択してください</option>
                 {USE_CATEGORIES.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
               </select>
               {selectedUse && <div style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 20, background: isSpecific ? "#fff3e0" : "#e3f2fd", color: isSpecific ? "#e65100" : "#1565c0" }}>{isSpecific ? "● 特定防火対象物" : "● 非特定防火対象物"}</div>}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-              <Field label="延べ面積（㎡）" value={form.total_area} onChange={(e: any) => set("total_area", e.target.value)} type="number" required />
+              <Field label="延べ面積（㎡）" value={form.total_area} onChange={(e: any) => set("total_area", e.target.value)} type="number" required helpText={FIELD_HELP_TEXT.totalArea} />
               <Field label="階数" value={form.num_floors} onChange={(e: any) => set("num_floors", e.target.value)} type="number" required />
-              <Field label="収容人員" value={form.capacity} onChange={(e: any) => set("capacity", e.target.value)} type="number" required />
+              <Field label="収容人員" value={form.capacity} onChange={(e: any) => set("capacity", e.target.value)} type="number" required helpText={FIELD_HELP_TEXT.capacity} helpAlign="right" />
             </div>
           </div>
         )}
@@ -441,8 +547,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <Field label="防火管理者 氏名" value={form.manager_name} onChange={(e: any) => set("manager_name", e.target.value)} required />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>資格種別 *</label>
-                <select value={form.manager_qual} onChange={(e: any) => set("manager_qual", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, background: "#fbfbfd", cursor: "pointer" }}>
+                <LabelWithTooltip label="資格種別" required helpText={FIELD_HELP_TEXT.managerQual} />
+                <select aria-label="資格種別" value={form.manager_qual} onChange={(e: any) => set("manager_qual", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, background: "#fbfbfd", cursor: "pointer" }}>
                   <option value="甲種">甲種</option>
                   <option value="乙種">乙種</option>
                 </select>
