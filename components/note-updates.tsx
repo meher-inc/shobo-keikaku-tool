@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 const BRAND = "#2E5F9E";
 
-// 「もっと見る」リンク先（著者の note。全記事が見られる）。
-const MAGAZINE_URL = "https://note.com/shun_maruoka";
+// 「もっと見る」リンク先のマガジン（消防計画づくりの実務ノート）。
+const MAGAZINE_URL = "https://note.com/shun_maruoka/m/m9f1348968657";
 
 interface NoteItem {
   title: string;
