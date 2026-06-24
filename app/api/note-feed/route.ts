@@ -9,7 +9,7 @@ import { NextResponse } from "next/server";
  * 対象マガジンの RSS を増減する場合は MAGAZINE_FEEDS を編集する。
  */
 
-export const revalidate = 3600; // 1時間ごとに再取得
+export const revalidate = 600; // 10分ごとに再取得（note 投稿の反映を速める）
 
 const MAGAZINE_FEEDS = [
   "https://note.com/shun_maruoka/m/m9f1348968657/rss",

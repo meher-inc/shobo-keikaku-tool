@@ -23,7 +23,7 @@ export function NoteUpdates() {
 
   useEffect(() => {
     let alive = true;
-    fetch("/api/note-feed")
+    fetch("/api/note-feed", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         if (alive) setItems(Array.isArray(d.items) ? d.items : []);
