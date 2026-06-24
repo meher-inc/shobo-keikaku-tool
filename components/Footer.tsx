@@ -1,18 +1,18 @@
 const BRAND = "#2E5F9E";
 
-// トドケデシリーズ（url のあるものは提供中、ない（準備中）ものは順次提供予定）。
-// 正式ラインナップは todokede-shobo/app/components/site-footer.tsx と一致させる。
+// トドケデシリーズ（各サービスの公式URL）。
 const series: { name: string; url?: string; current?: boolean }[] = [
   { name: "トドケデ消防計画", url: "/", current: true },
   { name: "トドケデ消防書類作成", url: "https://docs.todokede.jp/" },
-  { name: "トドケデ消防書類代行" },
+  { name: "トドケデ消防書類代行", url: "https://daikou.todokede.jp/" },
   { name: "トドケデ防火管理", url: "https://bouka.todokede.jp/" },
-  { name: "トドケデ訓練支援" },
+  { name: "トドケデ訓練支援", url: "https://kunren.todokede.jp/" },
   { name: "トドケデ消防設備点検", url: "https://tenken.todokede.jp/" },
-  { name: "トドケデ更新管理" },
+  { name: "トドケデ更新管理", url: "https://koushin.todokede.jp/" },
   { name: "トドケデ介護", url: "https://care.todokede.jp/" },
-  { name: "トドケデ危険物" },
-  { name: "トドケデBCP" },
+  { name: "トドケデ危険物", url: "https://kikenbutsu.todokede.jp/" },
+  { name: "トドケデBCP", url: "https://bcp.todokede.jp/" },
+  { name: "トドケデコンサルティング", url: "https://services.todokede.jp/company/business/consulting" },
 ];
 
 export default function Footer() {
@@ -68,8 +68,8 @@ export default function Footer() {
             })}
           </ul>
           <p style={{ marginTop: 18 }}>
-            <a href="https://todokede.jp" target="_blank" rel="noopener noreferrer" style={{ color: "#666", textDecoration: "none" }}>
-              トドケデ（ブランドサイト）→
+            <a href="https://services.todokede.jp" target="_blank" rel="noopener noreferrer" style={{ color: "#666", textDecoration: "none" }}>
+              全てのトドケデサービス ↗
             </a>
           </p>
         </div>

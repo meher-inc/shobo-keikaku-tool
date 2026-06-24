@@ -4,6 +4,7 @@ import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
 import { SPOT_PLANS, isSpotPlanId } from "../lib/spot-plans";
 import { MarketingSections } from "../components/marketing-sections";
 import { NoteUpdates } from "../components/note-updates";
+import TodokedeSeriesNav from "../components/shared/TodokedeSeriesNav";
 
 const USE_CATEGORIES = [
   { value: "1-イ", label: "1項イ 劇場等", specific: true },
@@ -899,9 +900,9 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         消防計画はゴールではなく入口です。届出・更新までトドケデシリーズでつながります。
       </p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 20, marginTop: 40 }}>
-        {/* アップセル: 消防書類作成（公開済み） */}
+        {/* アップセル: 消防書類作成 */}
         <a
-          href="https://docs.todokede.jp"
+          href="https://docs.todokede.jp/"
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -916,34 +917,36 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             防火・防災管理者選任届などの消防届出は、トドケデ消防書類作成で公式様式どおりに作成できます。
           </p>
           <span style={{ display: "inline-block", marginTop: 14, fontSize: 14, fontWeight: 600, color: "#2E5F9E" }}>
-            トドケデ消防書類作成を見る →
+            トドケデ消防書類作成を見る ↗
           </span>
         </a>
 
-        {/* ハブ集約: 更新管理（準備中・公開時にURLを差す） */}
-        <div
+        {/* ハブ集約: 更新管理 */}
+        <a
+          href="https://koushin.todokede.jp/"
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
-            background: "#fff", border: "1px dashed #DCE8F5", borderRadius: 16,
+            display: "block", textDecoration: "none",
+            background: "#fff", border: "1px solid #e8e8ed", borderRadius: 16,
             padding: "24px 22px",
           }}
         >
           <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.08em", color: "#8FB3DC" }}>まとめて管理</div>
-          <h3 style={{ fontSize: 17, fontWeight: 700, color: "#1d1d1f", marginTop: 8 }}>
-            すべての期限を、一括管理
-            <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 700, color: "#86868b", background: "#f0f0f3", borderRadius: 999, padding: "2px 10px", verticalAlign: "middle" }}>準備中</span>
-          </h3>
+          <h3 style={{ fontSize: 17, fontWeight: 700, color: "#1d1d1f", marginTop: 8 }}>すべての期限を、一括管理</h3>
           <p style={{ fontSize: 14, lineHeight: 1.8, color: "#6e6e73", marginTop: 8 }}>
             計画・点検・届出の期限と記録をトドケデ更新管理でまとめて。コンプライアンス状態を可視化します。
           </p>
-          <span style={{ display: "inline-block", marginTop: 14, fontSize: 14, fontWeight: 600, color: "#b0b0b5" }}>
-            近日公開
+          <span style={{ display: "inline-block", marginTop: 14, fontSize: 14, fontWeight: 600, color: "#2E5F9E" }}>
+            トドケデ更新管理を見る ↗
           </span>
-        </div>
+        </a>
       </div>
     </section>
 
     {/* 更新情報（note.com マガジン連携） — ページ下部 */}
     <NoteUpdates />
+    <TodokedeSeriesNav source="plan" currentId="shobo-keikaku" />
     </>
   );
 }
