@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
 
 /**
- * note.com マガジン「消防計画づくりの実務ノート」の最新記事を集約して返す。
+ * note の最新記事を集約して LP の更新情報セクションに返す。
+ *
+ * 取得元は「著者アカウントのRSS」を主とする。マガジン RSS はマガジンへ追加した
+ * 記事しか出ず、投稿してもマガジン未登録だと反映されないため、アカウントRSS
+ * （その人の最新記事すべて）を使うことで、投稿が自動でLPに反映される。
  *
  * LP の更新情報セクション（components/note-updates.tsx）がこの API を叩く。
- * note 側に投稿すると ISR の再取得（revalidate）でLPに自動反映される。
- *
- * 対象マガジンの RSS を増減する場合は MAGAZINE_FEEDS を編集する。
+ * 取得元を増減する場合は FEEDS を編集する。
  */
 
 export const revalidate = 600; // 10分ごとに再取得（note 投稿の反映を速める）
 
-const MAGAZINE_FEEDS = [
-  "https://note.com/shun_maruoka/m/m9f1348968657/rss",
-  "https://note.com/todokede/m/mb821e060300f/rss",
+const FEEDS = [
+  "https://note.com/shun_maruoka/rss", // 著者アカウントの最新記事（マガジン未登録分も反映）
+  "https://note.com/todokede/m/mb821e060300f/rss", // トドケデ公式マガジン
 ];
 
 const MAX_ITEMS = 6;
@@ -69,7 +71,7 @@ function parseFeed(xml: string): NoteItem[] {
 export async function GET() {
   try {
     const results = await Promise.all(
-      MAGAZINE_FEEDS.map(async (url) => {
+      FEEDS.map(async (url) => {
         try {
           const res = await fetch(url, {
             headers: { "User-Agent": "Mozilla/5.0 (compatible; todokede-lp/1.0)" },
