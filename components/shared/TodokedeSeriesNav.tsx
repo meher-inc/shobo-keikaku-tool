@@ -43,8 +43,8 @@ function withUtm(url: string, source: string, campaign: string) {
 function Mark() {
   return (
     <svg viewBox="0 0 40 40" width="26" height="26" aria-hidden>
-      <rect x="16" y="6" width="16" height="23" rx="2" fill="#c45042" />
-      <rect x="9" y="11" width="16" height="23" rx="2" fill="#a93226" />
+      <rect x="16" y="6" width="16" height="23" rx="2" fill="#8FB3DC" />
+      <rect x="9" y="11" width="16" height="23" rx="2" fill="#2E5F9E" />
     </svg>
   );
 }
