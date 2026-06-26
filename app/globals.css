@@ -6,6 +6,66 @@ body {
   color: #1d1d1f;
 }
 
+/* ── アクセシビリティ：フォーカス可視化（WCAG 2.4.7） ──
+   ボタン・リンクは outline、フォーム部品は box-shadow リング
+   （入力欄はインラインで outline:none のため、上書きされない box-shadow を使う）。 */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #2E5F9E;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(46, 95, 158, 0.35);
+  border-color: #2E5F9E;
+}
+
+/* ── スキップリンク（キーボードでの本文ジャンプ） ── */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 1000;
+  padding: 10px 16px;
+  background: #2E5F9E;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform 0.15s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ── アンカー遷移：スムーズスクロール＋ヘッダー分のオフセット ── */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+/* ── モーション低減の尊重（WCAG 2.3.3 / ユーザー設定） ── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Sample preview: desktop iframe / mobile image list */
 .sample-desktop {
   display: block;
