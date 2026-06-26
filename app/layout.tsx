@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ background: "var(--bg)", color: "var(--text)", margin: 0 }}>
         {/* テーマ適用（描画前に data-theme を設定し FOUC を防ぐ） */}
         <Script id="theme-init" strategy="beforeInteractive">
-          {`(function(){try{var t=localStorage.getItem('todokede-theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();`}
+          {`(function(){try{var t=localStorage.getItem('todokede-theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`}
         </Script>
         {/* Google tag (gtag.js) - Google Ads & GA4 共通 */}
         <Script
