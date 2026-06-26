@@ -1,4 +1,4 @@
-const BRAND = "#2E5F9E";
+const BRAND = "var(--brand)";
 
 // トドケデシリーズ（各サービスの公式URL）。
 const series: { name: string; url?: string; current?: boolean }[] = [
@@ -17,14 +17,14 @@ const series: { name: string; url?: string; current?: boolean }[] = [
 
 export default function Footer() {
   return (
-    <footer style={{ marginTop: 96, borderTop: "1px solid #e5e5e5", background: "#fff", padding: "48px 24px" }}>
-      <div style={{ maxWidth: 1080, margin: "0 auto", textAlign: "center", fontSize: 12, color: "#666" }}>
-        <p style={{ margin: "0 0 8px", fontWeight: 700, color: "#1a1a1a" }}>MeHer株式会社</p>
+    <footer style={{ marginTop: 96, borderTop: "1px solid var(--border)", background: "var(--surface)", padding: "48px 24px" }}>
+      <div style={{ maxWidth: 1080, margin: "0 auto", textAlign: "center", fontSize: 12, color: "var(--text-muted)" }}>
+        <p style={{ margin: "0 0 8px", fontWeight: 700, color: "var(--text)" }}>MeHer株式会社</p>
         <p style={{ margin: 0 }}>元消防士が監修する消防計画作成クラウドサービス</p>
 
         {/* トドケデシリーズ ラインナップ */}
-        <div style={{ marginTop: 36, paddingTop: 28, borderTop: "1px solid #eee" }}>
-          <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 800, letterSpacing: "0.12em", color: "#6e6e73" }}>
+        <div style={{ marginTop: 36, paddingTop: 28, borderTop: "1px solid var(--border)" }}>
+          <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 800, letterSpacing: "0.12em", color: "var(--text-muted)" }}>
             トドケデシリーズ
           </p>
           <ul
@@ -47,7 +47,7 @@ export default function Footer() {
                       href={s.url}
                       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       style={{
-                        color: s.current ? BRAND : "#1d1d1f",
+                        color: s.current ? BRAND : "var(--text)",
                         fontWeight: s.current ? 700 : 500,
                         textDecoration: "none",
                       }}
@@ -58,9 +58,9 @@ export default function Footer() {
                       )}
                     </a>
                   ) : (
-                    <span style={{ color: "#b0b0b5", fontWeight: 500 }}>
+                    <span style={{ color: "var(--text-faint)", fontWeight: 500 }}>
                       {s.name}
-                      <span style={{ marginLeft: 5, fontSize: 10, color: "#c4c4c9" }}>準備中</span>
+                      <span style={{ marginLeft: 5, fontSize: 10, color: "var(--border-strong)" }}>準備中</span>
                     </span>
                   )}
                 </li>
@@ -68,22 +68,22 @@ export default function Footer() {
             })}
           </ul>
           <p style={{ marginTop: 18 }}>
-            <a href="https://services.todokede.jp" target="_blank" rel="noopener noreferrer" style={{ color: "#666", textDecoration: "none" }}>
+            <a href="https://services.todokede.jp" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-muted)", textDecoration: "none" }}>
               全てのトドケデサービス ↗
             </a>
           </p>
         </div>
 
         <p style={{ marginTop: 32, fontSize: 11 }}>
-          <a href="/contact" style={{ color: "#666", textDecoration: "none" }}>法人のご相談</a>
+          <a href="/contact" style={{ color: "var(--text-muted)", textDecoration: "none" }}>法人のご相談</a>
           {" ・ "}
-          <a href="/mypage" style={{ color: "#666", textDecoration: "none" }}>マイページ</a>
+          <a href="/mypage" style={{ color: "var(--text-muted)", textDecoration: "none" }}>マイページ</a>
           {" ・ "}
-          <a href="/legal/tokusho" style={{ color: "#666", textDecoration: "none" }}>特定商取引法に基づく表記</a>
+          <a href="/legal/tokusho" style={{ color: "var(--text-muted)", textDecoration: "none" }}>特定商取引法に基づく表記</a>
           {" ・ "}
-          <a href="/legal/privacy" style={{ color: "#666", textDecoration: "none" }}>プライバシーポリシー</a>
+          <a href="/legal/privacy" style={{ color: "var(--text-muted)", textDecoration: "none" }}>プライバシーポリシー</a>
           {" ・ "}
-          <a href="/legal/terms" style={{ color: "#666", textDecoration: "none" }}>利用規約</a>
+          <a href="/legal/terms" style={{ color: "var(--text-muted)", textDecoration: "none" }}>利用規約</a>
         </p>
         <p style={{ marginTop: 16 }}>© {new Date().getFullYear()} MeHer Inc.</p>
       </div>
