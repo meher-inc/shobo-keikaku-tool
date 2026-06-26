@@ -139,13 +139,14 @@ function Hint({ text }: { text: string }) {
   );
 }
 
-function Field({ label, value, onChange, placeholder, type = "text", required = false, hint, error }: any) {
+function Field({ label, value, onChange, placeholder, type = "text", required = false, hint, error, autoComplete, inputMode }: any) {
   return (
     <div style={{ marginBottom: 20 }}>
       <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1d1d1f", marginBottom: 6 }}>
         {label}{required && <span style={{ color: "#ff3b30" }}> *</span>}{hint && <Hint text={hint} />}
       </label>
-      <input type={type} value={value} onChange={onChange} placeholder={placeholder}
+      <input type={type} value={value} onChange={onChange} placeholder={placeholder} autoComplete={autoComplete} inputMode={inputMode}
+        aria-required={required || undefined} aria-invalid={error ? true : undefined}
         style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: error ? "1px solid #ff3b30" : "1px solid #d2d2d7", borderRadius: 12, outline: "none", background: "#fbfbfd" }} />
       {error && <p style={{ fontSize: 12, color: "#ff3b30", margin: "4px 0 0" }}>{error}</p>}
     </div>
@@ -408,6 +409,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                 <input
                   type="text"
                   inputMode="numeric"
+                  autoComplete="postal-code"
+                  aria-label="郵便番号"
                   value={form.postal}
                   onChange={(e: any) => {
                     const v = e.target.value;
@@ -493,7 +496,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               </div>
               <Field label="選任年月日" value={form.manager_date} onChange={(e: any) => set("manager_date", e.target.value)} placeholder="令和6年4月1日" />
             </div>
-            <Field label="連絡先" value={form.manager_tel} onChange={(e: any) => set("manager_tel", e.target.value)} type="tel" required error={telError(form.manager_tel)} />
+            <Field label="連絡先" value={form.manager_tel} onChange={(e: any) => set("manager_tel", e.target.value)} type="tel" inputMode="tel" autoComplete="tel" required error={telError(form.manager_tel)} />
           </div>
         )}
 
@@ -528,7 +531,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>緊急時の連絡先と避難場所</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Field label="緊急連絡先 氏名" value={form.emergency_name} onChange={(e: any) => set("emergency_name", e.target.value)} required />
-              <Field label="緊急連絡先 TEL" value={form.emergency_tel} onChange={(e: any) => set("emergency_tel", e.target.value)} type="tel" required error={telError(form.emergency_tel)} />
+              <Field label="緊急連絡先 TEL" value={form.emergency_tel} onChange={(e: any) => set("emergency_tel", e.target.value)} type="tel" inputMode="tel" autoComplete="tel" required error={telError(form.emergency_tel)} />
             </div>
             <Field label="広域避難場所" value={form.evacuation_site} onChange={(e: any) => set("evacuation_site", e.target.value)} placeholder="○○区○○町 ○○公園" required />
             <Field label="一時集合場所" value={form.assembly_point} onChange={(e: any) => set("assembly_point", e.target.value)} placeholder="ビル北側駐車場" />

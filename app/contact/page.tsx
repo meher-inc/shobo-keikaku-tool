@@ -60,12 +60,12 @@ export default function ContactPage() {
 
           <div style={{ marginBottom: 20 }}>
             <label style={labelStyle}>会社・団体名<span style={{ color: "#ff3b30" }}> *</span></label>
-            <input style={inputStyle} value={f.company} onChange={(e) => set("company", e.target.value)} placeholder="株式会社○○" required />
+            <input style={inputStyle} autoComplete="organization" value={f.company} onChange={(e) => set("company", e.target.value)} placeholder="株式会社○○" required />
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div style={{ marginBottom: 20 }}>
               <label style={labelStyle}>お名前<span style={{ color: "#ff3b30" }}> *</span></label>
-              <input style={inputStyle} value={f.name} onChange={(e) => set("name", e.target.value)} placeholder="山田 太郎" required />
+              <input style={inputStyle} autoComplete="name" value={f.name} onChange={(e) => set("name", e.target.value)} placeholder="山田 太郎" required />
             </div>
             <div style={{ marginBottom: 20 }}>
               <label style={labelStyle}>対象物件数</label>
@@ -75,11 +75,11 @@ export default function ContactPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div style={{ marginBottom: 20 }}>
               <label style={labelStyle}>メールアドレス<span style={{ color: "#ff3b30" }}> *</span></label>
-              <input style={inputStyle} type="email" value={f.email} onChange={(e) => set("email", e.target.value)} placeholder="taro@example.com" required />
+              <input style={inputStyle} type="email" autoComplete="email" inputMode="email" value={f.email} onChange={(e) => set("email", e.target.value)} placeholder="taro@example.com" required />
             </div>
             <div style={{ marginBottom: 20 }}>
               <label style={labelStyle}>電話番号</label>
-              <input style={inputStyle} type="tel" value={f.tel} onChange={(e) => set("tel", e.target.value)} placeholder="06-1234-5678" />
+              <input style={inputStyle} type="tel" autoComplete="tel" inputMode="tel" value={f.tel} onChange={(e) => set("tel", e.target.value)} placeholder="06-1234-5678" />
             </div>
           </div>
           <div style={{ marginBottom: 24 }}>

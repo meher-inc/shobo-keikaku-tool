@@ -36,8 +36,30 @@ export function NoteUpdates() {
     };
   }, []);
 
-  // 取得中・記事ゼロのときはセクションごと非表示（LPを崩さない）。
-  if (!items || items.length === 0) return null;
+  // 読み込み中はスケルトンを表示（体感速度・レイアウトシフト抑制）。
+  if (items === null) {
+    return (
+      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px,7vw,72px) clamp(16px,4vw,24px)" }} aria-hidden="true">
+        <div style={{ background: "#EEF4FA", border: "1px solid #DCE8F5", borderRadius: 16, padding: "20px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <span style={{ fontSize: 13, fontWeight: 800, color: BRAND, letterSpacing: "0.04em" }}>note更新情報</span>
+            <span style={{ flex: 1, height: 1, background: "#DCE8F5" }} />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {[0, 1, 2].map((i) => (
+              <div key={i} style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <div className="skeleton-line" style={{ width: 84, height: 13, flexShrink: 0 }} />
+                <div className="skeleton-line" style={{ flex: 1, height: 13 }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // 記事ゼロのときはセクションごと非表示（LPを崩さない）。
+  if (items.length === 0) return null;
 
   return (
     <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px,7vw,72px) clamp(16px,4vw,24px)" }}>

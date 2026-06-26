@@ -84,6 +84,34 @@ html {
   }
 }
 
+/* ── マイクロインタラクション（控えめ・一貫したホバー/状態遷移） ── */
+button:not(:disabled),
+a,
+summary,
+[role="button"] {
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease,
+    box-shadow 0.18s ease, opacity 0.18s ease, filter 0.16s ease, transform 0.12s ease;
+}
+button:not(:disabled):hover {
+  filter: brightness(0.96);
+}
+
+/* ── スケルトン（読み込み中プレースホルダ） ── */
+@keyframes pulse-bg {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+.skeleton-line {
+  background: #DCE8F5;
+  border-radius: 6px;
+  animation: pulse-bg 1.4s ease-in-out infinite;
+}
+
 /* Sample preview: desktop iframe / mobile image list */
 .sample-desktop {
   display: block;
