@@ -104,7 +104,7 @@ export default function ContactPage() {
           >
             {status === "sending" ? "送信中…" : "相談を送信する"}
           </button>
-          <p style={{ fontSize: 12, color: "#86868b", marginTop: 12, lineHeight: 1.7 }}>
+          <p style={{ fontSize: 12, color: "#6e6e73", marginTop: 12, lineHeight: 1.7 }}>
             送信内容は折り返しのご連絡のみに利用します。詳しくは<a href="/legal/privacy" style={{ color: BRAND }}>プライバシーポリシー</a>をご確認ください。
           </p>
         </form>

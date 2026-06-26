@@ -24,7 +24,7 @@ export default function Footer() {
 
         {/* トドケデシリーズ ラインナップ */}
         <div style={{ marginTop: 36, paddingTop: 28, borderTop: "1px solid #eee" }}>
-          <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 800, letterSpacing: "0.12em", color: "#86868b" }}>
+          <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 800, letterSpacing: "0.12em", color: "#6e6e73" }}>
             トドケデシリーズ
           </p>
           <ul

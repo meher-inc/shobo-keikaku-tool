@@ -109,7 +109,7 @@ function SuccessContent() {
               <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#EEF4FA", color: "#2E5F9E", marginBottom: 12 }}>
                 {planName}プラン
               </div>
-              <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 24, lineHeight: 1.6 }}>
                 ありがとうございます。<br />
                 下のボタンから消防計画をダウンロードしてください。
               </p>
@@ -127,7 +127,7 @@ function SuccessContent() {
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>⏳</div>
               <h1 style={{ fontSize: 24, fontWeight: 700 }}>生成中...</h1>
-              <p style={{ fontSize: 15, color: "#86868b" }}>消防計画を作成しています。しばらくお待ちください。</p>
+              <p style={{ fontSize: 15, color: "#6e6e73" }}>消防計画を作成しています。しばらくお待ちください。</p>
             </>
           )}
 
@@ -138,7 +138,7 @@ function SuccessContent() {
               <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#EEF4FA", color: "#2E5F9E", marginBottom: 16 }}>
                 {planName}プラン
               </div>
-              <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 24, lineHeight: 1.6 }}>
                 消防計画のWordファイルがダウンロードされました。<br />
                 内容をご確認のうえ、所轄の消防署に届け出てください。
               </p>
@@ -219,7 +219,7 @@ function SuccessContent() {
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
               <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>エラーが発生しました</h1>
-              <p style={{ fontSize: 15, color: "#86868b", marginBottom: 32 }}>
+              <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 32 }}>
                 お手数ですが、もう一度お試しいただくか、<br />
                 info@todokede.jp までご連絡ください。
               </p>

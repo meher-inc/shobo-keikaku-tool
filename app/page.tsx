@@ -123,7 +123,7 @@ function Hint({ text }: { text: string }) {
         aria-label="説明を表示"
         onClick={() => setOpen((o) => !o)}
         onBlur={() => setOpen(false)}
-        style={{ width: 16, height: 16, borderRadius: 999, border: "1px solid #c4c4c9", background: "#fff", color: "#86868b", fontSize: 11, fontWeight: 700, lineHeight: "14px", cursor: "pointer", padding: 0 }}
+        style={{ width: 16, height: 16, borderRadius: 999, border: "1px solid #c4c4c9", background: "#fff", color: "#6e6e73", fontSize: 11, fontWeight: 700, lineHeight: "14px", cursor: "pointer", padding: 0 }}
       >
         ?
       </button>
@@ -397,7 +397,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           サンプルを見る
         </button>
       </div>
-      <p style={{ fontSize: 12, color: "#86868b", marginTop: 14 }}>
+      <p style={{ fontSize: 12, color: "#6e6e73", marginTop: 14 }}>
         実際に生成される消防計画（飲食店320㎡・別表付き）をご確認いただけます
       </p>
     </section>
@@ -406,13 +406,13 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
     <div id="form" style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(48px,8vw,80px) 16px 40px", scrollMarginTop: 24 }}>
       <h2 style={{ fontSize: "clamp(22px,4.5vw,30px)", fontWeight: 800, textAlign: "center", letterSpacing: "-0.01em", marginBottom: 8 }}>消防計画をつくる</h2>
-      <p style={{ fontSize: 15, color: "#86868b", textAlign: "center", marginBottom: 32 }}>6ステップの入力で、提出できる計画書が完成します。</p>
+      <p style={{ fontSize: 15, color: "#6e6e73", textAlign: "center", marginBottom: 32 }}>6ステップの入力で、提出できる計画書が完成します。</p>
 
       <div style={{ display: "flex", gap: 4, marginBottom: 24, padding: 4, background: "#e8e8ed", borderRadius: 12 }}>
         {STEPS.map((s, i) => (
           <button key={s.id} onClick={() => setStep(i)} style={{
             flex: 1, padding: "10px 4px", border: "none", cursor: "pointer", borderRadius: 10, fontSize: 12, fontWeight: 600,
-            background: i === step ? "#fff" : "transparent", color: i === step ? "#1d1d1f" : i < step ? "#34c759" : "#86868b",
+            background: i === step ? "#fff" : "transparent", color: i === step ? "#1d1d1f" : i < step ? "#34c759" : "#6e6e73",
             boxShadow: i === step ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
           }}>
             <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 2 }}>{i < step ? "✓" : i + 1}</div>
@@ -429,7 +429,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <button
               type="button"
               onClick={clearDraft}
-              style={{ fontSize: 13, fontWeight: 600, color: "#86868b", background: "#fff", border: "1px solid #d2d2d7", borderRadius: 8, padding: "6px 14px", cursor: "pointer", whiteSpace: "nowrap" }}
+              style={{ fontSize: 13, fontWeight: 600, color: "#6e6e73", background: "#fff", border: "1px solid #d2d2d7", borderRadius: 8, padding: "6px 14px", cursor: "pointer", whiteSpace: "nowrap" }}
             >
               新しく入力する
             </button>
@@ -439,7 +439,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 0 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>所在地</h2>
-            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>消防本部を自動で特定します</p>
+            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>消防本部を自動で特定します</p>
 
             {/* 郵便番号 → 住所 自動入力 */}
             <div style={{ marginBottom: 20 }}>
@@ -469,7 +469,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   {postalStatus === "loading" ? "検索中…" : "住所を入力"}
                 </button>
               </div>
-              <p style={{ fontSize: 12, marginTop: 6, minHeight: 16, color: postalStatus === "ok" ? "#1a7a1a" : postalStatus === "notfound" || postalStatus === "error" ? "#af6800" : "#86868b" }}>
+              <p style={{ fontSize: 12, marginTop: 6, minHeight: 16, color: postalStatus === "ok" ? "#1a7a1a" : postalStatus === "notfound" || postalStatus === "error" ? "#af6800" : "#6e6e73" }}>
                 {postalStatus === "ok" ? "住所を自動入力しました。番地以降を追記してください。"
                   : postalStatus === "notfound" ? "該当する住所が見つかりませんでした。手入力してください。"
                   : postalStatus === "error" ? "住所の取得に失敗しました。手入力してください。"
@@ -501,7 +501,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 1 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>建物情報</h2>
-            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>テンプレートを自動で選定します</p>
+            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>テンプレートを自動で選定します</p>
             <Field label="建物名称" value={form.building_name} onChange={(e: any) => set("building_name", e.target.value)} placeholder="○○ビル" required />
             <div style={{ marginBottom: 20 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>用途（令別表第一）<span style={{ color: "#ff3b30" }}> *</span><Hint text="建物の使い方の区分です（消防法施行令 別表第一の項）。劇場・飲食店・物販店・宿泊・病院・福祉施設などの『特定用途』は防火管理の基準が厳しくなります。わからない場合は最も近い用途を選んでください。" /></label>
@@ -522,7 +522,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 2 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>管理者情報</h2>
-            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>防火管理者の情報を入力します</p>
+            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>防火管理者の情報を入力します</p>
             <Field label="管理権原者 氏名" value={form.owner_name} onChange={(e: any) => set("owner_name", e.target.value)} required />
             <Field label="防火管理者 氏名" value={form.manager_name} onChange={(e: any) => set("manager_name", e.target.value)} required />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -542,7 +542,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 3 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>消防用設備等</h2>
-            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>設置されている設備を選択してください</p>
+            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>設置されている設備を選択してください</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 24 }}>
               {EQUIPMENT.map(e => {
                 const active = form.equipment.includes(e);
@@ -567,7 +567,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 4 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>運用情報</h2>
-            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 28 }}>緊急時の連絡先と避難場所</p>
+            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>緊急時の連絡先と避難場所</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Field label="緊急連絡先 氏名" value={form.emergency_name} onChange={(e: any) => set("emergency_name", e.target.value)} required />
               <Field label="緊急連絡先 TEL" value={form.emergency_tel} onChange={(e: any) => set("emergency_tel", e.target.value)} type="tel" inputMode="tel" autoComplete="tel" required error={telError(form.emergency_tel)} />
@@ -580,7 +580,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 5 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>プランを選択</h2>
-            <p style={{ fontSize: 15, color: "#86868b", marginBottom: 24 }}>内容を確認してプランを選んでください</p>
+            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 24 }}>内容を確認してプランを選んでください</p>
 
             {/* Plan selector */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
@@ -628,7 +628,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                           }}>おすすめ</span>
                         )}
                       </div>
-                      <div style={{ fontSize: 13, color: "#86868b", marginBottom: 8 }}>{plan.description}</div>
+                      <div style={{ fontSize: 13, color: "#6e6e73", marginBottom: 8 }}>{plan.description}</div>
                       <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
                         {plan.features.map(f => (
                           <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "#DCE8F5" : "#e8e8ed", color: isSelected ? "#234B7D" : "#6e6e73" }}>
@@ -646,7 +646,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     {/* Price */}
                     <div style={{ flexShrink: 0, textAlign: "right" as const }}>
                       <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "#2E5F9E" : "#1d1d1f", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
-                      <div style={{ fontSize: 11, color: "#86868b" }}>税込</div>
+                      <div style={{ fontSize: 11, color: "#6e6e73" }}>税込</div>
                     </div>
                   </button>
                 );
@@ -669,7 +669,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               >
                 サンプルをもう一度見る
               </button>
-              <p style={{ fontSize: 12, color: "#86868b", marginTop: 8 }}>
+              <p style={{ fontSize: 12, color: "#6e6e73", marginTop: 8 }}>
                 スタンダードプランで生成される内容のサンプルです
               </p>
             </div>
@@ -685,12 +685,12 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
             {/* Summary */}
             <div style={{ padding: 20, borderRadius: 14, background: "#f5f5f7", fontSize: 14, lineHeight: 2.2, marginBottom: 24 }}>
-              <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>所轄</span>{deptName || "—"}</div>
-              <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>建物</span>{form.building_name || "—"}</div>
-              <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>規模</span>{form.total_area || "—"}㎡ / {form.num_floors || "—"}階 / {form.capacity || "—"}人</div>
-              <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>管理権原者</span>{form.owner_name || "—"}</div>
-              <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>防火管理者</span>{form.manager_name || "—"}（{form.manager_qual}）</div>
-              <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "—"}</div>
+              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>所轄</span>{deptName || "—"}</div>
+              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>建物</span>{form.building_name || "—"}</div>
+              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>規模</span>{form.total_area || "—"}㎡ / {form.num_floors || "—"}階 / {form.capacity || "—"}人</div>
+              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>管理権原者</span>{form.owner_name || "—"}</div>
+              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>防火管理者</span>{form.manager_name || "—"}（{form.manager_qual}）</div>
+              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "—"}</div>
             </div>
 
             {/* 決済エラー（alert の置き換え・スクリーンリーダーに通知） */}
@@ -708,10 +708,10 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             }}>
               {loading ? (<><span className="spinner" aria-hidden="true" />決済画面に移動中...</>) : `${currentPlan.priceLabel} で生成する`}
             </button>
-            {completeness < 100 && <p style={{ fontSize: 13, color: "#86868b", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
+            {completeness < 100 && <p style={{ fontSize: 13, color: "#6e6e73", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
 
             {/* Trust badges */}
-            <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "#86868b" }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "#6e6e73" }}>
               <span>SSL暗号化通信</span>
               <span>Stripe安全決済</span>
             </div>
@@ -767,7 +767,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                 <div style={{ fontSize: 15, fontWeight: 700, color: "#1d1d1f" }}>
                   消防計画サンプル
                 </div>
-                <div style={{ fontSize: 12, color: "#86868b" }}>
+                <div style={{ fontSize: 12, color: "#6e6e73" }}>
                   京都市・飲食店320㎡(架空事業者)
                 </div>
               </div>
@@ -953,7 +953,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
           プランをじっくり比較したい方へ
         </h2>
-        <p style={{ fontSize: 15, color: "#86868b", lineHeight: 1.7, marginBottom: 24 }}>
+        <p style={{ fontSize: 15, color: "#6e6e73", lineHeight: 1.7, marginBottom: 24 }}>
           ライト・スタンダード・プレミアムの違いを一覧でご確認いただけます。料金は1件ごとの都度払い（買い切り）です。
         </p>
         <a

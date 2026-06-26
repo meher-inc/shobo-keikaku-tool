@@ -144,10 +144,10 @@ export function MarketingSections() {
                   </span>
                 )}
                 <h3 style={{ fontSize: 17, fontWeight: 700, color: "#1d1d1f" }}>{p.name}</h3>
-                <p style={{ fontSize: 13, color: "#86868b", marginTop: 4, marginBottom: 14 }}>{p.description}</p>
+                <p style={{ fontSize: 13, color: "#6e6e73", marginTop: 4, marginBottom: 14 }}>{p.description}</p>
                 <div style={{ fontSize: 28, fontWeight: 800, color: p.recommended ? BRAND : "#1d1d1f", letterSpacing: "-0.02em" }}>
                   {formatPrice(p.price)}
-                  <span style={{ fontSize: 13, fontWeight: 500, color: "#86868b" }}> /件（税込）</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "#6e6e73" }}> /件（税込）</span>
                 </div>
                 <ul style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
                   {p.features.map((f) => (
