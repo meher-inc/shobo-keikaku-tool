@@ -165,9 +165,20 @@ const [selectedPlan, setSelectedPlan] = useState("standard");
 const [showSample, setShowSample] = useState(false);  // ← これを追加
 const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [postalStatus, setPostalStatus] = useState<"idle" | "loading" | "ok" | "notfound" | "error">("idle");
+  const [genError, setGenError] = useState("");
   const [form, setForm] = useState(INITIAL_FORM);
   const [draftRestored, setDraftRestored] = useState(false);
   const draftLoaded = useRef(false);
+  const stepScrollReady = useRef(false);
+
+  // ステップ変更時にフォーム上部へスクロール（特にモバイルで新ステップ先頭を表示）。
+  useEffect(() => {
+    if (!stepScrollReady.current) {
+      stepScrollReady.current = true;
+      return;
+    }
+    document.getElementById("form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [step]);
 
   // Preselect plan when arriving from the pricing page (/?plan=standard など).
   useEffect(() => {
@@ -302,6 +313,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   async function handleGenerate() {
     setLoading(true);
+    setGenError("");
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -314,10 +326,10 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
         window.location.href = data.url;
       } else {
-        alert("決済セッションの作成に失敗しました");
+        setGenError("決済セッションの作成に失敗しました。時間をおいて再度お試しください。");
       }
     } catch {
-      alert("通信エラーが発生しました");
+      setGenError("通信エラーが発生しました。電波状況をご確認のうえ再度お試しください。");
     } finally {
       setLoading(false);
     }
@@ -639,13 +651,20 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               <div><span style={{ color: "#86868b", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "—"}</div>
             </div>
 
+            {/* 決済エラー（alert の置き換え・スクリーンリーダーに通知） */}
+            {genError && (
+              <div role="alert" style={{ padding: "12px 16px", borderRadius: 12, marginBottom: 14, background: "#fff5f5", border: "1px solid #ffd0d0", color: "#c0392b", fontSize: 14, lineHeight: 1.7 }}>
+                {genError}
+              </div>
+            )}
+
             {/* CTA button */}
-            <button onClick={handleGenerate} disabled={completeness < 100 || loading} style={{
+            <button onClick={handleGenerate} disabled={completeness < 100 || loading} aria-busy={loading} style={{
               width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
               cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
               background: completeness === 100 && !loading ? "#2E5F9E" : "#d2d2d7", color: "#fff",
             }}>
-              {loading ? "決済画面に移動中..." : `${currentPlan.priceLabel} で生成する`}
+              {loading ? (<><span className="spinner" aria-hidden="true" />決済画面に移動中...</>) : `${currentPlan.priceLabel} で生成する`}
             </button>
             {completeness < 100 && <p style={{ fontSize: 13, color: "#86868b", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
 
