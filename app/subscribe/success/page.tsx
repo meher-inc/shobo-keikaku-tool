@@ -117,18 +117,18 @@ function SuccessContent() {
             margin: "20px 0", textAlign: "left", fontSize: 14, lineHeight: 2,
           }}>
             {planLabel && cycleLabel && (
-              <div><span style={{ color: "#86868b" }}>プラン:</span> <strong>{planLabel}（{cycleLabel}）</strong></div>
+              <div><span style={{ color: "#6e6e73" }}>プラン:</span> <strong>{planLabel}（{cycleLabel}）</strong></div>
             )}
             {nextBilling && (
-              <div><span style={{ color: "#86868b" }}>次回請求日:</span> <strong>{nextBilling}</strong></div>
+              <div><span style={{ color: "#6e6e73" }}>次回請求日:</span> <strong>{nextBilling}</strong></div>
             )}
             {info?.customerEmail && (
-              <div><span style={{ color: "#86868b" }}>メール:</span> {info.customerEmail}</div>
+              <div><span style={{ color: "#6e6e73" }}>メール:</span> {info.customerEmail}</div>
             )}
           </div>
         )}
 
-        <p style={{ fontSize: 14, color: "#86868b", lineHeight: 1.7, marginBottom: 16 }}>
+        <p style={{ fontSize: 14, color: "#6e6e73", lineHeight: 1.7, marginBottom: 16 }}>
           Stripeから決済完了通知メールが届きます。<br />
           契約内容の確認・変更はマイページから行えます。
         </p>
@@ -175,7 +175,7 @@ export default function SubscribeSuccessPage() {
   return (
     <Suspense fallback={
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "80px 20px", textAlign: "center" }}>
-        <p style={{ color: "#86868b" }}>読み込み中...</p>
+        <p style={{ color: "#6e6e73" }}>読み込み中...</p>
       </div>
     }>
       <SuccessContent />

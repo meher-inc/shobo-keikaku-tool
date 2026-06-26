@@ -144,7 +144,7 @@ export default function MyPage() {
             textAlign: "center",
             marginTop: 24,
             fontSize: 12,
-            color: "#86868b",
+            color: "#6e6e73",
             lineHeight: 1.7,
           }}
         >
