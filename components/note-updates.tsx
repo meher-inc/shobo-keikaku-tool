@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const BRAND = "#2E5F9E";
+const BRAND = "var(--brand)";
 
 // 「もっと見る」リンク先のマガジン（消防計画づくりの実務ノート）。
 const MAGAZINE_URL = "https://note.com/shun_maruoka/m/m9f1348968657";
@@ -40,10 +40,10 @@ export function NoteUpdates() {
   if (items === null) {
     return (
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px,7vw,72px) clamp(16px,4vw,24px)" }} aria-hidden="true">
-        <div style={{ background: "#EEF4FA", border: "1px solid #DCE8F5", borderRadius: 16, padding: "20px 24px" }}>
+        <div style={{ background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", borderRadius: 16, padding: "20px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
             <span style={{ fontSize: 13, fontWeight: 800, color: BRAND, letterSpacing: "0.04em" }}>note更新情報</span>
-            <span style={{ flex: 1, height: 1, background: "#DCE8F5" }} />
+            <span style={{ flex: 1, height: 1, background: "var(--brand-tint-border)" }} />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {[0, 1, 2].map((i) => (
@@ -63,11 +63,11 @@ export function NoteUpdates() {
 
   return (
     <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px,7vw,72px) clamp(16px,4vw,24px)" }}>
-      <div style={{ background: "#EEF4FA", border: "1px solid #DCE8F5", borderRadius: 16, padding: "20px 24px" }}>
+      <div style={{ background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", borderRadius: 16, padding: "20px 24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
           <span style={{ fontSize: 13, fontWeight: 800, color: BRAND, letterSpacing: "0.04em" }}>note更新情報</span>
-          <span style={{ fontSize: 12, color: "#6e6e73" }}>消防計画づくりの実務ノート</span>
-          <span style={{ flex: 1, height: 1, background: "#DCE8F5" }} />
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>消防計画づくりの実務ノート</span>
+          <span style={{ flex: 1, height: 1, background: "var(--brand-tint-border)" }} />
         </div>
 
         <ul style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -84,10 +84,10 @@ export function NoteUpdates() {
                   flexWrap: "wrap",
                   textDecoration: "none",
                   padding: "10px 0",
-                  borderTop: i === 0 ? "none" : "1px solid #DCE8F5",
+                  borderTop: i === 0 ? "none" : "1px solid var(--brand-tint-border)",
                 }}
               >
-                <time style={{ fontSize: 13, color: "#6e6e73", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+                <time style={{ fontSize: 13, color: "var(--text-muted)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                   {it.date}
                 </time>
                 {i === 0 && (
@@ -95,7 +95,7 @@ export function NoteUpdates() {
                     NEW
                   </span>
                 )}
-                <span style={{ flex: 1, minWidth: 220, fontSize: 15, fontWeight: 600, color: "#1d1d1f", lineHeight: 1.6 }}>
+                <span style={{ flex: 1, minWidth: 220, fontSize: 15, fontWeight: 600, color: "var(--text)", lineHeight: 1.6 }}>
                   {it.title}
                 </span>
                 <span style={{ fontSize: 13, color: BRAND, fontWeight: 600, whiteSpace: "nowrap" }}>note で読む →</span>

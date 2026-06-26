@@ -1,7 +1,7 @@
 import { SPOT_PLANS } from "../lib/spot-plans";
 import { NEWLY_ADDED_DEPTS } from "../lib/updates";
 
-const BRAND = "#2E5F9E";
+const BRAND = "var(--brand)";
 
 const features = [
   {
@@ -60,25 +60,25 @@ export function MarketingSections() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 20, marginTop: 40 }}>
           {features.map((f) => (
             <div key={f.title} style={card}>
-              <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 10, color: "#1d1d1f" }}>{f.title}</h3>
-              <p style={{ fontSize: 14, lineHeight: 1.8, color: "#6e6e73" }}>{f.body}</p>
+              <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 10, color: "var(--text)" }}>{f.title}</h3>
+              <p style={{ fontSize: 14, lineHeight: 1.8, color: "var(--text-muted)" }}>{f.body}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ご利用の流れ */}
-      <section style={{ background: "#f9f9fb" }}>
+      <section style={{ background: "var(--surface-2)" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
           <h2 style={sectionHeading}>ご利用の流れ</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 20, marginTop: 40 }}>
             {steps.map((s) => (
-              <div key={s.n} style={{ ...card, background: "#fff" }}>
+              <div key={s.n} style={{ ...card, background: "var(--surface)" }}>
                 <div style={{ width: 36, height: 36, borderRadius: 18, background: BRAND, color: "#fff", fontWeight: 800, fontSize: 17, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
                   {s.n}
                 </div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: "#1d1d1f" }}>{s.title}</h3>
-                <p style={{ fontSize: 14, lineHeight: 1.8, color: "#6e6e73" }}>{s.body}</p>
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: "var(--text)" }}>{s.title}</h3>
+                <p style={{ fontSize: 14, lineHeight: 1.8, color: "var(--text-muted)" }}>{s.body}</p>
               </div>
             ))}
           </div>
@@ -88,7 +88,7 @@ export function MarketingSections() {
       {/* 対応エリア（政令市訴求） */}
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
         <h2 style={sectionHeading}>対応している消防本部</h2>
-        <p style={{ textAlign: "center", fontSize: 15, color: "#6e6e73", marginTop: 12 }}>
+        <p style={{ textAlign: "center", fontSize: 15, color: "var(--text-muted)", marginTop: 12 }}>
           2026年6月、政令指定都市の対応を拡大し、計{supportedDepts.length}本部に対応しました。対応エリア外は標準様式で出力されます。
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12, marginTop: 32 }}>
@@ -101,8 +101,8 @@ export function MarketingSections() {
                   position: "relative",
                   fontSize: 14,
                   fontWeight: 600,
-                  color: "#1d1d1f",
-                  background: "#EEF4FA",
+                  color: "var(--text)",
+                  background: "var(--brand-tint)",
                   borderRadius: 999,
                   padding: "10px 20px",
                   outline: isNew ? `1.5px solid ${BRAND}` : "none",
@@ -121,10 +121,10 @@ export function MarketingSections() {
       </section>
 
       {/* 料金（スポット3プラン要約） */}
-      <section style={{ background: "#f9f9fb" }}>
+      <section style={{ background: "var(--surface-2)" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
           <h2 style={sectionHeading}>料金</h2>
-          <p style={{ textAlign: "center", fontSize: 15, color: "#6e6e73", marginTop: 12 }}>
+          <p style={{ textAlign: "center", fontSize: 15, color: "var(--text-muted)", marginTop: 12 }}>
             1件ごとの都度払い（買い切り）。月額料金・更新料はかかりません。
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 20, marginTop: 40 }}>
@@ -133,9 +133,9 @@ export function MarketingSections() {
                 key={p.id}
                 style={{
                   ...card,
-                  background: "#fff",
+                  background: "var(--surface)",
                   position: "relative",
-                  outline: p.recommended ? `2px solid ${BRAND}` : "1px solid #e8e8ed",
+                  outline: p.recommended ? `2px solid ${BRAND}` : "1px solid var(--surface-muted)",
                 }}
               >
                 {p.recommended && (
@@ -143,15 +143,15 @@ export function MarketingSections() {
                     おすすめ
                   </span>
                 )}
-                <h3 style={{ fontSize: 17, fontWeight: 700, color: "#1d1d1f" }}>{p.name}</h3>
-                <p style={{ fontSize: 13, color: "#6e6e73", marginTop: 4, marginBottom: 14 }}>{p.description}</p>
-                <div style={{ fontSize: 28, fontWeight: 800, color: p.recommended ? BRAND : "#1d1d1f", letterSpacing: "-0.02em" }}>
+                <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--text)" }}>{p.name}</h3>
+                <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4, marginBottom: 14 }}>{p.description}</p>
+                <div style={{ fontSize: 28, fontWeight: 800, color: p.recommended ? BRAND : "var(--text)", letterSpacing: "-0.02em" }}>
                   {formatPrice(p.price)}
-                  <span style={{ fontSize: 13, fontWeight: 500, color: "#6e6e73" }}> /件（税込）</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-muted)" }}> /件（税込）</span>
                 </div>
                 <ul style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
                   {p.features.map((f) => (
-                    <li key={f} style={{ fontSize: 13, color: "#6e6e73", display: "flex", gap: 8 }}>
+                    <li key={f} style={{ fontSize: 13, color: "var(--text-muted)", display: "flex", gap: 8 }}>
                       <span style={{ color: BRAND, fontWeight: 700 }}>✓</span>
                       {f}
                     </li>
@@ -175,13 +175,13 @@ const sectionHeading: React.CSSProperties = {
   fontSize: "clamp(22px,4.5vw,30px)",
   fontWeight: 800,
   textAlign: "center",
-  color: "#1a1a1a",
+  color: "var(--text)",
   letterSpacing: "-0.01em",
 };
 
 const card: React.CSSProperties = {
-  background: "#fff",
-  border: "1px solid #e8e8ed",
+  background: "var(--surface)",
+  border: "1px solid var(--surface-muted)",
   borderRadius: 16,
   padding: "24px 22px",
 };

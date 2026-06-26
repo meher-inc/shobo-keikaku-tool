@@ -87,12 +87,12 @@ function SuccessContent() {
       <style jsx global>{`
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Noto Sans JP', sans-serif;
-          background: #f5f5f7; color: #1d1d1f; margin: 0;
+          background: var(--surface-3); color: var(--text); margin: 0;
         }
       `}</style>
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
         <div style={{
-          background: "#fff", borderRadius: 24, padding: "48px 32px",
+          background: "var(--surface)", borderRadius: 24, padding: "48px 32px",
           boxShadow: "0 2px 12px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04)",
         }}>
           {status === "loading" && (
@@ -106,16 +106,16 @@ function SuccessContent() {
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
               <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>お支払い完了</h1>
-              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#EEF4FA", color: "#2E5F9E", marginBottom: 12 }}>
+              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "var(--brand-tint)", color: "var(--brand)", marginBottom: 12 }}>
                 {planName}プラン
               </div>
-              <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 24, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.6 }}>
                 ありがとうございます。<br />
                 下のボタンから消防計画をダウンロードしてください。
               </p>
               <button onClick={handleDownload} style={{
                 width: "100%", padding: 16, borderRadius: 14, border: "none",
-                background: "#2E5F9E", color: "#fff", fontSize: 17, fontWeight: 600,
+                background: "var(--brand)", color: "#fff", fontSize: 17, fontWeight: 600,
                 cursor: "pointer", boxShadow: "0 4px 16px rgba(0,113,227,0.25)",
               }}>
                 📄 消防計画をダウンロード
@@ -127,7 +127,7 @@ function SuccessContent() {
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>⏳</div>
               <h1 style={{ fontSize: 24, fontWeight: 700 }}>生成中...</h1>
-              <p style={{ fontSize: 15, color: "#6e6e73" }}>消防計画を作成しています。しばらくお待ちください。</p>
+              <p style={{ fontSize: 15, color: "var(--text-muted)" }}>消防計画を作成しています。しばらくお待ちください。</p>
             </>
           )}
 
@@ -135,19 +135,19 @@ function SuccessContent() {
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
               <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>ダウンロード完了</h1>
-              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "#EEF4FA", color: "#2E5F9E", marginBottom: 16 }}>
+              <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "var(--brand-tint)", color: "var(--brand)", marginBottom: 16 }}>
                 {planName}プラン
               </div>
-              <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 24, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.6 }}>
                 消防計画のWordファイルがダウンロードされました。<br />
                 内容をご確認のうえ、所轄の消防署に届け出てください。
               </p>
 
               {showGuide && (
                 <a href="/guide.pdf" download style={{
-                  display: "block", width: "100%", padding: 14, borderRadius: 14, background: "#f0faf0", color: "#0d5e0d", fontSize: 15, fontWeight: 600,
+                  display: "block", width: "100%", padding: 14, borderRadius: 14, background: "var(--ok-bg)", color: "var(--ok-text-strong)", fontSize: 15, fontWeight: 600,
                   textDecoration: "none", marginBottom: 12, textAlign: "center",
-                  border: "1px solid #b8e6b8",
+                  border: "1px solid var(--ok-border)",
                 }}>
                   📘 記入ガイドPDFをダウンロード
                 </a>
@@ -156,24 +156,24 @@ function SuccessContent() {
               {showPremiumInfo && (
                 <div style={{
                   padding: "20px 24px", borderRadius: 16, marginBottom: 16,
-                  background: "#EEF4FA", border: "1px solid #b8d4ff", textAlign: "left",
+                  background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", textAlign: "left",
                 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#234B7D", marginBottom: 10 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--brand-dark)", marginBottom: 10 }}>
                     🔍 内容チェック＋修正1回（プレミアム特典）
                   </div>
 
                   {reviewStatus === "sending" && (
-                    <p style={{ fontSize: 13, color: "#1d1d1f", lineHeight: 1.8, margin: 0 }}>
+                    <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.8, margin: 0 }}>
                       ⏳ チェック依頼を送信中...
                     </p>
                   )}
 
                   {reviewStatus === "sent" && (
                     <>
-                      <p style={{ fontSize: 13, color: "#1d1d1f", lineHeight: 1.8, margin: 0, marginBottom: 8 }}>
+                      <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.8, margin: 0, marginBottom: 8 }}>
                         ✅ <strong>チェック依頼を自動で送信しました</strong>
                       </p>
-                      <p style={{ fontSize: 13, color: "#1d1d1f", lineHeight: 1.8, margin: 0 }}>
+                      <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.8, margin: 0 }}>
                         ご登録のメール宛に受付確認メールをお送りしました。元消防士の担当者が <strong>3営業日以内</strong> に修正版のWordをご返送いたします。
                       </p>
                     </>
@@ -181,14 +181,14 @@ function SuccessContent() {
 
                   {reviewStatus === "failed" && (
                     <div style={{
-                      padding: "14px 16px", borderRadius: 12, background: "#fff",
-                      fontSize: 13, color: "#1d1d1f", lineHeight: 1.8,
+                      padding: "14px 16px", borderRadius: 12, background: "var(--surface)",
+                      fontSize: 13, color: "var(--text)", lineHeight: 1.8,
                     }}>
-                      <div style={{ fontWeight: 600, marginBottom: 6, color: "#c00" }}>⚠️ 自動送信に失敗しました</div>
+                      <div style={{ fontWeight: 600, marginBottom: 6, color: "var(--err-text)" }}>⚠️ 自動送信に失敗しました</div>
                       <div>お手数ですが、ダウンロードしたWordを下記まで送付してください。</div>
                       <div style={{
                         margin: "8px 0", padding: "10px 14px", borderRadius: 10,
-                        background: "#f5f5f7", fontWeight: 600, fontSize: 14, textAlign: "center",
+                        background: "var(--surface-3)", fontWeight: 600, fontSize: 14, textAlign: "center",
                       }}>
                         📧 plan@todokede.jp
                       </div>
@@ -200,14 +200,14 @@ function SuccessContent() {
 
               <button onClick={handleDownload} style={{
                 width: "100%", padding: 14, borderRadius: 14, border: "none",
-                background: "#e8e8ed", color: "#1d1d1f", fontSize: 15, fontWeight: 600,
+                background: "var(--surface-muted)", color: "var(--text)", fontSize: 15, fontWeight: 600,
                 cursor: "pointer", marginBottom: 12,
               }}>
                 もう一度ダウンロード
               </button>
               <a href="/" style={{
                 display: "block", padding: 14, borderRadius: 14,
-                background: "#f5f5f7", color: "#2E5F9E", fontSize: 15, fontWeight: 600,
+                background: "var(--surface-3)", color: "var(--brand)", fontSize: 15, fontWeight: 600,
                 textDecoration: "none",
               }}>
                 トップに戻る
@@ -219,13 +219,13 @@ function SuccessContent() {
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
               <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>エラーが発生しました</h1>
-              <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 32 }}>
+              <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 32 }}>
                 お手数ですが、もう一度お試しいただくか、<br />
                 info@todokede.jp までご連絡ください。
               </p>
               <a href="/" style={{
                 display: "block", padding: 14, borderRadius: 14,
-                background: "#2E5F9E", color: "#fff", fontSize: 15, fontWeight: 600,
+                background: "var(--brand)", color: "#fff", fontSize: 15, fontWeight: 600,
                 textDecoration: "none",
               }}>
                 トップに戻る

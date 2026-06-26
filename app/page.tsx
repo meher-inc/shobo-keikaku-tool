@@ -85,7 +85,7 @@ const FAQ_ITEMS = [
         現在は1件ずつの購入となっております。管理会社様・フランチャイズ本部様などで複数物件の一括対応をご希望の場合は、
         <a
           href="/contact"
-          style={{ color: "#2E5F9E", textDecoration: "underline" }}
+          style={{ color: "var(--brand)", textDecoration: "underline" }}
         >
           法人・複数物件のご相談
         </a>
@@ -123,14 +123,14 @@ function Hint({ text }: { text: string }) {
         aria-label="説明を表示"
         onClick={() => setOpen((o) => !o)}
         onBlur={() => setOpen(false)}
-        style={{ width: 16, height: 16, borderRadius: 999, border: "1px solid #c4c4c9", background: "#fff", color: "#6e6e73", fontSize: 11, fontWeight: 700, lineHeight: "14px", cursor: "pointer", padding: 0 }}
+        style={{ width: 16, height: 16, borderRadius: 999, border: "1px solid var(--border-strong)", background: "var(--surface)", color: "var(--text-muted)", fontSize: 11, fontWeight: 700, lineHeight: "14px", cursor: "pointer", padding: 0 }}
       >
         ?
       </button>
       {open && (
         <span
           role="tooltip"
-          style={{ position: "absolute", left: 0, top: 22, zIndex: 20, width: 248, padding: "10px 12px", background: "#1d1d1f", color: "#fff", fontSize: 12, lineHeight: 1.7, fontWeight: 400, borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.18)", textAlign: "left", whiteSpace: "normal" }}
+          style={{ position: "absolute", left: 0, top: 22, zIndex: 20, width: 248, padding: "10px 12px", background: "var(--text)", color: "#fff", fontSize: 12, lineHeight: 1.7, fontWeight: 400, borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.18)", textAlign: "left", whiteSpace: "normal" }}
         >
           {text}
         </span>
@@ -142,13 +142,13 @@ function Hint({ text }: { text: string }) {
 function Field({ label, value, onChange, placeholder, type = "text", required = false, hint, error, autoComplete, inputMode }: any) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1d1d1f", marginBottom: 6 }}>
-        {label}{required && <span style={{ color: "#ff3b30" }}> *</span>}{hint && <Hint text={hint} />}
+      <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>
+        {label}{required && <span style={{ color: "var(--err-solid)" }}> *</span>}{hint && <Hint text={hint} />}
       </label>
       <input type={type} value={value} onChange={onChange} placeholder={placeholder} autoComplete={autoComplete} inputMode={inputMode}
         aria-required={required || undefined} aria-invalid={error ? true : undefined}
-        style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: error ? "1px solid #ff3b30" : "1px solid #d2d2d7", borderRadius: 12, outline: "none", background: "#fbfbfd" }} />
-      {error && <p style={{ fontSize: 12, color: "#ff3b30", margin: "4px 0 0" }}>{error}</p>}
+        style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: error ? "1px solid var(--err-solid)" : "1px solid var(--border-strong)", borderRadius: 12, outline: "none", background: "var(--surface-input)" }} />
+      {error && <p style={{ fontSize: 12, color: "var(--err-solid)", margin: "4px 0 0" }}>{error}</p>}
     </div>
   );
 }
@@ -379,25 +379,25 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     <>
     {/* Hero */}
     <section style={{ textAlign: "center", padding: "clamp(56px,9vw,96px) clamp(16px,4vw,24px) clamp(40px,6vw,64px)", maxWidth: 760, margin: "0 auto" }}>
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#EEF4FA", color: "#2E5F9E", fontSize: 13, fontWeight: 700, padding: "8px 16px", borderRadius: 999, marginBottom: 24 }}>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--brand-tint)", color: "var(--brand)", fontSize: 13, fontWeight: 700, padding: "8px 16px", borderRadius: 999, marginBottom: 24 }}>
         所轄消防本部の様式に準拠・1件ごとの買い切り
       </div>
       <h1 style={{ fontSize: "clamp(30px,6vw,46px)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 16 }}>消防計画を、自動作成。</h1>
-      <p style={{ fontSize: "clamp(15px,2.5vw,18px)", color: "#6e6e73", fontWeight: 400, lineHeight: 1.7, maxWidth: 560, margin: "0 auto" }}>
+      <p style={{ fontSize: "clamp(15px,2.5vw,18px)", color: "var(--text-muted)", fontWeight: 400, lineHeight: 1.7, maxWidth: 560, margin: "0 auto" }}>
         建物情報を入力するだけ。所轄消防本部の様式に準拠した計画書をWordで生成します。月額・更新料はかかりません。
       </p>
       <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 32 }}>
-        <a href="#form" style={{ background: "#2E5F9E", color: "#fff", padding: "15px 36px", borderRadius: 12, fontSize: 16, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.25)" }}>
+        <a href="#form" style={{ background: "var(--brand)", color: "#fff", padding: "15px 36px", borderRadius: 12, fontSize: 16, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.25)" }}>
           作成をはじめる
         </a>
         <button
           onClick={() => setShowSample(true)}
-          style={{ background: "#fff", border: "2px solid #2E5F9E", color: "#2E5F9E", padding: "13px 32px", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer" }}
+          style={{ background: "var(--surface)", border: "2px solid var(--brand)", color: "var(--brand)", padding: "13px 32px", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer" }}
         >
           サンプルを見る
         </button>
       </div>
-      <p style={{ fontSize: 12, color: "#6e6e73", marginTop: 14 }}>
+      <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 14 }}>
         実際に生成される消防計画（飲食店320㎡・別表付き）をご確認いただけます
       </p>
     </section>
@@ -406,13 +406,13 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
     <div id="form" style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(48px,8vw,80px) 16px 40px", scrollMarginTop: 24 }}>
       <h2 style={{ fontSize: "clamp(22px,4.5vw,30px)", fontWeight: 800, textAlign: "center", letterSpacing: "-0.01em", marginBottom: 8 }}>消防計画をつくる</h2>
-      <p style={{ fontSize: 15, color: "#6e6e73", textAlign: "center", marginBottom: 32 }}>6ステップの入力で、提出できる計画書が完成します。</p>
+      <p style={{ fontSize: 15, color: "var(--text-muted)", textAlign: "center", marginBottom: 32 }}>6ステップの入力で、提出できる計画書が完成します。</p>
 
-      <div style={{ display: "flex", gap: 4, marginBottom: 24, padding: 4, background: "#e8e8ed", borderRadius: 12 }}>
+      <div style={{ display: "flex", gap: 4, marginBottom: 24, padding: 4, background: "var(--surface-muted)", borderRadius: 12 }}>
         {STEPS.map((s, i) => (
           <button key={s.id} onClick={() => setStep(i)} style={{
             flex: 1, padding: "10px 4px", border: "none", cursor: "pointer", borderRadius: 10, fontSize: 12, fontWeight: 600,
-            background: i === step ? "#fff" : "transparent", color: i === step ? "#1d1d1f" : i < step ? "#34c759" : "#6e6e73",
+            background: i === step ? "var(--surface)" : "transparent", color: i === step ? "var(--text)" : i < step ? "var(--ok-solid)" : "var(--text-muted)",
             boxShadow: i === step ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
           }}>
             <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 2 }}>{i < step ? "✓" : i + 1}</div>
@@ -421,15 +421,15 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         ))}
       </div>
 
-      <div style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", boxShadow: "0 2px 12px rgba(0,0,0,0.04)", minHeight: 380 }}>
+      <div style={{ background: "var(--surface)", borderRadius: 20, padding: "32px 28px", boxShadow: "0 2px 12px rgba(0,0,0,0.04)", minHeight: 380 }}>
 
         {draftRestored && (
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", justifyContent: "space-between", marginBottom: 20, padding: "12px 16px", background: "#EEF4FA", border: "1px solid #DCE8F5", borderRadius: 12 }}>
-            <span style={{ fontSize: 13, color: "#2E5F9E", fontWeight: 600 }}>前回の入力内容を復元しました（この端末にのみ保存）。</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", justifyContent: "space-between", marginBottom: 20, padding: "12px 16px", background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", borderRadius: 12 }}>
+            <span style={{ fontSize: 13, color: "var(--brand)", fontWeight: 600 }}>前回の入力内容を復元しました（この端末にのみ保存）。</span>
             <button
               type="button"
               onClick={clearDraft}
-              style={{ fontSize: 13, fontWeight: 600, color: "#6e6e73", background: "#fff", border: "1px solid #d2d2d7", borderRadius: 8, padding: "6px 14px", cursor: "pointer", whiteSpace: "nowrap" }}
+              style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)", background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: 8, padding: "6px 14px", cursor: "pointer", whiteSpace: "nowrap" }}
             >
               新しく入力する
             </button>
@@ -439,11 +439,11 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 0 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>所在地</h2>
-            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>消防本部を自動で特定します</p>
+            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 28 }}>消防本部を自動で特定します</p>
 
             {/* 郵便番号 → 住所 自動入力 */}
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1d1d1f", marginBottom: 6 }}>郵便番号</label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>郵便番号</label>
               <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
                 <input
                   type="text"
@@ -458,18 +458,18 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     if (v.replace(/[^0-9]/g, "").length === 7) lookupPostal(v);
                   }}
                   placeholder="6000000（ハイフン不要）"
-                  style={{ flex: 1, padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, outline: "none", background: "#fbfbfd" }}
+                  style={{ flex: 1, padding: "12px 16px", fontSize: 16, border: "1px solid var(--border-strong)", borderRadius: 12, outline: "none", background: "var(--surface-input)" }}
                 />
                 <button
                   type="button"
                   onClick={() => lookupPostal(form.postal)}
                   disabled={postalStatus === "loading"}
-                  style={{ padding: "0 18px", fontSize: 14, fontWeight: 600, color: "#fff", background: "#2E5F9E", border: "none", borderRadius: 12, cursor: "pointer", whiteSpace: "nowrap", opacity: postalStatus === "loading" ? 0.6 : 1 }}
+                  style={{ padding: "0 18px", fontSize: 14, fontWeight: 600, color: "#fff", background: "var(--brand)", border: "none", borderRadius: 12, cursor: "pointer", whiteSpace: "nowrap", opacity: postalStatus === "loading" ? 0.6 : 1 }}
                 >
                   {postalStatus === "loading" ? "検索中…" : "住所を入力"}
                 </button>
               </div>
-              <p style={{ fontSize: 12, marginTop: 6, minHeight: 16, color: postalStatus === "ok" ? "#1a7a1a" : postalStatus === "notfound" || postalStatus === "error" ? "#af6800" : "#6e6e73" }}>
+              <p style={{ fontSize: 12, marginTop: 6, minHeight: 16, color: postalStatus === "ok" ? "var(--ok-text)" : postalStatus === "notfound" || postalStatus === "error" ? "var(--warn-text)" : "var(--text-muted)" }}>
                 {postalStatus === "ok" ? "住所を自動入力しました。番地以降を追記してください。"
                   : postalStatus === "notfound" ? "該当する住所が見つかりませんでした。手入力してください。"
                   : postalStatus === "error" ? "住所の取得に失敗しました。手入力してください。"
@@ -485,14 +485,14 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <Field label="以降の住所" value={form.address_detail} onChange={(e: any) => set("address_detail", e.target.value)} placeholder="○○通○○町123" />
             {deptKind && (
               <div role="status" aria-live="polite" style={{ padding: "16px 20px", borderRadius: 14, marginTop: 8,
-                background: deptKind === "official" ? "#f0faf0" : deptKind === "named-standard" ? "#EEF4FA" : "#fff9f0",
-                border: deptKind === "official" ? "1px solid #b8e6b8" : deptKind === "named-standard" ? "1px solid #DCE8F5" : "1px solid #ffd9a0" }}>
+                background: deptKind === "official" ? "var(--ok-bg)" : deptKind === "named-standard" ? "var(--brand-tint)" : "var(--warn-bg)",
+                border: deptKind === "official" ? "1px solid var(--ok-border)" : deptKind === "named-standard" ? "1px solid var(--brand-tint-border)" : "1px solid var(--warn-border)" }}>
                 <div style={{ fontSize: 13, fontWeight: 600,
-                  color: deptKind === "official" ? "#1a7a1a" : deptKind === "named-standard" ? "#2E5F9E" : "#af6800" }}>
+                  color: deptKind === "official" ? "var(--ok-text)" : deptKind === "named-standard" ? "var(--brand)" : "var(--warn-text)" }}>
                   {deptKind === "official" ? "所轄消防本部を特定しました" : deptKind === "named-standard" ? "所轄消防本部（標準様式で作成）" : "未対応（標準様式で作成）"}
                 </div>
                 <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4,
-                  color: deptKind === "official" ? "#0d5e0d" : deptKind === "named-standard" ? "#234B7D" : "#8a5200" }}>{deptName}</div>
+                  color: deptKind === "official" ? "var(--ok-text-strong)" : deptKind === "named-standard" ? "var(--brand-dark)" : "var(--warn-text-strong)" }}>{deptName}</div>
               </div>
             )}
           </div>
@@ -501,15 +501,15 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 1 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>建物情報</h2>
-            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>テンプレートを自動で選定します</p>
+            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 28 }}>テンプレートを自動で選定します</p>
             <Field label="建物名称" value={form.building_name} onChange={(e: any) => set("building_name", e.target.value)} placeholder="○○ビル" required />
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>用途（令別表第一）<span style={{ color: "#ff3b30" }}> *</span><Hint text="建物の使い方の区分です（消防法施行令 別表第一の項）。劇場・飲食店・物販店・宿泊・病院・福祉施設などの『特定用途』は防火管理の基準が厳しくなります。わからない場合は最も近い用途を選んでください。" /></label>
-              <select value={form.use_category} onChange={(e: any) => set("use_category", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, background: "#fbfbfd", cursor: "pointer" }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>用途（令別表第一）<span style={{ color: "var(--err-solid)" }}> *</span><Hint text="建物の使い方の区分です（消防法施行令 別表第一の項）。劇場・飲食店・物販店・宿泊・病院・福祉施設などの『特定用途』は防火管理の基準が厳しくなります。わからない場合は最も近い用途を選んでください。" /></label>
+              <select value={form.use_category} onChange={(e: any) => set("use_category", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid var(--border-strong)", borderRadius: 12, background: "var(--surface-input)", cursor: "pointer" }}>
                 <option value="">選択してください</option>
                 {USE_CATEGORIES.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
               </select>
-              {selectedUse && <div style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 20, background: isSpecific ? "#fff3e0" : "#e3f2fd", color: isSpecific ? "#e65100" : "#1565c0" }}>{isSpecific ? "● 特定防火対象物" : "● 非特定防火対象物"}</div>}
+              {selectedUse && <div style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 20, background: isSpecific ? "var(--warn-bg)" : "var(--info-bg)", color: isSpecific ? "var(--warn-accent)" : "var(--info-text)" }}>{isSpecific ? "● 特定防火対象物" : "● 非特定防火対象物"}</div>}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
               <Field label="延べ面積（㎡）" value={form.total_area} onChange={(e: any) => set("total_area", e.target.value)} type="number" required hint="建物すべての階の床面積の合計（㎡）です。登記事項証明書や検査済証で確認できます。" />
@@ -522,13 +522,13 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 2 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>管理者情報</h2>
-            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>防火管理者の情報を入力します</p>
+            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 28 }}>防火管理者の情報を入力します</p>
             <Field label="管理権原者 氏名" value={form.owner_name} onChange={(e: any) => set("owner_name", e.target.value)} required />
             <Field label="防火管理者 氏名" value={form.manager_name} onChange={(e: any) => set("manager_name", e.target.value)} required />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div style={{ marginBottom: 20 }}>
                 <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>資格種別 *<Hint text="防火管理者の資格区分です。特定用途で収容30人以上・延床300㎡以上などの場合は甲種、それ以外は乙種が目安です。選任済みの資格証でご確認ください。" /></label>
-                <select value={form.manager_qual} onChange={(e: any) => set("manager_qual", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid #d2d2d7", borderRadius: 12, background: "#fbfbfd", cursor: "pointer" }}>
+                <select value={form.manager_qual} onChange={(e: any) => set("manager_qual", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid var(--border-strong)", borderRadius: 12, background: "var(--surface-input)", cursor: "pointer" }}>
                   <option value="甲種">甲種</option>
                   <option value="乙種">乙種</option>
                 </select>
@@ -542,17 +542,17 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 3 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>消防用設備等</h2>
-            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>設置されている設備を選択してください</p>
+            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 28 }}>設置されている設備を選択してください</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 24 }}>
               {EQUIPMENT.map(e => {
                 const active = form.equipment.includes(e);
                 return (
                   <button key={e} onClick={() => toggleEquip(e)} style={{
                     display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, border: "none", cursor: "pointer",
-                    background: active ? "#EEF4FA" : "#f5f5f7", outline: active ? "2px solid #2E5F9E" : "1px solid transparent",
+                    background: active ? "var(--brand-tint)" : "var(--surface-3)", outline: active ? "2px solid var(--brand)" : "1px solid transparent",
                     fontSize: 14, fontWeight: 500, textAlign: "left" as const,
                   }}>
-                    <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: active ? "#2E5F9E" : "#fff", border: active ? "none" : "2px solid #d2d2d7", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: active ? "var(--brand)" : "var(--surface)", border: active ? "none" : "2px solid var(--border-strong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {active && <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>✓</span>}
                     </div>
                     {e}
@@ -567,7 +567,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 4 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>運用情報</h2>
-            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 28 }}>緊急時の連絡先と避難場所</p>
+            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 28 }}>緊急時の連絡先と避難場所</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Field label="緊急連絡先 氏名" value={form.emergency_name} onChange={(e: any) => set("emergency_name", e.target.value)} required />
               <Field label="緊急連絡先 TEL" value={form.emergency_tel} onChange={(e: any) => set("emergency_tel", e.target.value)} type="tel" inputMode="tel" autoComplete="tel" required error={telError(form.emergency_tel)} />
@@ -580,7 +580,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         {step === 5 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>プランを選択</h2>
-            <p style={{ fontSize: 15, color: "#6e6e73", marginBottom: 24 }}>内容を確認してプランを選んでください</p>
+            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24 }}>内容を確認してプランを選んでください</p>
 
             {/* Plan selector */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
@@ -599,8 +599,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                       borderRadius: 16,
                       border: "none",
                       cursor: "pointer",
-                      background: isSelected ? "#EEF4FA" : "#f5f5f7",
-                      outline: isSelected ? "2.5px solid #2E5F9E" : "1.5px solid transparent",
+                      background: isSelected ? "var(--brand-tint)" : "var(--surface-3)",
+                      outline: isSelected ? "2.5px solid var(--brand)" : "1.5px solid transparent",
                       textAlign: "left" as const,
                       transition: "all 0.15s ease",
                     }}
@@ -608,35 +608,35 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     {/* Radio indicator */}
                     <div style={{
                       width: 22, height: 22, borderRadius: 11, flexShrink: 0, marginTop: 2,
-                      background: isSelected ? "#2E5F9E" : "#fff",
-                      border: isSelected ? "none" : "2px solid #d2d2d7",
+                      background: isSelected ? "var(--brand)" : "var(--surface)",
+                      border: isSelected ? "none" : "2px solid var(--border-strong)",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
                       {isSelected && (
-                        <div style={{ width: 8, height: 8, borderRadius: 4, background: "#fff" }} />
+                        <div style={{ width: 8, height: 8, borderRadius: 4, background: "var(--surface)" }} />
                       )}
                     </div>
 
                     {/* Plan info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontSize: 16, fontWeight: 700, color: "#1d1d1f" }}>{plan.name}</span>
+                        <span style={{ fontSize: 16, fontWeight: 700, color: "var(--text)" }}>{plan.name}</span>
                         {plan.recommended && (
                           <span style={{
                             fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10,
-                            background: "#2E5F9E", color: "#fff", letterSpacing: "0.02em",
+                            background: "var(--brand)", color: "#fff", letterSpacing: "0.02em",
                           }}>おすすめ</span>
                         )}
                       </div>
-                      <div style={{ fontSize: 13, color: "#6e6e73", marginBottom: 8 }}>{plan.description}</div>
+                      <div style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 8 }}>{plan.description}</div>
                       <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
                         {plan.features.map(f => (
-                          <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "#DCE8F5" : "#e8e8ed", color: isSelected ? "#234B7D" : "#6e6e73" }}>
+                          <span key={f} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: isSelected ? "var(--brand-tint-border)" : "var(--surface-muted)", color: isSelected ? "var(--brand-dark)" : "var(--text-muted)" }}>
                             ✓ {f}
                           </span>
                         ))}
                         {plan.missing.map(m => (
-                          <span key={m} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: "#f5f5f7", color: "#c7c7cc", textDecoration: "line-through" }}>
+                          <span key={m} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: "var(--surface-3)", color: "var(--border-strong)", textDecoration: "line-through" }}>
                             {m}
                           </span>
                         ))}
@@ -645,8 +645,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
                     {/* Price */}
                     <div style={{ flexShrink: 0, textAlign: "right" as const }}>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "#2E5F9E" : "#1d1d1f", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
-                      <div style={{ fontSize: 11, color: "#6e6e73" }}>税込</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: isSelected ? "var(--brand)" : "var(--text)", letterSpacing: "-0.02em" }}>{plan.priceLabel}</div>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)" }}>税込</div>
                     </div>
                   </button>
                 );
@@ -657,9 +657,9 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               <button
                 onClick={() => setShowSample(true)}
                 style={{
-                  background: "#fff",
-                  border: "2px solid #2E5F9E",
-                  color: "#2E5F9E",
+                  background: "var(--surface)",
+                  border: "2px solid var(--brand)",
+                  color: "var(--brand)",
                   padding: "12px 28px",
                   borderRadius: 12,
                   fontSize: 14,
@@ -669,33 +669,33 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               >
                 サンプルをもう一度見る
               </button>
-              <p style={{ fontSize: 12, color: "#6e6e73", marginTop: 8 }}>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8 }}>
                 スタンダードプランで生成される内容のサンプルです
               </p>
             </div>
             {/* Missing items warning */}
             {missing.length > 0 && (
-              <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: "#fffbf0", border: "1px solid #ffd9a0" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#af6800", marginBottom: 8 }}>不足している項目</div>
+              <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: "var(--warn-bg)", border: "1px solid var(--warn-border)" }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--warn-text)", marginBottom: 8 }}>不足している項目</div>
                 <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 6 }}>
-                  {missing.map(m => <span key={m} style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: "#fff0d4", color: "#8a5200" }}>{m}</span>)}
+                  {missing.map(m => <span key={m} style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: "var(--warn-bg)", color: "var(--warn-text-strong)" }}>{m}</span>)}
                 </div>
               </div>
             )}
 
             {/* Summary */}
-            <div style={{ padding: 20, borderRadius: 14, background: "#f5f5f7", fontSize: 14, lineHeight: 2.2, marginBottom: 24 }}>
-              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>所轄</span>{deptName || "—"}</div>
-              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>建物</span>{form.building_name || "—"}</div>
-              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>規模</span>{form.total_area || "—"}㎡ / {form.num_floors || "—"}階 / {form.capacity || "—"}人</div>
-              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>管理権原者</span>{form.owner_name || "—"}</div>
-              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>防火管理者</span>{form.manager_name || "—"}（{form.manager_qual}）</div>
-              <div><span style={{ color: "#6e6e73", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "—"}</div>
+            <div style={{ padding: 20, borderRadius: 14, background: "var(--surface-3)", fontSize: 14, lineHeight: 2.2, marginBottom: 24 }}>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>所轄</span>{deptName || "—"}</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>建物</span>{form.building_name || "—"}</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>規模</span>{form.total_area || "—"}㎡ / {form.num_floors || "—"}階 / {form.capacity || "—"}人</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>管理権原者</span>{form.owner_name || "—"}</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>防火管理者</span>{form.manager_name || "—"}（{form.manager_qual}）</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "—"}</div>
             </div>
 
             {/* 決済エラー（alert の置き換え・スクリーンリーダーに通知） */}
             {genError && (
-              <div role="alert" style={{ padding: "12px 16px", borderRadius: 12, marginBottom: 14, background: "#fff5f5", border: "1px solid #ffd0d0", color: "#c0392b", fontSize: 14, lineHeight: 1.7 }}>
+              <div role="alert" style={{ padding: "12px 16px", borderRadius: 12, marginBottom: 14, background: "var(--err-bg)", border: "1px solid var(--err-border)", color: "var(--err-text)", fontSize: 14, lineHeight: 1.7 }}>
                 {genError}
               </div>
             )}
@@ -704,14 +704,14 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <button onClick={handleGenerate} disabled={completeness < 100 || loading} aria-busy={loading} style={{
               width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
               cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
-              background: completeness === 100 && !loading ? "#2E5F9E" : "#d2d2d7", color: "#fff",
+              background: completeness === 100 && !loading ? "var(--brand)" : "var(--border-strong)", color: "#fff",
             }}>
               {loading ? (<><span className="spinner" aria-hidden="true" />決済画面に移動中...</>) : `${currentPlan.priceLabel} で生成する`}
             </button>
-            {completeness < 100 && <p style={{ fontSize: 13, color: "#6e6e73", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
+            {completeness < 100 && <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
 
             {/* Trust badges */}
-            <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "#6e6e73" }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "var(--text-muted)" }}>
               <span>SSL暗号化通信</span>
               <span>Stripe安全決済</span>
             </div>
@@ -720,13 +720,13 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       </div>
 
       {stepError && (
-        <div role="alert" style={{ marginTop: 14, padding: "12px 16px", borderRadius: 12, background: "#fff9f0", border: "1px solid #ffd9a0", color: "#af6800", fontSize: 13, lineHeight: 1.7 }}>
+        <div role="alert" style={{ marginTop: 14, padding: "12px 16px", borderRadius: 12, background: "var(--warn-bg)", border: "1px solid var(--warn-border)", color: "var(--warn-text)", fontSize: 13, lineHeight: 1.7 }}>
           {stepError}
         </div>
       )}
       <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
-        {step > 0 && <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#e8e8ed", color: "#1d1d1f", fontSize: 15, fontWeight: 600 }}>← 戻る</button>}
-        {step < STEPS.length - 1 && <button onClick={goNext} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#2E5F9E", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
+        {step > 0 && <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "var(--surface-muted)", color: "var(--text)", fontSize: 15, fontWeight: 600 }}>← 戻る</button>}
+        {step < STEPS.length - 1 && <button onClick={goNext} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "var(--brand)", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
       </div>
 {/* Sample preview modal */}
       {showSample && (
@@ -746,7 +746,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: "#fff",
+              background: "var(--surface)",
               borderRadius: 16,
               width: "100%",
               maxWidth: 900,
@@ -758,30 +758,30 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           >
             <div style={{
               padding: "14px 20px",
-              borderBottom: "1px solid #e5e5e5",
+              borderBottom: "1px solid var(--border)",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
             }}>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: "#1d1d1f" }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text)" }}>
                   消防計画サンプル
                 </div>
-                <div style={{ fontSize: 12, color: "#6e6e73" }}>
+                <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
                   京都市・飲食店320㎡(架空事業者)
                 </div>
               </div>
               <button
                 onClick={() => setShowSample(false)}
                 style={{
-                  background: "#f5f5f7",
+                  background: "var(--surface-3)",
                   border: "none",
                   width: 32,
                   height: 32,
                   borderRadius: 16,
                   fontSize: 16,
                   cursor: "pointer",
-                  color: "#1d1d1f",
+                  color: "var(--text)",
                 }}
               >
                 ✕
@@ -827,7 +827,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           fontWeight: 900,
           textAlign: "center",
           marginBottom: 48,
-          color: "#1a1a1a",
+          color: "var(--text)",
         }}
       >
         よくあるご質問
@@ -839,7 +839,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <div
               key={i}
               style={{
-                borderBottom: "1px solid #e5e5e5",
+                borderBottom: "1px solid var(--border)",
                 padding: "20px 0",
               }}
             >
@@ -876,7 +876,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     style={{
                       fontSize: 18,
                       fontWeight: 900,
-                      color: "#2E5F9E",
+                      color: "var(--brand)",
                       flexShrink: 0,
                     }}
                   >
@@ -886,7 +886,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     style={{
                       fontSize: "clamp(14px, 3.5vw, 16px)",
                       fontWeight: 700,
-                      color: "#1a1a1a",
+                      color: "var(--text)",
                     }}
                   >
                     {item.q}
@@ -896,7 +896,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   aria-hidden="true"
                   style={{
                     fontSize: 24,
-                    color: "#666",
+                    color: "var(--text-muted)",
                     flexShrink: 0,
                     lineHeight: 1,
                   }}
@@ -911,7 +911,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   style={{
                     marginTop: 16,
                     padding: "clamp(14px, 4vw, 20px)",
-                    background: "#EEF4FA",
+                    background: "var(--brand-tint)",
                     borderRadius: 8,
                     display: "flex",
                     gap: 10,
@@ -920,7 +920,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   <span
                     style={{
                       fontWeight: 900,
-                      color: "#1a1a1a",
+                      color: "var(--text)",
                       flexShrink: 0,
                     }}
                   >
@@ -930,7 +930,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     style={{
                       fontSize: "clamp(13px, 3.5vw, 15px)",
                       lineHeight: 1.8,
-                      color: "#1a1a1a",
+                      color: "var(--text)",
                     }}
                   >
                     {item.a}
@@ -946,21 +946,21 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     {/* Plan comparison CTA */}
     <section style={{ maxWidth: 720, margin: "0 auto", padding: "64px 20px 0" }}>
       <div style={{
-        background: "linear-gradient(135deg, #F2F7FC 0%, #FFF 100%)",
-        border: "1px solid #EEF4FA",
+        background: "linear-gradient(135deg, var(--brand-gradient) 0%, var(--surface) 100%)",
+        border: "1px solid var(--brand-tint)",
         borderRadius: 20, padding: "40px 32px", textAlign: "center",
       }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
           プランをじっくり比較したい方へ
         </h2>
-        <p style={{ fontSize: 15, color: "#6e6e73", lineHeight: 1.7, marginBottom: 24 }}>
+        <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 24 }}>
           ライト・スタンダード・プレミアムの違いを一覧でご確認いただけます。料金は1件ごとの都度払い（買い切り）です。
         </p>
         <a
           href="/pricing"
           style={{
             display: "inline-block", padding: "14px 36px", borderRadius: 12,
-            background: "#2E5F9E", color: "#fff", fontSize: 15, fontWeight: 600,
+            background: "var(--brand)", color: "#fff", fontSize: 15, fontWeight: 600,
             textDecoration: "none",
           }}
         >

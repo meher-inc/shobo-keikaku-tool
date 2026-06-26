@@ -34,8 +34,12 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" className={noto.className}>
-      <body style={{ background: "#fff", color: "#1a1a1a", margin: 0 }}>
+    <html lang="ja" className={noto.className} suppressHydrationWarning>
+      <body style={{ background: "var(--bg)", color: "var(--text)", margin: 0 }}>
+        {/* テーマ適用（描画前に data-theme を設定し FOUC を防ぐ） */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(function(){try{var t=localStorage.getItem('todokede-theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();`}
+        </Script>
         {/* Google tag (gtag.js) - Google Ads & GA4 共通 */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-18069681696"
