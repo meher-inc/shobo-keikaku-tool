@@ -74,44 +74,8 @@
   color-scheme: dark;
 }
 
-/* OS設定がダークで、ユーザーが明示選択していない場合はダークを既定に。 */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #14161b;
-    --surface: #1c2027;
-    --surface-2: #181b21;
-    --surface-3: #181b21;
-    --surface-input: #222730;
-    --surface-muted: #2a2f3a;
-    --text: #e9ebef;
-    --text-muted: #9aa1ab;
-    --text-faint: #6a6f78;
-    --border: #2c313b;
-    --border-strong: #3a414d;
-    --brand: #5b8ad6;
-    --brand-dark: #84acea;
-    --brand-tint: #1c2b3c;
-    --brand-tint-border: #2e4259;
-    --brand-gradient: #1a2433;
-    --ok-bg: #14241a;
-    --ok-border: #2f5e3f;
-    --ok-text: #6cc46c;
-    --ok-text-strong: #93dca0;
-    --ok-solid: #36c95a;
-    --warn-bg: #2a2113;
-    --warn-border: #574627;
-    --warn-text: #e0a85e;
-    --warn-text-strong: #d5a45c;
-    --warn-accent: #ff9a5c;
-    --err-bg: #2a1718;
-    --err-border: #5a2e30;
-    --err-text: #ef8076;
-    --err-solid: #ff6b62;
-    --info-bg: #16283a;
-    --info-text: #74acec;
-    color-scheme: dark;
-  }
-}
+/* ダークは「任意（オプトイン）」。OS設定には自動追従せず、ユーザーが
+   ヘッダーのトグルで選んだときだけ [data-theme="dark"] が付与される。 */
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
