@@ -159,8 +159,35 @@ function telError(v: string): string | undefined {
   return /^[0-9０-９\-‐－ー()（）\s]+$/.test(v) ? undefined : "数字とハイフンで入力してください";
 }
 
+// 各ステップの必須項目（「次へ」で前進する際の検証に使用）。
+const STEP_REQUIRED: Record<number, { label: string; ok: (f: typeof INITIAL_FORM) => boolean }[]> = {
+  0: [
+    { label: "都道府県", ok: (f) => !!f.prefecture },
+    { label: "市区町村", ok: (f) => !!f.city },
+  ],
+  1: [
+    { label: "建物名称", ok: (f) => !!f.building_name },
+    { label: "用途", ok: (f) => !!f.use_category },
+    { label: "延べ面積", ok: (f) => !!f.total_area },
+    { label: "階数", ok: (f) => !!f.num_floors },
+    { label: "収容人員", ok: (f) => !!f.capacity },
+  ],
+  2: [
+    { label: "管理権原者 氏名", ok: (f) => !!f.owner_name },
+    { label: "防火管理者 氏名", ok: (f) => !!f.manager_name },
+    { label: "連絡先", ok: (f) => !!f.manager_tel && !telError(f.manager_tel) },
+  ],
+  3: [{ label: "消防用設備（1つ以上）", ok: (f) => f.equipment.length > 0 }],
+  4: [
+    { label: "緊急連絡先 氏名", ok: (f) => !!f.emergency_name },
+    { label: "緊急連絡先 TEL", ok: (f) => !!f.emergency_tel && !telError(f.emergency_tel) },
+    { label: "避難場所", ok: (f) => !!f.evacuation_site },
+  ],
+};
+
 export default function Home() {
   const [step, setStep] = useState(0);
+  const [stepError, setStepError] = useState("");
   const [loading, setLoading] = useState(false);
 const [selectedPlan, setSelectedPlan] = useState("standard");
 const [showSample, setShowSample] = useState(false);  // ← これを追加
@@ -174,12 +201,24 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   // ステップ変更時にフォーム上部へスクロール（特にモバイルで新ステップ先頭を表示）。
   useEffect(() => {
+    setStepError("");
     if (!stepScrollReady.current) {
       stepScrollReady.current = true;
       return;
     }
     document.getElementById("form")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [step]);
+
+  // 「次へ」で前進する際に現ステップの必須項目を検証（不足時は前進せず案内）。
+  function goNext() {
+    const miss = (STEP_REQUIRED[step] || []).filter((r) => !r.ok(form)).map((r) => r.label);
+    if (miss.length > 0) {
+      setStepError(`次の項目をご入力ください：${miss.join("、")}`);
+      return;
+    }
+    setStepError("");
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  }
 
   // Preselect plan when arriving from the pricing page (/?plan=standard など).
   useEffect(() => {
@@ -680,9 +719,14 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         )}
       </div>
 
+      {stepError && (
+        <div role="alert" style={{ marginTop: 14, padding: "12px 16px", borderRadius: 12, background: "#fff9f0", border: "1px solid #ffd9a0", color: "#af6800", fontSize: 13, lineHeight: 1.7 }}>
+          {stepError}
+        </div>
+      )}
       <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
         {step > 0 && <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#e8e8ed", color: "#1d1d1f", fontSize: 15, fontWeight: 600 }}>← 戻る</button>}
-        {step < STEPS.length - 1 && <button onClick={() => setStep(step + 1)} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#2E5F9E", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
+        {step < STEPS.length - 1 && <button onClick={goNext} style={{ flex: 2, padding: 14, borderRadius: 14, border: "none", cursor: "pointer", background: "#2E5F9E", color: "#fff", fontSize: 15, fontWeight: 600 }}>次へ →</button>}
       </div>
 {/* Sample preview modal */}
       {showSample && (
