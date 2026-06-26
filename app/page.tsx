@@ -430,7 +430,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             <Field label="区" value={form.ward} onChange={(e: any) => set("ward", e.target.value)} />
             <Field label="以降の住所" value={form.address_detail} onChange={(e: any) => set("address_detail", e.target.value)} placeholder="○○通○○町123" />
             {deptKind && (
-              <div style={{ padding: "16px 20px", borderRadius: 14, marginTop: 8,
+              <div role="status" aria-live="polite" style={{ padding: "16px 20px", borderRadius: 14, marginTop: 8,
                 background: deptKind === "official" ? "#f0faf0" : deptKind === "named-standard" ? "#EEF4FA" : "#fff9f0",
                 border: deptKind === "official" ? "1px solid #b8e6b8" : deptKind === "named-standard" ? "1px solid #DCE8F5" : "1px solid #ffd9a0" }}>
                 <div style={{ fontSize: 13, fontWeight: 600,
@@ -772,19 +772,29 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           return (
             <div
               key={i}
-              onClick={() => setFaqOpen(isOpen ? null : i)}
               style={{
                 borderBottom: "1px solid #e5e5e5",
                 padding: "20px 0",
-                cursor: "pointer",
               }}
             >
-              <div
+              <button
+                type="button"
+                onClick={() => setFaqOpen(isOpen ? null : i)}
+                aria-expanded={isOpen}
+                aria-controls={`faq-panel-${i}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
                   gap: 16,
+                  width: "100%",
+                  background: "transparent",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  textAlign: "left",
+                  color: "inherit",
+                  font: "inherit",
                 }}
               >
                 <div
@@ -817,6 +827,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   </span>
                 </div>
                 <span
+                  aria-hidden="true"
                   style={{
                     fontSize: 24,
                     color: "#666",
@@ -826,10 +837,11 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                 >
                   {isOpen ? "−" : "+"}
                 </span>
-              </div>
+              </button>
               {isOpen && (
                 <div
-                  onClick={(e) => e.stopPropagation()}
+                  id={`faq-panel-${i}`}
+                  role="region"
                   style={{
                     marginTop: 16,
                     padding: "clamp(14px, 4vw, 20px)",
