@@ -1,5 +1,62 @@
-import { AlignmentType, PageBreak, Paragraph, TextRun } from "docx";
+import { AlignmentType, PageBreak, Paragraph, Table, TextRun } from "docx";
 import type { RenderData } from "../../helpers/placeholder";
+import { styledTable, type TableTheme } from "./table-helpers";
+import { sectionHeading, plainText, pageBreak } from "./paragraph-helpers";
+
+const SUMMARY_THEME: TableTheme = { headerFill: "2E5F9E", altFill: "EEF4FA" };
+
+// ご提出前に建物固有で追記・確認が必要な代表的事項。
+const CHECKLIST = [
+  "自衛消防組織の編成（各班の担当者・任務分担）— 規模により別表へ記入",
+  "各階の平面図・避難経路図の添付",
+  "別表（自主検査表・点検計画表・火元責任者の区域別割当 等）の具体的な記入",
+  "消防用設備等の各階ごとの設置場所・数量",
+  "管轄消防署から個別に求められた事項",
+  "記載内容が自施設の実態と一致しているかの最終確認",
+];
+
+// 入力した内容を文書冒頭に概要として載せる（様式にプレースホルダが無い項目も
+// 必ず文書へ反映されるようにし、入力の取りこぼしを防ぐ）。
+function buildFrontMatter(data: RenderData): (Paragraph | Table)[] {
+  const v = (x?: string) => (x && x.trim() ? x : "（未入力）");
+  const addr = [data.prefecture, data.city, data.ward, data.addressDetail].filter(Boolean).join("");
+  const scale = [
+    data.totalArea ? `${data.totalArea}㎡` : "",
+    data.numFloors ? `${data.numFloors}階` : "",
+    data.capacity ? `${data.capacity}人` : "",
+  ].filter(Boolean).join(" / ");
+  const mgr = data.managerName
+    ? `${data.managerName}${data.managerQualification ? `（${data.managerQualification}）` : ""}`
+    : "";
+  const equip = (data.fireEquipmentList || "").replace(/,/g, "、");
+  const emerg = [data.emergencyContactName, data.emergencyContactPhone].filter(Boolean).join(" / ");
+
+  const rows: string[][] = [
+    ["所在地", v(addr)],
+    ["建物名称", v(data.buildingName)],
+    ["用途（令別表第一）", v(data.useCategory)],
+    ["規模（面積／階数／収容人員）", v(scale)],
+    ["管理権原者", v(data.ownerName)],
+    ["防火管理者", v(mgr)],
+    ["選任年月日", v(data.managerAppointmentDate)],
+    ["防火管理者 連絡先", v(data.managerContact)],
+    ["設置している消防用設備等", v(equip)],
+    ["緊急連絡先", v(emerg)],
+    ["広域避難場所", v(data.wideAreaEvacuationSite)],
+    ["一時集合場所", v(data.temporaryAssemblyPoint)],
+    ["訓練実施月", v(data.drillMonths)],
+    ["防災教育実施月", v(data.educationMonths)],
+  ];
+
+  return [
+    sectionHeading("防火対象物の概要（ご入力内容）"),
+    plainText("本計画は所轄消防本部の様式に準拠した雛形です。下記の入力内容を反映しています。建物固有の事項は追記・確認のうえご提出ください。"),
+    styledTable(["項目", "ご入力内容"], rows, [3200, 6200], SUMMARY_THEME),
+    sectionHeading("ご提出前に追記・確認が必要な事項"),
+    ...CHECKLIST.map((c) => plainText(`・${c}`)),
+    pageBreak(),
+  ];
+}
 
 /**
  * Cover page builder — shared across all dept packs.
@@ -25,7 +82,7 @@ export type CoverPageOpts = {
   subtitleSize?: number;
 };
 
-export function buildCoverPage(data: RenderData, opts: CoverPageOpts): Paragraph[] {
+export function buildCoverPage(data: RenderData, opts: CoverPageOpts): (Paragraph | Table)[] {
   const buildingName = data.companyName ?? data.buildingName ?? "（建物名未設定）";
   const creationDate = data.creationDate ?? "";
 
@@ -69,5 +126,7 @@ export function buildCoverPage(data: RenderData, opts: CoverPageOpts): Paragraph
     }),
     // Page break to push body to page 2
     new Paragraph({ children: [new PageBreak()] }),
+    // 入力内容の概要＋追記チェックリスト（全packで共通付与）
+    ...buildFrontMatter(data),
   ];
 }

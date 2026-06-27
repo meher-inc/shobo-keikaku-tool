@@ -47,6 +47,11 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
     isSpecificUse: str(form.is_specific_use),
     capacity: str(form.capacity),
 
+    // 建物概要（入力概要セクションで使用）
+    useCategory: str(form.use_category) ?? str(form.use_category_label),
+    totalArea: str(form.total_area),
+    numFloors: str(form.num_floors),
+
     outsourceCompany: str(form.outsource_company),
 
     // Chapter 4: inspection & checks
@@ -57,10 +62,14 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
     inspectionCompany: str(form.inspection_company),
 
     // Chapter 6: fire equipment — serialise array to CSV so the
-    // resolveBody / joinArray computed fn can consume it.
-    fireEquipmentList: Array.isArray(form.fire_equipment)
-      ? (form.fire_equipment as string[]).join(",")
-      : str(form.fire_equipment),
+    // resolveBody / joinArray computed fn can consume it。
+    // フォームは equipment で送るため、fire_equipment と両対応にする
+    // （以前は fire_equipment のみ参照で入力が反映されていなかった）。
+    fireEquipmentList: Array.isArray(form.equipment)
+      ? (form.equipment as string[]).join(",")
+      : Array.isArray(form.fire_equipment)
+        ? (form.fire_equipment as string[]).join(",")
+        : str(form.fire_equipment) ?? str(form.equipment),
 
     // Chapter 7: emergency contacts
     emergencyContactName: str(form.emergency_contact_name) ?? str(form.emergency_name),

@@ -81,12 +81,12 @@ describe("kobe オフィスビル用 v2 smoke tests", () => {
     expect(std).toContain("別表６　自衛消防組織の編成");
     expect(std).toContain("別表８　関係機関への通報連絡先");
     // 別表等一覧(1) + 別表1〜8(8) = 9 tables
-    expect(stdTbl).toBe(9);
+    expect(stdTbl).toBe(10);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表等一覧");
     expect(light).not.toContain("別表１　被害想定");
-    expect(lightTbl).toBe(0);
+    expect(lightTbl).toBe(1);
   });
 
   it("自衛消防 member names land in 別表6 when supplied", async () => {
