@@ -71,6 +71,14 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
         ? (form.fire_equipment as string[]).join(",")
         : str(form.fire_equipment) ?? str(form.equipment),
 
+    // 各階の設備配置（任意）。入力概要で「○階: 設備…」形式に整形して表示。
+    equipmentByFloor: Array.isArray(form.equipment_floors)
+      ? (form.equipment_floors as { floor?: string; detail?: string }[])
+          .filter((r) => r && (r.floor || r.detail))
+          .map((r) => `${(r.floor || "").trim() || "—"}: ${(r.detail || "").trim()}`.trim())
+          .join(" ／ ") || undefined
+      : undefined,
+
     // Chapter 7: emergency contacts
     emergencyContactName: str(form.emergency_contact_name) ?? str(form.emergency_name),
     emergencyContactPhone: str(form.emergency_contact_phone) ?? str(form.emergency_tel),

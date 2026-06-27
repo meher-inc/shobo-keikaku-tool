@@ -105,6 +105,8 @@ const INITIAL_FORM = {
   owner_name: "", manager_name: "", manager_qual: "甲種", manager_date: "", manager_tel: "",
   has_outsource: false, outsource_company: "",
   equipment: [] as string[], inspection_company: "",
+  // 各階の設備配置（任意）。階ごとの設備・数量。
+  equipment_floors: [] as { floor: string; detail: string }[],
   emergency_name: "", emergency_tel: "",
   evacuation_site: "", assembly_point: "",
   drill_months: "4月・10月", education_months: "4月・10月",
@@ -303,6 +305,12 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     }
   };
   const toggleEquip = (e: string) => set("equipment", form.equipment.includes(e) ? form.equipment.filter((x: string) => x !== e) : [...form.equipment, e]);
+  // 各階の設備配置（任意）の行操作
+  const addFloorRow = () => set("equipment_floors", [...form.equipment_floors, { floor: "", detail: "" }]);
+  const updateFloorRow = (i: number, k: "floor" | "detail", v: string) =>
+    set("equipment_floors", form.equipment_floors.map((r, idx) => (idx === i ? { ...r, [k]: v } : r)));
+  const removeFloorRow = (i: number) =>
+    set("equipment_floors", form.equipment_floors.filter((_, idx) => idx !== i));
   const selectedUse = USE_CATEGORIES.find(u => u.value === form.use_category);
   const isSpecific = selectedUse?.specific ?? false;
   const deptName =
@@ -563,6 +571,49 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               })}
             </div>
             <Field label="点検委託先" value={form.inspection_company} onChange={(e: any) => set("inspection_company", e.target.value)} placeholder="○○防災設備株式会社" />
+
+            {/* 各階の設備配置（任意・動的入力） */}
+            <div style={{ marginTop: 8, paddingTop: 20, borderTop: "1px solid var(--border)" }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>
+                各階の設備配置
+                <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: "var(--text-muted)", background: "var(--surface-muted)", borderRadius: 999, padding: "2px 10px", verticalAlign: "middle" }}>任意</span>
+                <Hint text="階ごとの消防用設備とおおよその数量を任意で記入できます。入力すると生成する計画書の「防火対象物の概要」に各階配置として反映されます。未入力でも提出後に追記できます。" />
+              </h3>
+              <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>例: 「1階」「消火器3本、屋内消火栓1」のように記入します。</p>
+              {form.equipment_floors.map((r, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "104px 1fr 36px", gap: 8, marginBottom: 8, alignItems: "center" }}>
+                  <input
+                    aria-label={`設備配置 ${i + 1} 行目 階`}
+                    placeholder="1階"
+                    value={r.floor}
+                    onChange={(e) => updateFloorRow(i, "floor", e.target.value)}
+                    style={{ padding: "11px 12px", fontSize: 14, borderRadius: 10, border: "1px solid var(--border-strong)", background: "var(--surface-input)", color: "var(--text)", outline: "none", width: "100%", boxSizing: "border-box" }}
+                  />
+                  <input
+                    aria-label={`設備配置 ${i + 1} 行目 設備・数量`}
+                    placeholder="消火器3本、屋内消火栓1"
+                    value={r.detail}
+                    onChange={(e) => updateFloorRow(i, "detail", e.target.value)}
+                    style={{ padding: "11px 12px", fontSize: 14, borderRadius: 10, border: "1px solid var(--border-strong)", background: "var(--surface-input)", color: "var(--text)", outline: "none", width: "100%", boxSizing: "border-box" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeFloorRow(i)}
+                    aria-label={`設備配置 ${i + 1} 行目を削除`}
+                    style={{ width: 36, height: 36, borderRadius: 10, border: "1px solid var(--border-strong)", background: "var(--surface-3)", color: "var(--text-muted)", cursor: "pointer", fontSize: 18, lineHeight: 1 }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addFloorRow}
+                style={{ marginTop: 4, padding: "9px 16px", fontSize: 13, fontWeight: 600, borderRadius: 10, border: "1px dashed var(--border-strong)", background: "transparent", color: "var(--brand)", cursor: "pointer" }}
+              >
+                ＋ 階を追加
+              </button>
+            </div>
           </div>
         )}
 
