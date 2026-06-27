@@ -49,6 +49,7 @@ function buildFrontMatter(data: RenderData): (Paragraph | Table)[] {
     ["選任年月日", v(data.managerAppointmentDate)],
     ["防火管理者 連絡先", v(data.managerContact)],
     ["設置している消防用設備等", v(equip)],
+    ["消防用設備等の各階配置", v(data.equipmentByFloor)],
     ["緊急連絡先", v(emerg)],
     ["広域避難場所", v(data.wideAreaEvacuationSite)],
     ["一時集合場所", v(data.temporaryAssemblyPoint)],
