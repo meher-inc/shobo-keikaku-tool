@@ -20,36 +20,59 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "支払いが完了していません" }, { status: 400 });
     }
 
-    // Reconstruct form data from metadata
     const meta = session.metadata || {};
-    const formData = {
-      plan: meta.plan,
-      building_name: meta.building_name,
-      prefecture: meta.prefecture,
-      city: meta.city,
-      ward: meta.ward,
-      address_detail: meta.address_detail,
-      use_category: meta.use_category,
-      total_area: meta.total_area,
-      num_floors: meta.num_floors,
-      capacity: meta.capacity,
-      owner_name: meta.owner_name,
-      manager_name: meta.manager_name,
-      manager_qual: meta.manager_qual,
-      manager_date: meta.manager_date,
-      manager_tel: meta.manager_tel,
-      has_outsource: meta.has_outsource === "true",
-      outsource_company: meta.outsource_company,
-      equipment: JSON.parse(meta.equipment || "[]"),
-      inspection_company: meta.inspection_company,
-      security_company: meta.security_company,
-      emergency_name: meta.emergency_name,
-      emergency_tel: meta.emergency_tel,
-      evacuation_site: meta.evacuation_site,
-      assembly_point: meta.assembly_point,
-      drill_months: meta.drill_months,
-      education_months: meta.education_months,
-    };
+
+    // 入力の正本は Supabase orders.form_data（checkout が full JSON を保存）。
+    // Stripe metadata は一部項目しか持たず、自衛消防隊・各階配置などの新規項目が
+    // 欠落するため、form_data を優先する。取得できない（旧データ等）場合に限り、
+    // 従来どおり metadata から再構築してフォールバックする。
+    let orderRow: { id: string; download_count: number | null; form_data: Record<string, unknown> | null } | null = null;
+    try {
+      const { data, error } = await supabaseAdmin
+        .from("orders")
+        .select("id, download_count, form_data")
+        .eq("stripe_session_id", sessionId)
+        .maybeSingle();
+      if (error) {
+        console.error("[download] supabase form_data lookup error:", error);
+      } else if (data) {
+        orderRow = data;
+      }
+    } catch (lookupErr) {
+      console.error("[download] form_data lookup threw:", lookupErr);
+    }
+
+    const formData =
+      orderRow?.form_data && Object.keys(orderRow.form_data).length > 0
+        ? orderRow.form_data
+        : {
+            plan: meta.plan,
+            building_name: meta.building_name,
+            prefecture: meta.prefecture,
+            city: meta.city,
+            ward: meta.ward,
+            address_detail: meta.address_detail,
+            use_category: meta.use_category,
+            total_area: meta.total_area,
+            num_floors: meta.num_floors,
+            capacity: meta.capacity,
+            owner_name: meta.owner_name,
+            manager_name: meta.manager_name,
+            manager_qual: meta.manager_qual,
+            manager_date: meta.manager_date,
+            manager_tel: meta.manager_tel,
+            has_outsource: meta.has_outsource === "true",
+            outsource_company: meta.outsource_company,
+            equipment: JSON.parse(meta.equipment || "[]"),
+            inspection_company: meta.inspection_company,
+            security_company: meta.security_company,
+            emergency_name: meta.emergency_name,
+            emergency_tel: meta.emergency_tel,
+            evacuation_site: meta.evacuation_site,
+            assembly_point: meta.assembly_point,
+            drill_months: meta.drill_months,
+            education_months: meta.education_months,
+          };
 
     // Call the generate-plan API internally
     const generateRes = await fetch(`${request.nextUrl.origin}/api/generate-plan`, {
@@ -63,18 +86,14 @@ export async function GET(request: NextRequest) {
     }
 
     const buffer = await generateRes.arrayBuffer();
-    const filename = encodeURIComponent(`消防計画_${meta.building_name}.docx`);
+    const buildingName =
+      (formData as Record<string, unknown>).building_name || meta.building_name || "消防計画";
+    const filename = encodeURIComponent(`消防計画_${buildingName}.docx`);
 
     // Best-effort download tracking. Failure must never block the DL.
+    // 入力取得時に取得済みの orderRow を再利用する（再クエリ不要）。
     try {
-      const { data: orderRow, error: fetchErr } = await supabaseAdmin
-        .from("orders")
-        .select("id, download_count")
-        .eq("stripe_session_id", sessionId)
-        .maybeSingle();
-      if (fetchErr) {
-        console.error("[download] supabase lookup error:", fetchErr);
-      } else if (orderRow) {
+      if (orderRow) {
         const { error: updateErr } = await supabaseAdmin
           .from("orders")
           .update({
