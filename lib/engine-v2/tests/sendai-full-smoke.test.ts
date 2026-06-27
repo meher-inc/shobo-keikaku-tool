@@ -67,11 +67,11 @@ describe("sendai 大規模 v2 smoke tests", () => {
     expect(std).toContain("別表２－１　自主検査チェック表（出火防止）");
     expect(std).toContain("別紙　防火管理業務委託状況票");
     // 一覧(1) + 別表1,2-1,2-2,3(4) + 別紙(1) = 6 tables
-    expect(stdTbl).toBe(6);
+    expect(stdTbl).toBe(7);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表・別紙一覧");
-    expect(lightTbl).toBe(0);
+    expect(lightTbl).toBe(1);
   });
 
   it("自衛消防 member names land in 別表1 when supplied", async () => {

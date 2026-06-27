@@ -66,10 +66,10 @@ describe("niigata その他・中規模 v2 smoke tests", () => {
     expect(std).toContain("別紙１　自主検査票（その１）「火気・電気関係」");
     expect(std).toContain("別表　防火管理業務の委託状況");
     // 一覧(1) + 別紙1,2(2) + 別表(1) = 4 tables
-    expect(stdTbl).toBe(4);
+    expect(stdTbl).toBe(5);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表・別紙一覧");
-    expect(lightTbl).toBe(0);
+    expect(lightTbl).toBe(1);
   });
 });

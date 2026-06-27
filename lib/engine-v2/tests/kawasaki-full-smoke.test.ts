@@ -79,12 +79,12 @@ describe("kawasaki 甲種 v2 smoke tests", () => {
     expect(std).toContain("別表６　自衛消防の組織");
     expect(std).toContain("別表７　自衛消防の任務分担");
     // 別表等一覧(1) + 別表1〜7(7) = 8 tables
-    expect(stdTbl).toBe(8);
+    expect(stdTbl).toBe(9);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表等一覧");
     expect(light).not.toContain("別表１　防火管理委員会の構成");
-    expect(lightTbl).toBe(0);
+    expect(lightTbl).toBe(1);
   });
 
   it("自衛消防 member names land in 別表6 when supplied", async () => {

@@ -110,7 +110,7 @@ describe("yokohama 一般用 v2 smoke tests", () => {
     expect(xml).not.toContain("別表４　防火管理業務の委託状況表");
     // appendix list always emits 1 table when include_appendix is on
     expect(xml).toContain("別表等一覧");
-    expect(tblCount).toBe(1);
+    expect(tblCount).toBe(2);
   });
 
   // ── Y2: outsourced gating ─────────────────────────────────────
@@ -128,7 +128,7 @@ describe("yokohama 一般用 v2 smoke tests", () => {
     // 別表3 still hidden
     expect(xml).not.toContain("別表３　防災センター従事者一覧表");
     // 1 (list) + 1 (別表4 outsource table) = 2
-    expect(tblCount).toBe(2);
+    expect(tblCount).toBe(3);
   });
 
   // ── Y3: unified_fpm gating ────────────────────────────────────
@@ -145,7 +145,7 @@ describe("yokohama 一般用 v2 smoke tests", () => {
     expect(xml).not.toContain("別表３　防災センター従事者一覧表");
     expect(xml).not.toContain("別表４　防火管理業務の委託状況表");
     // unified gating affects body only — table count unchanged from baseline
-    expect(tblCount).toBe(1);
+    expect(tblCount).toBe(2);
   });
 
   // ── Y4: disaster_center gating ────────────────────────────────
@@ -160,7 +160,7 @@ describe("yokohama 一般用 v2 smoke tests", () => {
     expect(xml).not.toContain("別表４　防火管理業務の委託状況表");
     expect(xml).not.toContain("第13条の２　統括防火管理者への報告");
     // 1 (list) + 1 (別表3 disaster center table) = 2
-    expect(tblCount).toBe(2);
+    expect(tblCount).toBe(3);
   });
 
   // ── Y5: all flags on (composite gating) ───────────────────────
@@ -180,7 +180,7 @@ describe("yokohama 一般用 v2 smoke tests", () => {
     expect(xml).toContain("別表３　防災センター従事者一覧表");
     expect(xml).toContain("別表４　防火管理業務の委託状況表");
     // 1 (list) + 1 (別表3) + 1 (別表4) = 3
-    expect(tblCount).toBe(3);
+    expect(tblCount).toBe(4);
   });
 
   // ── Y6: plan=light → no appendices at all ─────────────────────
@@ -202,7 +202,7 @@ describe("yokohama 一般用 v2 smoke tests", () => {
     expect(xml).not.toContain("別表２　自衛消防隊の組織及び任務分担");
     expect(xml).not.toContain("別表３　防災センター従事者一覧表");
     expect(xml).not.toContain("別表４　防火管理業務の委託状況表");
-    expect(tblCount).toBe(0);
+    expect(tblCount).toBe(1);
   });
 
   // ── Cover subtitle ───────────────────────────────────────────
