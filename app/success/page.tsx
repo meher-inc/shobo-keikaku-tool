@@ -205,6 +205,15 @@ function SuccessContent() {
               }}>
                 もう一度ダウンロード
               </button>
+              {sessionId && (
+                <a href={`/?edit=${encodeURIComponent(sessionId)}`} style={{
+                  display: "block", padding: 14, borderRadius: 14, marginBottom: 12,
+                  background: "var(--surface-muted)", color: "var(--text)", fontSize: 15, fontWeight: 600,
+                  textDecoration: "none",
+                }}>
+                  内容を修正して再ダウンロード
+                </a>
+              )}
               <a href="/" style={{
                 display: "block", padding: 14, borderRadius: 14,
                 background: "var(--surface-3)", color: "var(--brand)", fontSize: 15, fontWeight: 600,
