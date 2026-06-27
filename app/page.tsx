@@ -200,7 +200,12 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [genError, setGenError] = useState("");
   const [form, setForm] = useState(INITIAL_FORM);
   const [draftRestored, setDraftRestored] = useState(false);
+  // 購入後の編集モード（/?edit=<session_id> で起動）。聖域の order-form API と連携。
+  const [editSession, setEditSession] = useState<string | null>(null);
+  const [editable, setEditable] = useState(true);
+  const [editLoading, setEditLoading] = useState(false);
   const draftLoaded = useRef(false);
+  const editMode = useRef(false);
   const stepScrollReady = useRef(false);
 
   // ステップ変更時にフォーム上部へスクロール（特にモバイルで新ステップ先頭を表示）。
@@ -232,8 +237,39 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     }
   }, []);
 
-  // 入力内容の下書きをブラウザから復元（マウント時）。サーバには保存しない。
+  // 購入後の編集モード。/?edit=<session_id> で起動し、注文の form_data を
+  // サーバ（聖域 order-form API）から取得してフォームへ読み込む。
   useEffect(() => {
+    const sid = new URLSearchParams(window.location.search).get("edit");
+    if (!sid) return;
+    editMode.current = true;
+    setEditSession(sid);
+    setStep(STEPS.length - 1); // 確認・保存ステップで読込結果（成功/エラー）を表示
+    (async () => {
+      try {
+        const res = await fetch(`/api/order-form?session_id=${encodeURIComponent(sid)}`);
+        const data = await res.json();
+        if (!res.ok) {
+          setGenError(data.error || "購入情報の読み込みに失敗しました。");
+          return;
+        }
+        if (data.form_data && typeof data.form_data === "object") {
+          setForm({ ...INITIAL_FORM, ...data.form_data });
+        }
+        setEditable(data.editable !== false);
+      } catch {
+        setGenError("通信エラーが発生しました。時間をおいて再度お試しください。");
+      }
+    })();
+  }, []);
+
+  // 入力内容の下書きをブラウザから復元（マウント時）。サーバには保存しない。
+  // 編集モードでは注文データを使うため復元しない。
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("edit")) {
+      draftLoaded.current = true;
+      return;
+    }
     try {
       const raw = localStorage.getItem(DRAFT_KEY);
       if (raw) {
@@ -254,8 +290,9 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   }, []);
 
   // 入力内容を下書きとして保存（復元完了後のみ。初回ロード前の上書きを防ぐ）。
+  // 編集モードでは下書きに保存しない（注文データを汚さない）。
   useEffect(() => {
-    if (!draftLoaded.current) return;
+    if (!draftLoaded.current || editMode.current) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
     } catch {
@@ -382,6 +419,31 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       setGenError("通信エラーが発生しました。電波状況をご確認のうえ再度お試しください。");
     } finally {
       setLoading(false);
+    }
+  }
+
+  // 購入後の編集モード：修正を保存してから、追加料金なしで再生成・ダウンロードする。
+  async function handleSaveAndDownload() {
+    if (!editSession) return;
+    setEditLoading(true);
+    setGenError("");
+    try {
+      const res = await fetch("/api/order-form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: editSession, form_data: form }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setGenError(data.error || "保存に失敗しました。時間をおいて再度お試しください。");
+        return;
+      }
+      // 修正版を再生成してダウンロード（決済は発生しない）。
+      window.location.href = `/api/download?session_id=${encodeURIComponent(editSession)}`;
+    } catch {
+      setGenError("通信エラーが発生しました。電波状況をご確認のうえ再度お試しください。");
+    } finally {
+      setEditLoading(false);
     }
   }
 
@@ -650,8 +712,15 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
         {step === 5 && (
           <div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>プランを選択</h2>
-            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24 }}>内容を確認してプランを選んでください</p>
+            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>{editSession ? "内容を修正する" : "プランを選択"}</h2>
+            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24 }}>{editSession ? "購入済みの計画書を修正し、追加料金なしで再生成できます" : "内容を確認してプランを選んでください"}</p>
+
+            {editSession && (
+              <div role="status" style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "12px 16px", borderRadius: 12, marginBottom: 20, background: "var(--ok-bg)", border: "1px solid var(--ok-border)", color: "var(--ok-text-strong)", fontSize: 13.5, lineHeight: 1.7 }}>
+                <span aria-hidden="true">✓</span>
+                <span>購入済みの計画を編集しています。各ステップで内容を修正し、下の「修正版を保存してダウンロード」で再生成できます（決済は発生しません）。</span>
+              </div>
+            )}
 
             {/* 購入前の内容確認プレビュー（決済前に所轄・入力内容・作成物を確認できる） */}
             <div style={{ border: "1px solid var(--border)", borderRadius: 14, padding: "18px 20px", marginBottom: 24, background: "var(--surface-2)" }}>
@@ -702,8 +771,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               </div>
             </div>
 
-            {/* Plan selector */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+            {/* Plan selector（編集モードではプラン固定のため非表示） */}
+            <div style={{ display: editSession ? "none" : "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
               {PLANS.map(plan => {
                 const isSelected = selectedPlan === plan.id;
                 return (
@@ -821,20 +890,37 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             )}
 
             {/* CTA button */}
-            <button onClick={handleGenerate} disabled={completeness < 100 || loading} aria-busy={loading} style={{
-              width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
-              cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
-              background: completeness === 100 && !loading ? "var(--brand)" : "var(--border-strong)", color: "#fff",
-            }}>
-              {loading ? (<><span className="spinner" aria-hidden="true" />決済画面に移動中...</>) : `${currentPlan.priceLabel} で生成する`}
-            </button>
-            {completeness < 100 && <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
+            {editSession ? (
+              <>
+                <button onClick={handleSaveAndDownload} disabled={completeness < 100 || editLoading || !editable} aria-busy={editLoading} style={{
+                  width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
+                  cursor: completeness === 100 && !editLoading && editable ? "pointer" : "not-allowed",
+                  background: completeness === 100 && !editLoading && editable ? "var(--brand)" : "var(--border-strong)", color: "#fff",
+                }}>
+                  {editLoading ? (<><span className="spinner" aria-hidden="true" />保存して再生成中...</>) : "修正版を保存してダウンロード"}
+                </button>
+                <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", marginTop: 10 }}>
+                  {editable ? "追加料金はかかりません。修正内容で計画書を再生成します。" : "編集可能期間を過ぎているため保存できません。お手数ですがお問い合わせください。"}
+                </p>
+              </>
+            ) : (
+              <>
+                <button onClick={handleGenerate} disabled={completeness < 100 || loading} aria-busy={loading} style={{
+                  width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
+                  cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
+                  background: completeness === 100 && !loading ? "var(--brand)" : "var(--border-strong)", color: "#fff",
+                }}>
+                  {loading ? (<><span className="spinner" aria-hidden="true" />決済画面に移動中...</>) : `${currentPlan.priceLabel} で生成する`}
+                </button>
+                {completeness < 100 && <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
 
-            {/* Trust badges */}
-            <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "var(--text-muted)" }}>
-              <span>SSL暗号化通信</span>
-              <span>Stripe安全決済</span>
-            </div>
+                {/* Trust badges */}
+                <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "var(--text-muted)" }}>
+                  <span>SSL暗号化通信</span>
+                  <span>Stripe安全決済</span>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
