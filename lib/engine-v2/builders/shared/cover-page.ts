@@ -30,6 +30,14 @@ function buildFrontMatter(data: RenderData): (Paragraph | Table)[] {
     : "";
   const equip = (data.fireEquipmentList || "").replace(/,/g, "、");
   const emerg = [data.emergencyContactName, data.emergencyContactPhone].filter(Boolean).join(" / ");
+  const team = [
+    data.leaderName ? `隊長:${data.leaderName}` : "",
+    data.tsuhouMember ? `通報:${data.tsuhouMember}` : "",
+    data.shokaMember ? `初期消火:${data.shokaMember}` : "",
+    data.hinanMember ? `避難誘導:${data.hinanMember}` : "",
+    data.kyugoMember ? `救護:${data.kyugoMember}` : "",
+    data.anzenMember ? `安全:${data.anzenMember}` : "",
+  ].filter(Boolean).join(" / ");
 
   const rows: string[][] = [
     ["所在地", v(addr)],
@@ -46,6 +54,7 @@ function buildFrontMatter(data: RenderData): (Paragraph | Table)[] {
     ["一時集合場所", v(data.temporaryAssemblyPoint)],
     ["訓練実施月", v(data.drillMonths)],
     ["防災教育実施月", v(data.educationMonths)],
+    ["自衛消防隊（各班の担当者）", v(team)],
   ];
 
   return [

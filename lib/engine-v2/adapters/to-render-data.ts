@@ -86,6 +86,14 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
     // Chapter 10: drills
     drillMonths: str(form.drill_months),
 
+    // 自衛消防隊の編成（専用様式の別表「自衛消防隊の編成」／入力概要で使用）
+    leaderName: str(form.leader_name),
+    tsuhouMember: str(form.tsuhou_member),
+    shokaMember: str(form.shoka_member),
+    hinanMember: str(form.hinan_member),
+    kyugoMember: str(form.kyugo_member),
+    anzenMember: str(form.anzen_member),
+
     // Creation date — v1 passes the pre-formatted string (e.g.
     // "令和7年4月1日") in creation_date. creationDateIso is the ISO
     // form for the eraDate computed fn in 附則.

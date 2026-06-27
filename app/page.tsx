@@ -108,6 +108,8 @@ const INITIAL_FORM = {
   emergency_name: "", emergency_tel: "",
   evacuation_site: "", assembly_point: "",
   drill_months: "4月・10月", education_months: "4月・10月",
+  // 自衛消防隊の編成（任意）。専用様式の別表に氏名を差し込む。
+  leader_name: "", tsuhou_member: "", shoka_member: "", hinan_member: "", kyugo_member: "", anzen_member: "",
 };
 
 // 入力内容の下書き保存キー（ブラウザの localStorage のみ。サーバには送らない）。
@@ -574,6 +576,24 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             </div>
             <Field label="広域避難場所" value={form.evacuation_site} onChange={(e: any) => set("evacuation_site", e.target.value)} placeholder="○○区○○町 ○○公園" required />
             <Field label="一時集合場所" value={form.assembly_point} onChange={(e: any) => set("assembly_point", e.target.value)} placeholder="ビル北側駐車場" />
+
+            {/* 自衛消防隊の編成（任意・専用様式の別表に反映） */}
+            <div style={{ marginTop: 8, paddingTop: 20, borderTop: "1px solid var(--border)" }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>
+                自衛消防隊の編成
+                <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: "var(--text-muted)", background: "var(--surface-muted)", borderRadius: 999, padding: "2px 10px", verticalAlign: "middle" }}>任意</span>
+                <Hint text="各班の担当者氏名です。入力すると、対応している消防本部の様式では別表「自衛消防隊の編成」に自動で差し込まれます。未入力の場合は空欄で出力され、後から記入できます。" />
+              </h3>
+              <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>分かる範囲でご記入ください（後から追記も可能です）。</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <Field label="自衛消防隊長" value={form.leader_name} onChange={(e: any) => set("leader_name", e.target.value)} autoComplete="off" />
+                <Field label="通報連絡班" value={form.tsuhou_member} onChange={(e: any) => set("tsuhou_member", e.target.value)} autoComplete="off" />
+                <Field label="初期消火班" value={form.shoka_member} onChange={(e: any) => set("shoka_member", e.target.value)} autoComplete="off" />
+                <Field label="避難誘導班" value={form.hinan_member} onChange={(e: any) => set("hinan_member", e.target.value)} autoComplete="off" />
+                <Field label="救護班" value={form.kyugo_member} onChange={(e: any) => set("kyugo_member", e.target.value)} autoComplete="off" />
+                <Field label="安全防護班" value={form.anzen_member} onChange={(e: any) => set("anzen_member", e.target.value)} autoComplete="off" />
+              </div>
+            </div>
           </div>
         )}
 
