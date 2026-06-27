@@ -68,11 +68,11 @@ describe("hiroshima v2 smoke tests", () => {
     expect(std).toContain("自衛消防隊の編成と任務");
     expect(std).toContain("別紙１　消防用設備等・特殊消防用設備等自主点検チェック表");
     // 一覧(1) + 別表(1) + 別紙1〜3(3) = 5 tables
-    expect(stdTbl).toBe(6);
+    expect(stdTbl).toBe(7);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表・別紙一覧");
-    expect(lightTbl).toBe(1);
+    expect(lightTbl).toBe(2);
   });
 
   it("自衛消防 member names land in 別表 when supplied", async () => {

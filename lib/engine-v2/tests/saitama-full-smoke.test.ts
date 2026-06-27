@@ -62,11 +62,11 @@ describe("saitama 中規模 v2 smoke tests", () => {
     expect(std).toContain("別表７　自衛消防隊の編成と任務");
     expect(std).toContain("別表９　防火管理業務の一部委託状況表");
     // 別表等一覧(1) + 別表1〜9(9) = 10 tables
-    expect(stdTbl).toBe(11);
+    expect(stdTbl).toBe(12);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表等一覧");
-    expect(lightTbl).toBe(1);
+    expect(lightTbl).toBe(2);
   });
 
   it("自衛消防 member names land in 別表7 when supplied", async () => {

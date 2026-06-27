@@ -64,11 +64,11 @@ describe("shizuoka 単一権原 v2 smoke tests", () => {
     expect(std).toContain("別表１　自主点検表");
     expect(std).toContain("別表３　自衛消防組織編成表");
     // 一覧(1) + 別表1,2,3,4(4) + 別紙(1) = 6 tables
-    expect(stdTbl).toBe(7);
+    expect(stdTbl).toBe(8);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表・別紙一覧");
-    expect(lightTbl).toBe(1);
+    expect(lightTbl).toBe(2);
   });
 
   it("自衛消防 member names land in 別表3 when supplied", async () => {

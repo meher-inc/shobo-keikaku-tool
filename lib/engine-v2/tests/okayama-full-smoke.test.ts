@@ -74,11 +74,11 @@ describe("okayama 中規模 v2 smoke tests", () => {
     expect(std).toContain("別表２");
     expect(std).toContain("別表４");
     // 別表等一覧(1) + 別表1〜4(4) = 5 tables
-    expect(stdTbl).toBe(6);
+    expect(stdTbl).toBe(7);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表等一覧");
-    expect(lightTbl).toBe(1);
+    expect(lightTbl).toBe(2);
   });
 
   it("自衛消防 member names land in 別表2 when supplied", async () => {

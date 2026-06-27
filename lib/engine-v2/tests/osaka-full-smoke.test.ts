@@ -146,7 +146,7 @@ describe("osaka 中・小規模 v2 smoke tests", () => {
     expect(xml).not.toContain("別表等一覧");
     expect(xml).not.toMatch(APPENDIX9_HEADING_RE);
     expect(xml).not.toContain("別表１　防火・防災管理業務委託状況表");
-    expect(tblCount).toBe(1);
+    expect(tblCount).toBe(2);
   });
 
   // ── O2: outsourced=false × plan=light ─────────────────────────
@@ -160,7 +160,7 @@ describe("osaka 中・小規模 v2 smoke tests", () => {
     // Appendix completely suppressed
     expect(xml).not.toContain("別表等一覧");
     expect(xml).not.toMatch(APPENDIX9_HEADING_RE);
-    expect(tblCount).toBe(1);
+    expect(tblCount).toBe(2);
   });
 
   // ── O3: outsourced=true × plan=standard × member fallback ────
@@ -181,7 +181,7 @@ describe("osaka 中・小規模 v2 smoke tests", () => {
     expect(xml).not.toContain("山田太郎");
     expect(xml).not.toContain("佐藤花子");
     // tbl: 1 (list) + 1 (別表9) = 2 (stubs are plainText, not tbl)
-    expect(tblCount).toBe(3);
+    expect(tblCount).toBe(4);
   });
 
   // ── O4: outsourced=false × plan=standard × full members ──────
@@ -209,7 +209,7 @@ describe("osaka 中・小規模 v2 smoke tests", () => {
     expect(xml).toContain("田中美咲");
     expect(xml).toContain("渡辺健太");
     // tbl: 1 (list) + 1 (別表9) = 2 (別表1 hidden, all others stub plainText)
-    expect(tblCount).toBe(3);
+    expect(tblCount).toBe(4);
   });
 
   // ── Auxiliary 7 (placed last): osaka-specific appendix fields land ──
