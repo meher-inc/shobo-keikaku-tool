@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
 import { SPOT_PLANS, isSpotPlanId } from "../lib/spot-plans";
 import { MarketingSections } from "../components/marketing-sections";
@@ -652,6 +652,55 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>プランを選択</h2>
             <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24 }}>内容を確認してプランを選んでください</p>
+
+            {/* 購入前の内容確認プレビュー（決済前に所轄・入力内容・作成物を確認できる） */}
+            <div style={{ border: "1px solid var(--border)", borderRadius: 14, padding: "18px 20px", marginBottom: 24, background: "var(--surface-2)" }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "var(--brand)", letterSpacing: "0.02em", marginBottom: 12 }}>ご入力内容の確認</div>
+
+              {deptName && (
+                <div style={{ fontSize: 14, lineHeight: 1.7, padding: "10px 14px", borderRadius: 10, marginBottom: 14, background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", color: "var(--text)" }}>
+                  {deptKind === "official" && <>この内容で <strong>{deptName}</strong> の様式に準拠した消防計画を作成します。</>}
+                  {deptKind === "named-standard" && <><strong>{deptName}</strong> 管内です。専用様式がないため <strong>標準様式</strong> で作成します。</>}
+                  {deptKind === "standard" && <>対応エリア外のため <strong>標準様式</strong>（京都市ベース）で作成します。ご利用前に管轄の様式とご照合ください。</>}
+                </div>
+              )}
+
+              <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "6px 14px", margin: 0, fontSize: 13.5, lineHeight: 1.6 }}>
+                {([
+                  ["所在地", [form.prefecture, form.city, form.ward, form.address_detail].filter(Boolean).join("")],
+                  ["建物名称", form.building_name],
+                  ["用途", form.use_category],
+                  ["規模", [form.total_area && `${form.total_area}㎡`, form.num_floors && `${form.num_floors}階`, form.capacity && `${form.capacity}人`].filter(Boolean).join(" / ")],
+                  ["管理権原者", form.owner_name],
+                  ["防火管理者", form.manager_name && `${form.manager_name}${form.manager_qual ? `（${form.manager_qual}）` : ""}`],
+                  ["連絡先", form.manager_tel],
+                  ["消防用設備", form.equipment.join("、")],
+                  ["各階配置", form.equipment_floors.filter(r => r.floor || r.detail).map(r => `${r.floor || "—"}: ${r.detail}`).join(" ／ ")],
+                  ["自衛消防隊", [form.leader_name && `隊長:${form.leader_name}`, form.tsuhou_member && `通報:${form.tsuhou_member}`, form.shoka_member && `初期消火:${form.shoka_member}`, form.hinan_member && `避難誘導:${form.hinan_member}`, form.kyugo_member && `救護:${form.kyugo_member}`, form.anzen_member && `安全:${form.anzen_member}`].filter(Boolean).join(" / ")],
+                  ["避難場所", [form.evacuation_site, form.assembly_point].filter(Boolean).join(" / ")],
+                ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
+                  <Fragment key={k}>
+                    <dt style={{ color: "var(--text-muted)", whiteSpace: "nowrap" }}>{k}</dt>
+                    <dd style={{ margin: 0, color: "var(--text)", wordBreak: "break-word" }}>{v}</dd>
+                  </Fragment>
+                ))}
+              </dl>
+
+              <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)", fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.7 }}>
+                作成物には次を同梱します: 入力内容の概要 ／ 提出前チェックリスト ／ 各階平面図の記入テンプレート ／ 作成後の提出のしかた
+              </div>
+
+              {missing.length > 0 && (
+                <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, background: "var(--warn-bg)", border: "1px solid var(--warn-border)", color: "var(--warn-text-strong)", fontSize: 13, lineHeight: 1.7 }}>
+                  未入力の項目があります: {missing.join("、")}。<br />
+                  上のステップ番号から該当ステップに戻って入力すると、より完成度が高まります。
+                </div>
+              )}
+
+              <div style={{ marginTop: 10, fontSize: 12.5, color: "var(--text-faint)" }}>
+                修正がある場合は、決済前に上のステップへ戻って編集できます。
+              </div>
+            </div>
 
             {/* Plan selector */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
