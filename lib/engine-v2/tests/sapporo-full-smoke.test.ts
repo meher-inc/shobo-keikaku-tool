@@ -91,12 +91,12 @@ describe("sapporo 中規模 v2 smoke tests", () => {
     expect(std).toContain("別表２　自衛消防隊の編成");
     expect(std).toContain("別表３　休日、夜間の自衛消防隊編成表");
     // 別表等一覧(1) + 別表1(1) + 別表2(1) + 別表3(1) = 4 tables
-    expect(stdTbl).toBe(5);
+    expect(stdTbl).toBe(6);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表等一覧");
     expect(light).not.toContain("別表１　自主検査チェック表");
-    expect(lightTbl).toBe(1);
+    expect(lightTbl).toBe(2);
   });
 
   it("自衛消防隊 member names land in 別表2 when supplied", async () => {

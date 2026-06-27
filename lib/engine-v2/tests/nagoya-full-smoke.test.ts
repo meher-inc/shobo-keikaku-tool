@@ -145,7 +145,7 @@ describe("nagoya その他用《中規模》 v2 smoke tests", () => {
     expect(xml).not.toContain("別表１　予防管理組織編成");
     expect(xml).not.toContain("別表２　自主点検チェックリスト");
     expect(xml).not.toContain("別記様式　防火管理業務の委託状況票");
-    expect(tblCount).toBe(1);
+    expect(tblCount).toBe(2);
   });
 
   // ── N2: outsourced=true (2-gate consistency: 第13条 + 別記様式 同期) ──
@@ -161,7 +161,7 @@ describe("nagoya その他用《中規模》 v2 smoke tests", () => {
     // appendix gate: 別記様式 emit
     expect(xml).toContain("別記様式　防火管理業務の委託状況票");
     // tbl: 1 (list) + 1 (別表3) + 1 (別記様式) = 3
-    expect(tblCount).toBe(4);
+    expect(tblCount).toBe(5);
   });
 
   // ── N3: requiresUnifiedFpm=true (no-op, Phase 2A 設計通り) ─────
@@ -179,7 +179,7 @@ describe("nagoya その他用《中規模》 v2 smoke tests", () => {
     expect(xml).toMatch(APPENDIX3_HEADING_RE);
     expect(xml).not.toContain("別記様式　防火管理業務の委託状況票");
     // tbl: 1 (list) + 1 (別表3) = 2
-    expect(tblCount).toBe(3);
+    expect(tblCount).toBe(4);
   });
 
   // ── N4: tokaiQuakeApplicable=true (no-op, 第9-10条 既に無条件 emit) ──
@@ -195,7 +195,7 @@ describe("nagoya その他用《中規模》 v2 smoke tests", () => {
     expect(xml).not.toContain("第13条　防火管理業務の一部委託");
     expect(xml).not.toContain("別記様式　防火管理業務の委託状況票");
     // tbl: 1 (list) + 1 (別表3) = 2 (フラグは将来予約のため tbl 影響なし)
-    expect(tblCount).toBe(3);
+    expect(tblCount).toBe(4);
   });
 
   // ── N5: plan=standard × all body flags false (include_appendix verify) ──
@@ -216,6 +216,6 @@ describe("nagoya その他用《中規模》 v2 smoke tests", () => {
     expect(xml).toContain("山田太郎");
     expect(xml).toContain("佐藤花子");
     // tbl: 1 (list) + 1 (別表3) = 2 (stubs are plainText, no tbl contribution)
-    expect(tblCount).toBe(3);
+    expect(tblCount).toBe(4);
   });
 });

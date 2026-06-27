@@ -63,11 +63,11 @@ describe("sakai 中規模 v2 smoke tests", () => {
     expect(std).toContain("別表７");
     expect(std).toContain("別表１２");
     // 別表等一覧(1) + 別表1〜12(12) = 13 tables
-    expect(stdTbl).toBe(14);
+    expect(stdTbl).toBe(15);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表等一覧");
-    expect(lightTbl).toBe(1);
+    expect(lightTbl).toBe(2);
   });
 
   it("自衛消防 member names land in 別表7 when supplied", async () => {

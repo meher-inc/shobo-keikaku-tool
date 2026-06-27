@@ -13,6 +13,7 @@ import { loadPack } from "../engine";
 import type { RenderData } from "../helpers/placeholder";
 import { buildChildrenFromPack, type SectionOverride } from "../builders/document";
 import { buildCoverPage } from "../builders/shared/cover-page";
+import { buildFloorPlanGuide } from "../builders/shared/floor-plan-guide";
 import {
   buildSendaiAppendices,
   buildSendaiAppendixList,
@@ -88,6 +89,11 @@ export async function buildSendaiFull(form: any): Promise<Buffer> {
     ...(includeAppendix ? buildSendaiAppendixList() : []),
     ...(includeAppendix ? buildSendaiAppendices(data) : []),
   ];
+
+  // 末尾に各階平面図・避難経路図の記入用テンプレートを同梱
+
+  allChildren.push(...buildFloorPlanGuide(data));
+
 
   const doc = new Document({
     sections: [

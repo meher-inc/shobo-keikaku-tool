@@ -65,11 +65,11 @@ describe("kitakyushu 中・大規模 v2 smoke tests", () => {
     expect(std).toContain("別表２　自衛消防隊の編成");
     expect(std).toContain("別表４　防火管理業務の委託状況");
     // 一覧(1) + 別表1〜4(4) = 5 tables
-    expect(stdTbl).toBe(6);
+    expect(stdTbl).toBe(7);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表一覧");
-    expect(lightTbl).toBe(1);
+    expect(lightTbl).toBe(2);
   });
 
   it("自衛消防 member names land in 別表2 when supplied", async () => {

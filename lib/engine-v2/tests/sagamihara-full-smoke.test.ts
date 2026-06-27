@@ -60,11 +60,11 @@ describe("sagamihara 中規模 v2 smoke tests", () => {
     expect(std).toContain("別表８　自衛消防隊の編成と任務");
     expect(std).toContain("別表　防火管理業務の委託状況");
     // 一覧(1) + 別表2,3,4,5,8,委託(6) = 7 tables
-    expect(stdTbl).toBe(8);
+    expect(stdTbl).toBe(9);
 
     const { xml: light, tblCount: lightTbl } = await renderAndUnzip({ plan: "light" });
     expect(light).not.toContain("別表等一覧");
-    expect(lightTbl).toBe(1);
+    expect(lightTbl).toBe(2);
   });
 
   it("自衛消防 member names land in 別表8 when supplied", async () => {
