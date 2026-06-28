@@ -62,6 +62,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main id="main-content">{children}</main>
         <Footer />
+        {/* トドケデAI相談員（共通ウィジェット） */}
+        <Script
+          src="https://chat.todokede.jp/widget.js"
+          data-service="plan"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
