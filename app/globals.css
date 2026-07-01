@@ -189,6 +189,36 @@ button:not(:disabled):hover {
   animation: pulse-bg 1.4s ease-in-out infinite;
 }
 
+/* ── ヘッダーの常時CTA（初回訪問者に「どこから作成するか」を全ページで明示） ── */
+.header-cta {
+  background: var(--brand);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(46, 95, 158, 0.22);
+}
+.header-cta:hover {
+  filter: brightness(0.96);
+}
+@media (max-width: 560px) {
+  /* 狭い画面ではロゴを縮め、副題を隠してCTAの居場所を確保する */
+  .header-subtitle {
+    display: none;
+  }
+  .header-logo {
+    width: 132px !important;
+    height: 33px !important;
+  }
+  .header-cta {
+    font-size: 13px;
+    padding: 8px 13px;
+  }
+}
+
 /* Sample preview: desktop iframe / mobile image list */
 .sample-desktop {
   display: block;
