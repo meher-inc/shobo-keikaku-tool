@@ -1,5 +1,4 @@
 import ThemeToggle from "./ThemeToggle";
-import StartCtaButton from "./StartCtaButton";
 
 export default function Header() {
   return (
@@ -8,7 +7,6 @@ export default function Header() {
         <a href="/" aria-label="トドケデ消防計画" style={{ display: "inline-block", lineHeight: 0, textDecoration: "none" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            className="header-logo"
             src="/logo-todokede.svg"
             alt="トドケデ消防計画"
             width={176}
@@ -16,11 +14,9 @@ export default function Header() {
             style={{ height: 44, width: 176, maxWidth: "none", display: "block" }}
           />
         </a>
-        <span className="header-subtitle" style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.02em" }}>
+        <span style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.02em" }}>
           元消防士が監修
         </span>
-        {/* 常時表示のCTA：どのページ・どのスクロール位置からでも「作成をはじめる」導線を確保 */}
-        <StartCtaButton />
         <ThemeToggle />
       </div>
     </header>
