@@ -107,6 +107,11 @@ export function MarketingSections() {
             </div>
           ))}
         </div>
+        <p style={{ textAlign: "center", fontSize: 14, marginTop: 24 }}>
+          <a href="/shobo-keikaku-no-kakikata" style={{ color: BRAND, fontWeight: 600, textDecoration: "underline" }}>
+            はじめての方へ：消防計画の書き方をわかりやすく解説 →
+          </a>
+        </p>
       </section>
 
       {/* 特長 */}
