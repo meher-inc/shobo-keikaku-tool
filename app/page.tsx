@@ -452,11 +452,11 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     {/* Hero */}
     <section style={{ textAlign: "center", padding: "clamp(56px,9vw,96px) clamp(16px,4vw,24px) clamp(40px,6vw,64px)", maxWidth: 760, margin: "0 auto" }}>
       <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--brand-tint)", color: "var(--brand)", fontSize: 13, fontWeight: 700, padding: "8px 16px", borderRadius: 999, marginBottom: 24 }}>
-        所轄消防本部の様式に準拠・1件ごとの買い切り
+        20の消防本部様式に準拠・1件 ¥4,980〜 の買い切り
       </div>
       <h1 style={{ fontSize: "clamp(30px,6vw,46px)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 16 }}>消防計画を、自動作成。</h1>
-      <p style={{ fontSize: "clamp(15px,2.5vw,18px)", color: "var(--text-muted)", fontWeight: 400, lineHeight: 1.7, maxWidth: 560, margin: "0 auto" }}>
-        建物情報を入力するだけ。所轄消防本部の様式に準拠した計画書をWordで生成します。月額・更新料はかかりません。
+      <p style={{ fontSize: "clamp(15px,2.5vw,18px)", color: "var(--text-muted)", fontWeight: 400, lineHeight: 1.7, maxWidth: 580, margin: "0 auto" }}>
+        開業前・立入検査・防火管理者の選任で「消防計画の提出」を求められた方へ。所在地と建物情報を入力するだけで、所轄の様式に沿った消防計画を約15分でWord作成。元消防士監修・買い切り（月額・更新料なし）。
       </p>
       <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 32 }}>
         <a href="#form" style={{ background: "var(--brand)", color: "#fff", padding: "15px 36px", borderRadius: 12, fontSize: 16, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.25)" }}>
