@@ -3,7 +3,6 @@ import { Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import StickyBottomCta from "../components/StickyBottomCta";
 
 const noto = Noto_Sans_JP({
   subsets: ["latin"],
@@ -63,7 +62,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main id="main-content">{children}</main>
         <Footer />
-        <StickyBottomCta />
         {/* トドケデAI相談員（共通ウィジェット） */}
         <Script
           src="https://chat.todokede.jp/widget.js"
