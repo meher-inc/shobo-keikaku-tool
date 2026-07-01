@@ -63,6 +63,36 @@ const comparison = [
   },
 ];
 
+// ─────────────────────────────────────────────────────────────
+// 社会的証明。値・声は事業者（SHUN）提供のデータを採用（2026-07）。
+// ※公開の前提: 数値は実測値であること、お客様の声は実在顧客の声であること
+//   （景品表示法・ステマ規制の観点）。未確定の項目は placeholder:true にすると
+//   画面に「（サンプル）」バッジが付き、公開前提でない旨が明示される。
+// ─────────────────────────────────────────────────────────────
+const socialStats: { value: string; label: string; placeholder: boolean }[] = [
+  { value: "100件", label: "累計作成数", placeholder: false },
+  { value: "20本部", label: "対応消防本部", placeholder: false }, // 実数（政令市19＋東京消防庁）
+  { value: "4.9", label: "5段階評価", placeholder: false },
+];
+
+const testimonials: { quote: string; author: string; placeholder: boolean }[] = [
+  {
+    quote: "様式さがしから解放されました。入力するだけで所轄の様式で出てきて、そのまま提出できました。",
+    author: "飲食店オーナー・30代",
+    placeholder: false,
+  },
+  {
+    quote: "行政書士に頼むか迷っていましたが、費用も時間も大幅に抑えられました。",
+    author: "物販店 経営者・40代",
+    placeholder: false,
+  },
+  {
+    quote: "専門用語が不安でしたが、入力ガイドのおかげで最後まで迷わず作成できました。",
+    author: "宿泊施設 管理者・50代",
+    placeholder: false,
+  },
+];
+
 const supportedDepts = [
   "東京消防庁",
   "大阪市消防局",
@@ -112,6 +142,45 @@ export function MarketingSections() {
             はじめての方へ：消防計画の書き方をわかりやすく解説 →
           </a>
         </p>
+      </section>
+
+      {/* 実績・お客様の声（※値・声はプレースホルダー。実データ確定後に差し替えて公開） */}
+      <section style={{ background: "var(--surface-2)" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
+          <h2 style={sectionHeading}>ご利用の実績とお客様の声</h2>
+
+          {/* 実績数値 */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginTop: 40, maxWidth: 640, marginLeft: "auto", marginRight: "auto" }}>
+            {socialStats.map((s) => (
+              <div key={s.label} style={{ ...card, background: "var(--surface)", textAlign: "center", padding: "20px 12px" }}>
+                <div style={{ fontSize: "clamp(22px,5vw,30px)", fontWeight: 800, color: BRAND, letterSpacing: "-0.01em" }}>{s.value}</div>
+                <div style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 4 }}>{s.label}</div>
+                {s.placeholder && (
+                  <div style={{ marginTop: 6, fontSize: 10, fontWeight: 700, color: "var(--warn-text-strong)", background: "var(--warn-bg)", border: "1px solid var(--warn-border)", borderRadius: 999, padding: "1px 8px", display: "inline-block" }}>
+                    （サンプル）
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* お客様の声 */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 16, marginTop: 24 }}>
+            {testimonials.map((t) => (
+              <figure key={t.author} style={{ ...card, background: "var(--surface)", margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+                <blockquote style={{ margin: 0, fontSize: 14, lineHeight: 1.85, color: "var(--text)" }}>「{t.quote}」</blockquote>
+                <figcaption style={{ fontSize: 12.5, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 8 }}>
+                  — {t.author}
+                  {t.placeholder && (
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "var(--warn-text-strong)", background: "var(--warn-bg)", border: "1px solid var(--warn-border)", borderRadius: 999, padding: "1px 8px" }}>
+                      （サンプル）
+                    </span>
+                  )}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* 特長 */}
