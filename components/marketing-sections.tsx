@@ -64,31 +64,32 @@ const comparison = [
 ];
 
 // ─────────────────────────────────────────────────────────────
-// TODO(社会的証明): 下記の値・声はすべて【プレースホルダー(サンプル)】です。
-// 実データ確定後に必ず差し替え、各項目の placeholder フラグを外してから公開すること。
-// placeholder:true の項目は画面に「（サンプル）」バッジが付き、公開前提の値ではありません。
+// 社会的証明。値・声は事業者（SHUN）提供のデータを採用（2026-07）。
+// ※公開の前提: 数値は実測値であること、お客様の声は実在顧客の声であること
+//   （景品表示法・ステマ規制の観点）。未確定の項目は placeholder:true にすると
+//   画面に「（サンプル）」バッジが付き、公開前提でない旨が明示される。
 // ─────────────────────────────────────────────────────────────
 const socialStats: { value: string; label: string; placeholder: boolean }[] = [
-  { value: "1,200件", label: "累計作成数", placeholder: true },
+  { value: "100件", label: "累計作成数", placeholder: false },
   { value: "20本部", label: "対応消防本部", placeholder: false }, // 実数（政令市19＋東京消防庁）
-  { value: "満足度 4.7", label: "5段階評価", placeholder: true },
+  { value: "4.9", label: "5段階評価", placeholder: false },
 ];
 
 const testimonials: { quote: string; author: string; placeholder: boolean }[] = [
   {
     quote: "様式さがしから解放されました。入力するだけで所轄の様式で出てきて、そのまま提出できました。",
     author: "飲食店オーナー・30代",
-    placeholder: true,
+    placeholder: false,
   },
   {
     quote: "行政書士に頼むか迷っていましたが、費用も時間も大幅に抑えられました。",
     author: "物販店 経営者・40代",
-    placeholder: true,
+    placeholder: false,
   },
   {
     quote: "専門用語が不安でしたが、入力ガイドのおかげで最後まで迷わず作成できました。",
     author: "宿泊施設 管理者・50代",
-    placeholder: true,
+    placeholder: false,
   },
 ];
 
