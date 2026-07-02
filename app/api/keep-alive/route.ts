@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "../../../lib/supabase";
+import { pingHealthcheck } from "../../../lib/healthcheck";
 
 /**
  * Supabase 無料プランの自動一時停止（約7日間 DB アクセスが無いと pause）を
@@ -38,6 +39,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    await pingHealthcheck();
     return NextResponse.json({ ok: true, at: new Date().toISOString() });
   } catch (err: any) {
     console.error("[keep-alive] error:", err?.message || err);
