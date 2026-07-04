@@ -3,18 +3,23 @@ import { NEWLY_ADDED_DEPTS } from "../lib/updates";
 
 const BRAND = "var(--brand)";
 
+// ベネフィット（機能でなく「利用後の変化」を訴求）。
 const features = [
   {
-    title: "所轄消防本部の様式に準拠",
-    body: "建物の所在地から所轄を自動判定し、その様式に沿った消防計画をそのまま提出できる形で生成します。",
+    title: "様式さがしは、ゼロに",
+    body: "所在地から所轄消防本部を自動判定し、その様式で出力。どの様式を使えばいいか迷う時間がなくなります。",
   },
   {
-    title: "入力ガイドつきで迷わない",
-    body: "防火管理者・収容人員・設備など、必要項目をステップごとにご案内。専門知識がなくても入力できます。",
+    title: "専門知識は、いりません",
+    body: "防火管理者・収容人員・設備などをステップ入力ガイドでご案内。専門用語を前に手が止まりません。",
   },
   {
-    title: "Word出力で提出も編集も自在",
-    body: "Word形式（.docx）で出力。建物固有の情報を追記してから印刷・PDF化し、そのまま窓口へ提出いただけます。",
+    title: "待ち時間は、最短15分",
+    body: "入力後すぐにWordを生成。提出まで最短当日。専門家の納期を待つ必要がありません。",
+  },
+  {
+    title: "追加費用は、かかりません",
+    body: "1件ごとの買い切りで、月額・更新料なし。専門家へ依頼するより費用を大きく抑えられます。",
   },
 ];
 
@@ -123,6 +128,27 @@ function formatPrice(n: number): string {
 export function MarketingSections() {
   return (
     <div>
+      {/* 問題提起・共感（悩みの言語化 → 解決への橋渡し） */}
+      <section style={{ maxWidth: 760, margin: "0 auto", padding: "clamp(40px,7vw,64px) clamp(16px,4vw,24px) clamp(8px,2vw,16px)" }}>
+        <h2 style={sectionHeading}>こんなことで、止まっていませんか？</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 32 }}>
+          {[
+            "「消防計画を出してください」と言われたが、どの様式を使えばいいのか分からない。",
+            "記入例を見ても、管理権原者・自衛消防組織など専門用語だらけで手が止まる。",
+            "専門家に頼むと数万円。でも自分で作るには時間も知識も足りない。",
+            "間違ったまま出して、受理されない・立入検査で指摘されるのが不安。",
+          ].map((t) => (
+            <div key={t} style={{ display: "flex", gap: 12, alignItems: "flex-start", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 16px" }}>
+              <span aria-hidden="true" style={{ flexShrink: 0, color: "var(--text-faint)", fontWeight: 800, fontSize: 16, lineHeight: 1.6 }}>—</span>
+              <p style={{ fontSize: 14.5, lineHeight: 1.8, color: "var(--text)" }}>{t}</p>
+            </div>
+          ))}
+        </div>
+        <p style={{ textAlign: "center", fontSize: "clamp(15px,2.4vw,17px)", fontWeight: 700, color: "var(--brand)", lineHeight: 1.8, marginTop: 24 }}>
+          その「分からない」を、入力ガイドと所轄様式の自動判定で解消します。
+        </p>
+      </section>
+
       {/* 安心して提出できる理由（reason to believe） */}
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px,7vw,72px) clamp(16px,4vw,24px) clamp(8px,2vw,16px)" }}>
         <h2 style={sectionHeading}>はじめてでも、安心して提出できる理由</h2>
@@ -183,9 +209,16 @@ export function MarketingSections() {
         </div>
       </section>
 
-      {/* 特長 */}
+      {/* 区切りCTA（実績・声のあと） */}
+      <div style={{ textAlign: "center", padding: "0 16px clamp(8px,2vw,20px)" }}>
+        <a href="#form" style={{ display: "inline-block", background: BRAND, color: "#fff", padding: "14px 34px", borderRadius: 12, fontSize: 15, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.22)" }}>
+          自分の建物で試してみる →
+        </a>
+      </div>
+
+      {/* ベネフィット（こう変わる） */}
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)" }}>
-        <h2 style={sectionHeading}>入力するだけで、提出できる計画書に</h2>
+        <h2 style={sectionHeading}>トドケデなら、こう変わります</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 20, marginTop: 40 }}>
           {features.map((f) => (
             <div key={f.title} style={card}>
@@ -284,6 +317,13 @@ export function MarketingSections() {
           ※金額・時間は一般的な目安です。行政書士へ依頼した場合の費用は依頼先により異なります。
         </p>
       </section>
+
+      {/* 区切りCTA（比較のあと） */}
+      <div style={{ textAlign: "center", padding: "0 16px clamp(8px,2vw,20px)" }}>
+        <a href="#form" style={{ display: "inline-block", background: BRAND, color: "#fff", padding: "14px 34px", borderRadius: 12, fontSize: 15, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.22)" }}>
+          ¥4,980〜 で今すぐつくる →
+        </a>
+      </div>
 
       {/* 料金（スポット3プラン要約） */}
       <section style={{ background: "var(--surface-2)" }}>

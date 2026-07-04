@@ -1149,6 +1149,13 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       </div>
     </section>
 
+    {/* 区切りCTA（FAQのあと） */}
+    <div style={{ textAlign: "center", padding: "48px 20px 0" }}>
+      <a href="#form" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", padding: "16px 40px", borderRadius: 12, fontSize: 16, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.25)" }}>
+        準備ができたら、作成をはじめる →
+      </a>
+    </div>
+
     {/* Plan comparison CTA */}
     <section style={{ maxWidth: 720, margin: "0 auto", padding: "64px 20px 0" }}>
       <div style={{
