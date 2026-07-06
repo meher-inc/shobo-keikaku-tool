@@ -19,10 +19,6 @@ export default function TokushoPage() {
       <Section heading="販売業者">
         <p>
           MeHer株式会社
-          <br />
-          <span className={styles.note}>
-            ※2026年11月中に「株式会社トドケデ」へ商号変更予定
-          </span>
         </p>
       </Section>
 
