@@ -146,8 +146,19 @@ describe("construction full-pack smoke tests", () => {
     }
   });
 
+  it("shows 京都市消防局 for Kyoto even though it shares pack=full", async () => {
+    const xml = await renderConstruction(
+      { prefecture: "京都府", city: "京都市", ward: "中京区" },
+      "full"
+    );
+    expect(xml).toContain("【工事中の防火対象物用・京都市消防局管内】");
+  });
+
   it("falls back to a dept-less subtitle for unsupported areas (pack=full)", async () => {
-    const xml = await renderConstruction({}, "full");
+    const xml = await renderConstruction(
+      { prefecture: "静岡県", city: "浜松市" },
+      "full"
+    );
     expect(xml).toContain("【工事中の防火対象物用】");
     expect(xml).not.toContain("管内】");
   });

@@ -50,6 +50,11 @@ const DEPT_META: Partial<Record<V2Pack, ConstructionDeptMeta>> = {
   "okayama-full": { deptName: "岡山市消防局" },
 };
 
-export function constructionDeptMeta(pack: V2Pack): ConstructionDeptMeta {
+export function constructionDeptMeta(pack: V2Pack, city?: string): ConstructionDeptMeta {
+  // 京都市は通常計画では標準様式（pack="full"）を未対応エリアと共有して
+  // いるため、pack だけでは判別できない。市名で補完して所轄を表示する。
+  if (pack === "full" && city === "京都市") {
+    return { deptName: "京都市消防局" };
+  }
   return DEPT_META[pack] ?? { deptName: "" };
 }

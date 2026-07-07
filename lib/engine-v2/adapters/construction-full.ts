@@ -40,7 +40,7 @@ import constructionFull from "../templates/construction.full.json";
 export async function buildConstructionFull(form: any, basePack: V2Pack): Promise<Buffer> {
   const loaded = loadPack(constructionFull);
   const data = toRenderData((form ?? {}) as Record<string, unknown>);
-  const dept = constructionDeptMeta(basePack);
+  const dept = constructionDeptMeta(basePack, data.city);
 
   // 附則 eraDate — default to "now" if caller didn't supply one.
   if (!data.creationDateIso) {
