@@ -1,0 +1,318 @@
+{
+  "version": "2.0.0-construction",
+  "deptId": "construction",
+  "deptName": "標準様式（工事中の防火対象物用）",
+  "scale": "medium",
+  "chapters": [
+    {
+      "id": "ch1",
+      "title": "第１　目的及び適用範囲",
+      "sections": [
+        {
+          "id": "ch1-purpose",
+          "heading": "１　目的",
+          "body": [
+            { "type": "text", "value": "　この計画は、" },
+            { "type": "placeholder", "key": "buildingName", "fallback": "当建物" },
+            { "type": "text", "value": "の工事期間中における防火管理について必要な事項を定め、工事に伴う火災の発生を予防するとともに、火災、地震その他の災害等による人命の安全及び被害の軽減を図ることを目的とする。" }
+          ]
+        },
+        {
+          "id": "ch1-scope",
+          "heading": "２　適用範囲",
+          "body": [
+            { "type": "text", "value": "⑴　この計画は、工事部分及び管理権原の及ぶ範囲（" },
+            { "type": "placeholder", "key": "managementScope", "fallback": "建物全体" },
+            { "type": "text", "value": "）に適用する。\n⑵　この計画は、管理権原者、防火管理者、従業員その他建物内に勤務する者及び工事関係者（元請・下請を問わず工事に従事する者。以下「工事人」という。）に適用する。" }
+          ]
+        },
+        {
+          "id": "ch1-period",
+          "heading": "３　適用期間",
+          "body": [
+            { "type": "text", "value": "　この計画は、工事の着手から完了までの期間（" },
+            { "type": "placeholder", "key": "constructionStart", "fallback": "着工日" },
+            { "type": "text", "value": "から" },
+            { "type": "placeholder", "key": "constructionEnd", "fallback": "完了予定日" },
+            { "type": "text", "value": "まで）に適用する。工期に変更が生じた場合は、防火管理者は速やかに内容を確認し、必要に応じて所轄消防署に連絡する。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch2",
+      "title": "第２　工事の計画及び施工",
+      "sections": [
+        {
+          "id": "ch2-outline",
+          "heading": "１　工事の概要",
+          "body": [
+            { "type": "text", "value": "　工事の概要は、次のとおりとする（詳細は別表１「工事概要書」による。）。\n⑴　工事名称　　" },
+            { "type": "placeholder", "key": "constructionName", "fallback": "（工事名称）" },
+            { "type": "text", "value": "\n⑵　工事種別　　" },
+            { "type": "placeholder", "key": "constructionType", "fallback": "（増築・改築・修繕・模様替え等）" },
+            { "type": "text", "value": "\n⑶　工事範囲　　" },
+            { "type": "placeholder", "key": "constructionScope", "fallback": "（工事を行う階・部分）" },
+            { "type": "text", "value": "\n⑷　工事期間　　" },
+            { "type": "placeholder", "key": "constructionStart", "fallback": "着工日" },
+            { "type": "text", "value": "　〜　" },
+            { "type": "placeholder", "key": "constructionEnd", "fallback": "完了予定日" },
+            { "type": "text", "value": "\n⑸　施工者　　　" },
+            { "type": "placeholder", "key": "contractorName", "fallback": "（施工者名）" },
+            { "type": "text", "value": "\n⑹　現場責任者　" },
+            { "type": "placeholder", "key": "constructionSiteManager", "fallback": "（現場責任者氏名）" },
+            { "type": "text", "value": "（連絡先：" },
+            { "type": "placeholder", "key": "contractorTel", "fallback": "　　　　　　" },
+            { "type": "text", "value": "）" }
+          ]
+        },
+        {
+          "id": "ch2-consult",
+          "heading": "２　工事計画の事前確認",
+          "body": [
+            { "type": "text", "value": "⑴　管理権原者及び防火管理者は、工事の着手前に工事の内容、工程、施工方法及び火気使用の有無を確認し、防火管理上必要な事項について施工者と協議のうえ決定する。\n⑵　工事の内容又は工程に変更が生じた場合も、前号と同様とする。\n⑶　避難施設又は消防用設備等の機能に影響を及ぼすおそれのある工事を行う場合は、事前に所轄消防署に連絡し、必要な届出等について確認する。" }
+          ]
+        },
+        {
+          "id": "ch2-occupied",
+          "heading": "３　使用中の部分との区画等",
+          "body": [
+            { "type": "text", "value": "⑴　建物を使用（営業）しながら工事を行うため、工事部分と使用部分の区画を明確にし、利用者及び従業員の安全確保を最優先とする。\n⑵　工事部分への関係者以外の立入りを防止するため、区画・表示等の措置を講じる。\n⑶　工事に使用する養生シート等は、防炎性能を有するもの（防炎物品）を使用する。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch3",
+      "title": "第３　工事中の防火管理体制",
+      "sections": [
+        {
+          "id": "ch3-organization",
+          "heading": "１　防火管理体制",
+          "body": [
+            { "type": "text", "value": "⑴　工事期間中の防火管理業務は、防火管理者（" },
+            { "type": "placeholder", "key": "managerName", "fallback": "（防火管理者氏名）" },
+            { "type": "text", "value": "）が統括する。\n⑵　工事部分の火元責任者は、施工者の現場責任者（" },
+            { "type": "placeholder", "key": "constructionSiteManager", "fallback": "（現場責任者氏名）" },
+            { "type": "text", "value": "）を指定する。\n⑶　防火管理体制及び緊急連絡先は、別表４「工事中の自衛消防隊編成及び緊急連絡先一覧」のとおりとする。" }
+          ]
+        },
+        {
+          "id": "ch3-manager-duties",
+          "heading": "２　防火管理者の業務",
+          "body": [
+            { "type": "text", "value": "　防火管理者は、工事期間中、次の業務を行う。\n⑴　工事の内容、工程及び火気使用の有無の把握\n⑵　火気を使用する工事の事前承認及び立会い等の監督\n⑶　工事部分及びその周辺の巡回・点検（別表５「工事中の防火巡回チェック表」による。）\n⑷　工事人に対するこの計画の周知及び教育\n⑸　所轄消防署との連絡\n⑹　消防用設備等の機能停止を伴う工事の把握及び代替措置の実施" }
+          ]
+        },
+        {
+          "id": "ch3-contractor-duties",
+          "heading": "３　施工者（工事人）の遵守事項",
+          "body": [
+            { "type": "text", "value": "　施工者及び工事人は、次の事項を遵守する。\n⑴　この計画に定める事項及び防火管理者の指示に従うこと。\n⑵　火気を使用する作業は、事前に防火管理者の承認を受けること。\n⑶　指定された場所以外で喫煙し、又は火気を使用しないこと。\n⑷　危険物品を持ち込む場合は、事前に防火管理者に届け出ること。\n⑸　避難施設（廊下、階段、避難口等）に資材等を置かないこと。\n⑹　作業終了時は、火気の始末、資材の整理整頓及び施錠を確認すること。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch4",
+      "title": "第４　火気管理",
+      "sections": [
+        {
+          "id": "ch4-hot-work",
+          "heading": "１　火気を使用する工事の承認",
+          "body": [
+            { "type": "text", "value": "⑴　溶接、溶断、グラインダー等火花若しくは裸火を発生させる作業又は火気を使用する作業を行うときは、作業の都度、事前に別表２「火気使用工事 事前承認書」により防火管理者の承認を受ける。\n⑵　防火管理者は、承認に当たり、次の事項を確認する。\n　ア　作業場所周辺の可燃物の除去又は不燃シート等による養生\n　イ　消火器等の準備\n　ウ　監視人の配置\n　エ　作業範囲及び作業時間" }
+          ]
+        },
+        {
+          "id": "ch4-watch",
+          "heading": "２　作業中及び作業後の措置",
+          "body": [
+            { "type": "text", "value": "⑴　火気を使用する作業中は、監視人を配置し、火花の飛散状況等を監視する。\n⑵　作業終了後は、残火の有無を確認し、おおむね30分以上経過した後に再度確認を行う。\n⑶　異常を発見したときは、直ちに作業を中止し、防火管理者に報告する。" }
+          ]
+        },
+        {
+          "id": "ch4-smoking",
+          "heading": "３　喫煙管理",
+          "body": [
+            { "type": "text", "value": "⑴　工事部分は原則として禁煙とし、喫煙は防火管理者が指定した場所に限る。\n⑵　喫煙場所には吸殻容器を設け、吸殻は水を掛ける等確実に消火してから処理する。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch5",
+      "title": "第５　危険物品の管理",
+      "sections": [
+        {
+          "id": "ch5-approval",
+          "heading": "１　持込みの承認",
+          "body": [
+            { "type": "text", "value": "　塗料、シンナー、接着剤、燃料、高圧ガス容器等の危険物品を建物内に持ち込むときは、事前に品名、数量、使用場所及び保管方法を別表３「危険物品持込届」により防火管理者に届け出て、承認を受ける。" }
+          ]
+        },
+        {
+          "id": "ch5-storage",
+          "heading": "２　保管及び使用",
+          "body": [
+            { "type": "text", "value": "⑴　危険物品の持込量は、当日の使用に必要な最小限度とする。\n⑵　保管は火気から遠ざけた指定場所で行い、みだりに移動しないよう表示等の措置を講じる。\n⑶　使用後の残量は、原則としてその日のうちに搬出し、やむを得ず保管する場合は施錠できる場所に保管する。\n⑷　危険物の貯蔵・取扱いが法令の届出等を要する数量に達するおそれがある場合は、事前に所轄消防署に相談する。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch6",
+      "title": "第６　放火防止対策",
+      "sections": [
+        {
+          "id": "ch6-arson",
+          "heading": "１　放火されない環境づくり",
+          "body": [
+            { "type": "text", "value": "⑴　資材、廃材等の可燃物は整理整頓し、可燃性の廃材は原則としてその日のうちに搬出する。やむを得ず保管する場合は、指定場所に集積し、みだりに放置しない。\n⑵　工事部分及び資材置場への関係者以外の立入りを制限する。\n⑶　夜間、休日等の無人となる時間帯は、施錠を確実に行い、必要に応じて巡回を実施する。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch7",
+      "title": "第７　避難施設等の維持管理",
+      "sections": [
+        {
+          "id": "ch7-routes",
+          "heading": "１　避難施設の確保",
+          "body": [
+            { "type": "text", "value": "⑴　工事期間中も、廊下、階段、避難口その他の避難施設は有効に維持し、資材等により避難の支障となる物件を放置しない。\n⑵　工事によりやむを得ず避難施設の一部が使用できなくなる場合は、代替の避難経路を確保し、案内表示等により従業員、利用者及び工事人に周知する。\n⑶　避難経路の変更内容は、事前に所轄消防署に連絡する。" }
+          ]
+        },
+        {
+          "id": "ch7-fire-doors",
+          "heading": "２　防火設備の機能維持",
+          "body": [
+            { "type": "text", "value": "⑴　防火戸、防火シャッター等の閉鎖に支障となる物件を置かない。\n⑵　工事に伴い防火設備の機能に支障が生じる場合は、事前に防火管理者の承認を受け、必要な代替措置を講じる。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch8",
+      "title": "第８　消防用設備等の機能維持及び代替措置",
+      "sections": [
+        {
+          "id": "ch8-maintain",
+          "heading": "１　機能停止の手続",
+          "body": [
+            { "type": "text", "value": "⑴　工事に伴い消防用設備等（自動火災報知設備、スプリンクラー設備、屋内消火栓設備等）の機能の全部又は一部を停止する場合は、事前に防火管理者の承認を受けるとともに、所轄消防署に連絡する。\n⑵　停止の予定がある設備等：" },
+            { "type": "placeholder", "key": "equipmentShutdown", "fallback": "（現時点で予定なし。停止が生じる場合は事前に手続を行う。）" }
+          ]
+        },
+        {
+          "id": "ch8-alternatives",
+          "heading": "２　代替措置",
+          "body": [
+            { "type": "text", "value": "　消防用設備等の機能を停止する間は、次の代替措置を講じる。\n⑴　消火器の増設配置\n⑵　巡回（警戒）の強化\n⑶　従業員及び工事人への停止内容の周知\n⑷　停止期間を必要最小限とし、作業終了後は速やかに機能を復旧させ、復旧を確認すること" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch9",
+      "title": "第９　工事人に対する教育及び計画の周知",
+      "sections": [
+        {
+          "id": "ch9-education",
+          "heading": "１　教育及び周知",
+          "body": [
+            { "type": "text", "value": "⑴　防火管理者は、工事の着手前及び工事人の新規入場時に、この計画の内容、火気管理、危険物品の管理、避難経路その他の遵守事項について教育し、周知する。\n⑵　遵守事項は、工事部分の見やすい場所に掲示する。\n⑶　施工者は、下請の工事人に対しても、この計画の内容を周知する。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch10",
+      "title": "第１０　自衛消防活動及び訓練",
+      "sections": [
+        {
+          "id": "ch10-initial",
+          "heading": "１　火災が発生した場合の初動措置",
+          "body": [
+            { "type": "text", "value": "　火災を発見した者は、大声で周囲に知らせるとともに、次の措置を分担して行う。\n⑴　通報連絡　　１１９番通報を行うとともに、防火管理者及び現場責任者に連絡する。\n⑵　初期消火　　消火器等を使用し、初期消火を行う。天井に火が燃え移った場合は退避する。\n⑶　避難誘導　　従業員、利用者及び工事人を安全な場所へ誘導する。" }
+          ]
+        },
+        {
+          "id": "ch10-team",
+          "heading": "２　工事中の自衛消防隊",
+          "body": [
+            { "type": "text", "value": "　工事期間中の自衛消防隊の編成は、別表４「工事中の自衛消防隊編成及び緊急連絡先一覧」のとおりとし、施工者側の現場責任者及び工事人と連携して活動する。" }
+          ]
+        },
+        {
+          "id": "ch10-earthquake",
+          "heading": "３　地震その他の災害時の措置",
+          "body": [
+            { "type": "text", "value": "⑴　地震が発生したときは、直ちに火気を使用する作業を中止し、火気の始末を行う。\n⑵　揺れが収まった後、ガス・電気等の安全確認、工事箇所及び足場等の点検並びに被害状況の確認を行う。\n⑶　異常を認めたときは、防火管理者に報告し、必要に応じて所轄消防署等に通報する。" }
+          ]
+        },
+        {
+          "id": "ch10-drills",
+          "heading": "４　訓練",
+          "body": [
+            { "type": "text", "value": "　工事期間が長期にわたる場合は、消火、通報及び避難の訓練を実施する（実施予定：" },
+            { "type": "placeholder", "key": "drillMonths", "fallback": "工事の工程に応じて実施" },
+            { "type": "text", "value": "）。訓練には、可能な限り工事人も参加させる。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch11",
+      "title": "第１１　緊急連絡体制",
+      "sections": [
+        {
+          "id": "ch11-contacts",
+          "heading": "１　緊急連絡先",
+          "body": [
+            { "type": "text", "value": "⑴　消防機関　　　　１１９番（火災・救急）\n⑵　防火管理者　　　" },
+            { "type": "placeholder", "key": "managerName", "fallback": "（防火管理者氏名）" },
+            { "type": "text", "value": "（連絡先：" },
+            { "type": "placeholder", "key": "managerContact", "fallback": "　　　　　　" },
+            { "type": "text", "value": "）\n⑶　緊急連絡先　　　" },
+            { "type": "placeholder", "key": "emergencyContactName", "fallback": "（緊急連絡先氏名）" },
+            { "type": "text", "value": "（連絡先：" },
+            { "type": "placeholder", "key": "emergencyContactPhone", "fallback": "　　　　　　" },
+            { "type": "text", "value": "）\n⑷　施工者　　　　　" },
+            { "type": "placeholder", "key": "contractorName", "fallback": "（施工者名）" },
+            { "type": "text", "value": "（連絡先：" },
+            { "type": "placeholder", "key": "contractorTel", "fallback": "　　　　　　" },
+            { "type": "text", "value": "）" }
+          ]
+        },
+        {
+          "id": "ch11-evacuation",
+          "heading": "２　避難場所",
+          "body": [
+            { "type": "text", "value": "⑴　広域避難場所　　" },
+            { "type": "placeholder", "key": "wideAreaEvacuationSite", "fallback": "（広域避難場所）" },
+            { "type": "text", "value": "\n⑵　一時集合場所　　" },
+            { "type": "placeholder", "key": "temporaryAssemblyPoint", "fallback": "（一時集合場所）" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fusoku",
+      "title": "附　則",
+      "sections": [
+        {
+          "id": "fusoku-date",
+          "heading": "施行期日",
+          "body": [
+            { "type": "text", "value": "　この計画は、" },
+            { "type": "computed", "fn": "eraDate", "args": ["creationDateIso"] },
+            { "type": "text", "value": "から施行する。" }
+          ]
+        }
+      ]
+    }
+  ],
+  "appendices": []
+}

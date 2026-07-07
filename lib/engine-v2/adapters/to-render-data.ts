@@ -102,6 +102,21 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
     kyugoMember: str(form.kyugo_member),
     anzenMember: str(form.anzen_member),
 
+    // 工事中の消防計画（plan_kind === "construction" のとき使用）
+    planKind: str(form.plan_kind),
+    constructionName: str(form.construction_name),
+    constructionType: str(form.construction_type),
+    constructionScope: str(form.construction_scope),
+    constructionStart: str(form.construction_start),
+    constructionEnd: str(form.construction_end),
+    contractorName: str(form.contractor_name),
+    contractorTel: str(form.contractor_tel),
+    constructionSiteManager: str(form.construction_site_manager),
+    hotWork: str(form.hot_work),
+    hazmatUse: str(form.hazmat_use),
+    equipmentShutdown: str(form.equipment_shutdown),
+    occupiedDuringConstruction: str(form.occupied_during_construction),
+
     // Creation date — v1 passes the pre-formatted string (e.g.
     // "令和7年4月1日") in creation_date. creationDateIso is the ISO
     // form for the eraDate computed fn in 附則.
