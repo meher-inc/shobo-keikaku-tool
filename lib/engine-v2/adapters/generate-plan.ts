@@ -81,6 +81,16 @@ export async function runV2Adapter(
 ): Promise<Buffer> {
   const packName: V2Pack = opts.pack ?? "sample";
 
+  // 工事中の消防計画（工事中の防火対象物用）。
+  // pack は所在地から選ばれた通常計画のものが渡ってくるが、
+  // form.plan_kind が "construction" のときは共通の工事中テンプレートで
+  // 生成し、pack は所轄表示のメタデータとしてのみ使う。
+  // ここ（lib 層）で分岐することで app/api/generate-plan には手を入れない。
+  if (form?.plan_kind === "construction" && packName !== "sample") {
+    const { buildConstructionFull } = await import("./construction-full");
+    return buildConstructionFull(form, packName);
+  }
+
   if (packName === "full") {
     return buildKyotoFull(form);
   }

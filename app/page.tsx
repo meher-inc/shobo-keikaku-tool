@@ -51,6 +51,10 @@ const FAQ_ITEMS = [
     a: "現在は京都市消防局・東京消防庁・大阪市消防局・堺市消防局・岡山市消防局・横浜市消防局・福岡市消防局・名古屋市消防局・札幌市消防局・川崎市消防局・神戸市消防局・さいたま市消防局・広島市消防局・仙台市消防局・千葉市消防局・北九州市消防局・新潟市消防局・熊本市消防局・相模原市消防局・静岡市消防局に正式対応しています。それ以外のエリアは標準様式(京都ベース)で出力されますので、ご利用前に管轄消防署の様式と照合することをお勧めします。",
   },
   {
+    q: "工事中（増改築・内装改修など）の建物の消防計画にも対応していますか?",
+    a: "はい。建物情報のステップで「工事中の消防計画」を選ぶと、火気管理・危険物品の管理・避難経路の確保・消防用設備等の機能停止時の代替措置などを定めた、工事中の防火対象物用の消防計画を生成します。工事概要書や火気使用工事の事前承認書などの別表も同梱されます（スタンダード以上）。工事中の消防計画の届出様式や届出要否は消防本部ごとに運用が異なるため、提出前に所轄消防署へご確認ください。",
+  },
+  {
     q: "どのプランを選べばいいかわかりません。",
     a: "迷ったらスタンダード(¥9,800)がおすすめです。消防計画本体に加えて別表すべてと記入ガイドPDFが付くので、初めて作成する方でも安心です。プレミアム(¥29,800)は「絶対に一発で通したい」「元消防士に直接見てほしい」方向けです。",
   },
@@ -112,7 +116,20 @@ const INITIAL_FORM = {
   drill_months: "4月・10月", education_months: "4月・10月",
   // 自衛消防隊の編成（任意）。専用様式の別表に氏名を差し込む。
   leader_name: "", tsuhou_member: "", shoka_member: "", hinan_member: "", kyugo_member: "", anzen_member: "",
+  // 工事中の消防計画（plan_kind: "normal" | "construction"）。
+  // construction のとき、生成は工事中の防火対象物用テンプレートに切り替わる。
+  plan_kind: "normal",
+  construction_name: "", construction_type: "", construction_scope: "",
+  construction_start: "", construction_end: "",
+  contractor_name: "", contractor_tel: "", construction_site_manager: "",
+  hot_work: false, hazmat_use: false, equipment_shutdown: "",
+  occupied_during_construction: true,
 };
+
+// 工事種別の選択肢（工事中の消防計画の工事概要に反映）。
+const CONSTRUCTION_TYPES = [
+  "内装改修・模様替え", "増築", "改築", "修繕", "設備工事", "外壁・屋上工事", "解体", "新築", "その他",
+];
 
 // 入力内容の下書き保存キー（ブラウザの localStorage のみ。サーバには送らない）。
 const DRAFT_KEY = "todokede-plan-draft-v1";
@@ -175,6 +192,11 @@ const STEP_REQUIRED: Record<number, { label: string; ok: (f: typeof INITIAL_FORM
     { label: "延べ面積", ok: (f) => !!f.total_area },
     { label: "階数", ok: (f) => !!f.num_floors },
     { label: "収容人員", ok: (f) => !!f.capacity },
+    // 工事中の消防計画を選んだ場合のみ必須になる項目。
+    { label: "工事種別", ok: (f) => f.plan_kind !== "construction" || !!f.construction_type },
+    { label: "着工日", ok: (f) => f.plan_kind !== "construction" || !!f.construction_start },
+    { label: "完了予定日", ok: (f) => f.plan_kind !== "construction" || !!f.construction_end },
+    { label: "施工者名", ok: (f) => f.plan_kind !== "construction" || !!f.contractor_name },
   ],
   2: [
     { label: "管理権原者 氏名", ok: (f) => !!f.owner_name },
@@ -384,7 +406,12 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     : NAMED_STANDARD_DEPTS.has(deptName) ? "named-standard"
     : "official";
 
-  const checks = [form.building_name, form.use_category, form.total_area, form.capacity, form.owner_name, form.manager_name, form.manager_tel, form.equipment.length > 0, form.emergency_name, form.evacuation_site];
+  const isConstruction = form.plan_kind === "construction";
+  const checks = [
+    form.building_name, form.use_category, form.total_area, form.capacity, form.owner_name, form.manager_name, form.manager_tel, form.equipment.length > 0, form.emergency_name, form.evacuation_site,
+    // 工事中の消防計画では工事の基本情報も揃ってから生成できるようにする。
+    ...(isConstruction ? [form.construction_type, form.construction_start, form.construction_end, form.contractor_name] : []),
+  ];
   const completeness = Math.round(checks.filter(Boolean).length / checks.length * 100);
 
   const missing: string[] = [];
@@ -395,6 +422,12 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   if (!form.manager_name) missing.push("防火管理者");
   if (form.equipment.length === 0) missing.push("消防用設備");
   if (!form.evacuation_site) missing.push("避難場所");
+  if (isConstruction) {
+    if (!form.construction_type) missing.push("工事種別");
+    if (!form.construction_start) missing.push("着工日");
+    if (!form.construction_end) missing.push("完了予定日");
+    if (!form.contractor_name) missing.push("施工者名");
+  }
 
   const currentPlan = PLANS.find(p => p.id === selectedPlan)!;
 
@@ -574,6 +607,33 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>建物情報</h2>
             <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 28 }}>テンプレートを自動で選定します</p>
+
+            {/* 計画の種類（通常／工事中）。construction を選ぶと工事中の防火対象物用の計画を生成する。 */}
+            <div style={{ marginBottom: 24 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>
+                作成する消防計画の種類
+                <Hint text="増改築・内装改修・修繕などの工事を行う建物では、通常の消防計画とは別に『工事中の消防計画』の作成・届出を求められることがあります。工事中を選ぶと、火気管理・危険物品の管理・避難経路の確保・消防用設備等の代替措置などを定めた工事中の防火対象物用の計画を生成します。" />
+              </label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {([
+                  ["normal", "通常の消防計画", "営業中・使用中の建物"],
+                  ["construction", "工事中の消防計画", "増改築・改修・解体等の工事を行う建物"],
+                ] as [string, string, string][]).map(([val, title, desc]) => {
+                  const active = form.plan_kind === val;
+                  return (
+                    <button key={val} onClick={() => set("plan_kind", val)} style={{
+                      padding: "14px 14px", borderRadius: 12, border: "none", cursor: "pointer", textAlign: "left" as const,
+                      background: active ? "var(--brand-tint)" : "var(--surface-3)",
+                      outline: active ? "2px solid var(--brand)" : "1px solid transparent",
+                    }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: active ? "var(--brand-dark)" : "var(--text)" }}>{title}</div>
+                      <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, lineHeight: 1.5 }}>{desc}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <Field label="建物名称" value={form.building_name} onChange={(e: any) => set("building_name", e.target.value)} placeholder="○○ビル" required />
             <div style={{ marginBottom: 20 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>用途（令別表第一）<span style={{ color: "var(--err-solid)" }}> *</span><Hint text="建物の使い方の区分です（消防法施行令 別表第一の項）。劇場・飲食店・物販店・宿泊・病院・福祉施設などの『特定用途』は防火管理の基準が厳しくなります。わからない場合は最も近い用途を選んでください。" /></label>
@@ -588,6 +648,68 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               <Field label="階数" value={form.num_floors} onChange={(e: any) => set("num_floors", e.target.value)} type="number" required hint="地上階数を入力します（地階がある場合は備考や以降の住所欄で補足してください）。" />
               <Field label="収容人員" value={form.capacity} onChange={(e: any) => set("capacity", e.target.value)} type="number" required hint="その建物・テナントに通常いる人数（従業員＋利用者など）の合計です。消防法令の算定基準で求めた人数を入力します。" />
             </div>
+
+            {/* 工事中の消防計画を選んだ場合の工事情報 */}
+            {form.plan_kind === "construction" && (
+              <div style={{ marginTop: 8, paddingTop: 20, borderTop: "1px solid var(--border)" }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>工事の情報</h3>
+                <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>工事概要書・火気管理などの章に反映されます。</p>
+                <Field label="工事名称" value={form.construction_name} onChange={(e: any) => set("construction_name", e.target.value)} placeholder="○○ビル 2階内装改修工事" hint="施工者との契約書や見積書に記載の工事件名です。未定の場合は「（建物名）改修工事」のような仮の名称でも構いません。" />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div style={{ marginBottom: 20 }}>
+                    <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>工事種別<span style={{ color: "var(--err-solid)" }}> *</span></label>
+                    <select value={form.construction_type} onChange={(e: any) => set("construction_type", e.target.value)} style={{ width: "100%", padding: "12px 16px", fontSize: 16, border: "1px solid var(--border-strong)", borderRadius: 12, background: "var(--surface-input)", cursor: "pointer" }}>
+                      <option value="">選択してください</option>
+                      {CONSTRUCTION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </div>
+                  <Field label="工事範囲（階・部分）" value={form.construction_scope} onChange={(e: any) => set("construction_scope", e.target.value)} placeholder="2階 客席部分" />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <Field label="着工日" value={form.construction_start} onChange={(e: any) => set("construction_start", e.target.value)} placeholder="令和8年8月1日" required />
+                  <Field label="完了予定日" value={form.construction_end} onChange={(e: any) => set("construction_end", e.target.value)} placeholder="令和8年9月30日" required />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <Field label="施工者（元請）名" value={form.contractor_name} onChange={(e: any) => set("contractor_name", e.target.value)} placeholder="○○建設株式会社" required />
+                  <Field label="施工者 連絡先" value={form.contractor_tel} onChange={(e: any) => set("contractor_tel", e.target.value)} type="tel" inputMode="tel" error={telError(form.contractor_tel)} />
+                </div>
+                <Field label="現場責任者 氏名" value={form.construction_site_manager} onChange={(e: any) => set("construction_site_manager", e.target.value)} hint="施工者側の現場代理人・作業所長など、工事部分の火元責任者となる方です。" />
+                <Field label="機能停止予定の消防用設備等" value={form.equipment_shutdown} onChange={(e: any) => set("equipment_shutdown", e.target.value)} placeholder="自動火災報知設備（2階感知器）を○月○日〜○日停止" hint="工事に伴い自動火災報知設備・スプリンクラー等を一時停止する予定があれば記入します。停止する場合は所轄消防署への事前連絡が必要です。未定・なしの場合は空欄で構いません。" />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
+                  {([
+                    ["hot_work", "溶接・溶断など火気を使用する工事がある"],
+                    ["hazmat_use", "塗料・シンナー等の危険物品を持ち込む"],
+                  ] as ["hot_work" | "hazmat_use", string][]).map(([key, label]) => {
+                    const active = !!form[key];
+                    return (
+                      <button key={key} onClick={() => set(key, !active)} style={{
+                        display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, border: "none", cursor: "pointer",
+                        background: active ? "var(--brand-tint)" : "var(--surface-3)", outline: active ? "2px solid var(--brand)" : "1px solid transparent",
+                        fontSize: 13, fontWeight: 500, textAlign: "left" as const,
+                      }}>
+                        <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: active ? "var(--brand)" : "var(--surface)", border: active ? "none" : "2px solid var(--border-strong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          {active && <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>✓</span>}
+                        </div>
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div style={{ marginBottom: 4 }}>
+                  <button onClick={() => set("occupied_during_construction", !form.occupied_during_construction)} style={{
+                    display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, border: "none", cursor: "pointer", width: "100%",
+                    background: form.occupied_during_construction ? "var(--brand-tint)" : "var(--surface-3)", outline: form.occupied_during_construction ? "2px solid var(--brand)" : "1px solid transparent",
+                    fontSize: 13, fontWeight: 500, textAlign: "left" as const,
+                  }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: form.occupied_during_construction ? "var(--brand)" : "var(--surface)", border: form.occupied_during_construction ? "none" : "2px solid var(--border-strong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      {form.occupied_during_construction && <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>✓</span>}
+                    </div>
+                    営業（使用）しながら工事を行う
+                  </button>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "6px 0 0" }}>チェックすると、使用部分と工事部分の区画・利用者の安全確保に関する条項が計画に追加されます。</p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -728,16 +850,26 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
               {deptName && (
                 <div style={{ fontSize: 14, lineHeight: 1.7, padding: "10px 14px", borderRadius: 10, marginBottom: 14, background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", color: "var(--text)" }}>
-                  {deptKind === "official" && <>この内容で <strong>{deptName}</strong> の様式に準拠した消防計画を作成します。</>}
-                  {deptKind === "named-standard" && <><strong>{deptName}</strong> 管内です。専用様式がないため <strong>標準様式</strong> で作成します。</>}
-                  {deptKind === "standard" && <>対応エリア外のため <strong>標準様式</strong>（京都市ベース）で作成します。ご利用前に管轄の様式とご照合ください。</>}
+                  {isConstruction ? (
+                    <>この内容で <strong>工事中の消防計画</strong>（工事中の防火対象物用{deptKind === "official" ? <>・<strong>{deptName}</strong> 管内</> : null}）を作成します。工事中の計画の様式・届出要否は消防本部ごとに運用が異なるため、提出前に所轄消防署へご確認ください。</>
+                  ) : (
+                    <>
+                      {deptKind === "official" && <>この内容で <strong>{deptName}</strong> の様式に準拠した消防計画を作成します。</>}
+                      {deptKind === "named-standard" && <><strong>{deptName}</strong> 管内です。専用様式がないため <strong>標準様式</strong> で作成します。</>}
+                      {deptKind === "standard" && <>対応エリア外のため <strong>標準様式</strong>（京都市ベース）で作成します。ご利用前に管轄の様式とご照合ください。</>}
+                    </>
+                  )}
                 </div>
               )}
 
               <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "6px 14px", margin: 0, fontSize: 13.5, lineHeight: 1.6 }}>
                 {([
+                  ["計画の種類", isConstruction ? "工事中の消防計画（工事中の防火対象物用）" : ""],
                   ["所在地", [form.prefecture, form.city, form.ward, form.address_detail].filter(Boolean).join("")],
                   ["建物名称", form.building_name],
+                  ["工事概要", isConstruction ? [form.construction_name, form.construction_type, form.construction_scope].filter(Boolean).join(" / ") : ""],
+                  ["工事期間", isConstruction ? [form.construction_start, form.construction_end].filter(Boolean).join(" 〜 ") : ""],
+                  ["施工者", isConstruction ? [form.contractor_name, form.construction_site_manager && `現場責任者:${form.construction_site_manager}`, form.contractor_tel].filter(Boolean).join(" / ") : ""],
                   ["用途", form.use_category],
                   ["規模", [form.total_area && `${form.total_area}㎡`, form.num_floors && `${form.num_floors}階`, form.capacity && `${form.capacity}人`].filter(Boolean).join(" / ")],
                   ["管理権原者", form.owner_name],
@@ -756,7 +888,9 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               </dl>
 
               <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)", fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.7 }}>
-                作成物には次を同梱します: 入力内容の概要 ／ 提出前チェックリスト ／ 各階平面図の記入テンプレート ／ 作成後の提出のしかた
+                {isConstruction
+                  ? "作成物には次を同梱します: 入力内容の概要 ／ 提出前チェックリスト ／ 別表（工事概要書・火気使用工事 事前承認書・危険物品持込届 等） ／ 各階平面図の記入テンプレート"
+                  : "作成物には次を同梱します: 入力内容の概要 ／ 提出前チェックリスト ／ 各階平面図の記入テンプレート ／ 作成後の提出のしかた"}
               </div>
 
               {missing.length > 0 && (
@@ -874,8 +1008,10 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
             {/* Summary */}
             <div style={{ padding: 20, borderRadius: 14, background: "var(--surface-3)", fontSize: 14, lineHeight: 2.2, marginBottom: 24 }}>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>計画の種類</span>{isConstruction ? "工事中の消防計画" : "消防計画"}</div>
               <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>所轄</span>{deptName || "—"}</div>
               <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>建物</span>{form.building_name || "—"}</div>
+              {isConstruction && <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>工事</span>{[form.construction_type, [form.construction_start, form.construction_end].filter(Boolean).join("〜")].filter(Boolean).join(" / ") || "—"}</div>}
               <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>規模</span>{form.total_area || "—"}㎡ / {form.num_floors || "—"}階 / {form.capacity || "—"}人</div>
               <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>管理権原者</span>{form.owner_name || "—"}</div>
               <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>防火管理者</span>{form.manager_name || "—"}（{form.manager_qual}）</div>
