@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const BRAND = "var(--brand)";
 
-// 「もっと見る」リンク先のマガジン（消防計画づくりの実務ノート）。
+// 「全記事を見る」リンク先のマガジン（消防計画づくりの実務ノート）。
 const MAGAZINE_URL = "https://note.com/shun_maruoka/m/m9f1348968657";
 
 interface NoteItem {
@@ -15,9 +15,55 @@ interface NoteItem {
   thumbnail?: string;
 }
 
+const sectionStyle: React.CSSProperties = {
+  maxWidth: 1080,
+  margin: "0 auto",
+  padding: "clamp(48px,8vw,88px) clamp(16px,4vw,24px)",
+};
+const headingStyle: React.CSSProperties = {
+  fontSize: "clamp(22px,4.5vw,30px)",
+  fontWeight: 800,
+  textAlign: "center",
+  color: "var(--text)",
+  letterSpacing: "-0.01em",
+};
+const subtitleStyle: React.CSSProperties = {
+  textAlign: "center",
+  fontSize: 15,
+  color: "var(--text-muted)",
+  marginTop: 12,
+};
+const gridStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
+  gap: 20,
+  marginTop: 40,
+};
+const thumbWrapStyle: React.CSSProperties = {
+  aspectRatio: "16 / 10",
+  background: "var(--surface-3)",
+  overflow: "hidden",
+};
+const imgStyle: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
+};
+const titleStyle: React.CSSProperties = {
+  fontSize: 15.5,
+  fontWeight: 700,
+  color: "var(--text)",
+  lineHeight: 1.6,
+  display: "-webkit-box",
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: "vertical",
+  overflow: "hidden",
+};
+
 /**
  * note.com マガジン「消防計画づくりの実務ノート」の最新記事を
- * LP の更新情報セクションとして表示する。/api/note-feed から取得する。
+ * サムネイル付きカードグリッドで表示する。/api/note-feed から取得する。
  */
 export function NoteUpdates() {
   const [items, setItems] = useState<NoteItem[] | null>(null);
@@ -37,23 +83,22 @@ export function NoteUpdates() {
     };
   }, []);
 
-  // 読み込み中はスケルトンを表示（体感速度・レイアウトシフト抑制）。
+  // 読み込み中はカード型スケルトンを表示（体感速度・レイアウトシフト抑制）。
   if (items === null) {
     return (
-      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px,7vw,72px) clamp(16px,4vw,24px)" }} aria-hidden="true">
-        <div style={{ background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", borderRadius: 16, padding: "20px 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, color: BRAND, letterSpacing: "0.04em" }}>note更新情報</span>
-            <span style={{ flex: 1, height: 1, background: "var(--brand-tint-border)" }} />
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {[0, 1, 2].map((i) => (
-              <div key={i} style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                <div className="skeleton-line" style={{ width: 84, height: 13, flexShrink: 0 }} />
-                <div className="skeleton-line" style={{ flex: 1, height: 13 }} />
+      <section style={sectionStyle} aria-hidden="true">
+        <h2 style={headingStyle}>記事で学ぶ｜消防計画の実務ガイド</h2>
+        <p style={subtitleStyle}>消防計画づくりの実務を、noteで詳しく解説しています。</p>
+        <div style={gridStyle}>
+          {[0, 1, 2].map((i) => (
+            <div key={i} style={{ border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden", background: "var(--surface)" }}>
+              <div className="skeleton-line" style={{ aspectRatio: "16 / 10", borderRadius: 0 }} />
+              <div style={{ padding: "16px 18px" }}>
+                <div className="skeleton-line" style={{ height: 14, marginBottom: 8 }} />
+                <div className="skeleton-line" style={{ height: 14, width: "70%" }} />
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </section>
     );
@@ -62,70 +107,64 @@ export function NoteUpdates() {
   // 記事ゼロのときはセクションごと非表示（LPを崩さない）。
   if (items.length === 0) return null;
 
+  const cards = items.slice(0, 6);
+
   return (
-    <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px,7vw,72px) clamp(16px,4vw,24px)" }}>
-      <div style={{ background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", borderRadius: 16, padding: "20px 24px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-          <span style={{ fontSize: 13, fontWeight: 800, color: BRAND, letterSpacing: "0.04em" }}>note更新情報</span>
-          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>消防計画づくりの実務ノート</span>
-          <span style={{ flex: 1, height: 1, background: "var(--brand-tint-border)" }} />
-        </div>
+    <section style={sectionStyle}>
+      <h2 style={headingStyle}>記事で学ぶ｜消防計画の実務ガイド</h2>
+      <p style={subtitleStyle}>消防計画づくりの実務を、noteで詳しく解説しています。</p>
 
-        <ul style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {items.map((it, i) => (
-            <li key={it.link}>
-              <a
-                href={it.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "flex",
-                  gap: 12,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  textDecoration: "none",
-                  padding: "10px 0",
-                  borderTop: i === 0 ? "none" : "1px solid var(--brand-tint-border)",
-                }}
-              >
-                {it.thumbnail && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={it.thumbnail}
-                    alt=""
-                    loading="lazy"
-                    width={76}
-                    height={46}
-                    style={{ width: 76, height: 46, flexShrink: 0, objectFit: "cover", borderRadius: 6, border: "1px solid var(--brand-tint-border)", background: "var(--surface-3)" }}
-                  />
-                )}
-                <time style={{ fontSize: 13, color: "var(--text-muted)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
-                  {it.date}
-                </time>
-                {i === 0 && (
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", background: BRAND, borderRadius: 999, padding: "2px 10px", whiteSpace: "nowrap" }}>
-                    NEW
-                  </span>
-                )}
-                <span style={{ flex: 1, minWidth: 220, fontSize: 15, fontWeight: 600, color: "var(--text)", lineHeight: 1.6 }}>
-                  {it.title}
-                </span>
-                <span style={{ fontSize: 13, color: BRAND, fontWeight: 600, whiteSpace: "nowrap" }}>note で読む →</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div style={{ marginTop: 12, textAlign: "right" }}>
+      <div style={gridStyle}>
+        {cards.map((it) => (
           <a
-            href={MAGAZINE_URL}
+            key={it.link}
+            href={it.link}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ fontSize: 13, fontWeight: 600, color: BRAND, textDecoration: "underline" }}
+            className="note-card"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              border: "1px solid var(--border)",
+              borderRadius: 16,
+              overflow: "hidden",
+              background: "var(--surface)",
+              textDecoration: "none",
+            }}
           >
-            実務ノートをもっと見る
+            <div style={thumbWrapStyle}>
+              {it.thumbnail && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={it.thumbnail} alt="" loading="lazy" style={imgStyle} />
+              )}
+            </div>
+            <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
+              <span style={titleStyle}>{it.title}</span>
+              <span style={{ marginTop: "auto", fontSize: 13.5, color: BRAND, fontWeight: 600 }}>note で読む →</span>
+            </div>
           </a>
-        </div>
+        ))}
+      </div>
+
+      <div style={{ textAlign: "center", marginTop: 36 }}>
+        <a
+          href={MAGAZINE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "inline-block",
+            padding: "14px 32px",
+            borderRadius: 12,
+            border: `1.5px solid ${BRAND}`,
+            color: BRAND,
+            fontSize: 15,
+            fontWeight: 700,
+            textDecoration: "none",
+            background: "var(--surface)",
+          }}
+        >
+          noteマガジンで全記事を見る
+        </a>
       </div>
     </section>
   );

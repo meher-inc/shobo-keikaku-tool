@@ -189,6 +189,16 @@ button:not(:disabled):hover {
   animation: pulse-bg 1.4s ease-in-out infinite;
 }
 
+/* ── note記事カード（ホバーで持ち上げ） ── */
+.note-card {
+  transition: transform 0.15s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.note-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  border-color: var(--brand-tint-border);
+}
+
 /* Sample preview: desktop iframe / mobile image list */
 .sample-desktop {
   display: block;
