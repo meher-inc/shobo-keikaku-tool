@@ -40,7 +40,8 @@ const gridStyle: React.CSSProperties = {
   marginTop: 40,
 };
 const thumbWrapStyle: React.CSSProperties = {
-  aspectRatio: "16 / 10",
+  // note のアイキャッチ実寸（800×419 ≈ 1.91:1）に合わせ、cover で切れないようにする。
+  aspectRatio: "1280 / 670",
   background: "var(--surface-3)",
   overflow: "hidden",
 };
@@ -92,7 +93,7 @@ export function NoteUpdates() {
         <div style={gridStyle}>
           {[0, 1, 2].map((i) => (
             <div key={i} style={{ border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden", background: "var(--surface)" }}>
-              <div className="skeleton-line" style={{ aspectRatio: "16 / 10", borderRadius: 0 }} />
+              <div className="skeleton-line" style={{ aspectRatio: "1280 / 670", borderRadius: 0 }} />
               <div style={{ padding: "16px 18px" }}>
                 <div className="skeleton-line" style={{ height: 14, marginBottom: 8 }} />
                 <div className="skeleton-line" style={{ height: 14, width: "70%" }} />
