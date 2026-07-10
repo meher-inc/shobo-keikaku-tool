@@ -12,6 +12,7 @@ interface NoteItem {
   link: string;
   iso: string;
   date: string;
+  thumbnail?: string;
 }
 
 /**
@@ -80,13 +81,24 @@ export function NoteUpdates() {
                 style={{
                   display: "flex",
                   gap: 12,
-                  alignItems: "baseline",
+                  alignItems: "center",
                   flexWrap: "wrap",
                   textDecoration: "none",
                   padding: "10px 0",
                   borderTop: i === 0 ? "none" : "1px solid var(--brand-tint-border)",
                 }}
               >
+                {it.thumbnail && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={it.thumbnail}
+                    alt=""
+                    loading="lazy"
+                    width={76}
+                    height={46}
+                    style={{ width: 76, height: 46, flexShrink: 0, objectFit: "cover", borderRadius: 6, border: "1px solid var(--brand-tint-border)", background: "var(--surface-3)" }}
+                  />
+                )}
                 <time style={{ fontSize: 13, color: "var(--text-muted)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                   {it.date}
                 </time>
