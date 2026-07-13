@@ -3,6 +3,7 @@ import { Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { SiteStructuredData } from "../components/StructuredData";
 
 const noto = Noto_Sans_JP({
   subsets: ["latin"],
@@ -16,7 +17,7 @@ export const metadata = {
   openGraph: {
     title: "トドケデ消防計画 ｜ 元消防士が作った消防計画自動作成サービス",
     description:
-      "所在地と建物情報を入力するだけで、所轄消防本部の様式に準拠した消防計画書をWordで自動生成。年額¥49,800〜。",
+      "所在地と建物情報を入力するだけで、所轄消防本部の様式に準拠した消防計画書をWordで自動生成。1件¥4,980〜の買い切り。",
     url: "https://plan.todokede.jp/",
     siteName: "トドケデ消防計画",
     images: ["https://plan.todokede.jp/og-image.png"],
@@ -27,7 +28,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "トドケデ消防計画 ｜ 元消防士が作った消防計画自動作成サービス",
     description:
-      "所在地と建物情報を入力するだけで、所轄消防本部の様式に準拠した消防計画書をWordで自動生成。年額¥49,800〜。",
+      "所在地と建物情報を入力するだけで、所轄消防本部の様式に準拠した消防計画書をWordで自動生成。1件¥4,980〜の買い切り。",
     images: ["https://plan.todokede.jp/og-image.png"],
   },
 };
@@ -36,6 +37,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja" className={noto.className} suppressHydrationWarning>
       <body style={{ background: "var(--bg)", color: "var(--text)", margin: 0 }}>
+        {/* 構造化データ（schema.org JSON-LD）: 組織・製品情報 */}
+        <SiteStructuredData />
         {/* テーマ適用（描画前に data-theme を設定し FOUC を防ぐ） */}
         <Script id="theme-init" strategy="beforeInteractive">
           {`(function(){try{var t=localStorage.getItem('todokede-theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`}

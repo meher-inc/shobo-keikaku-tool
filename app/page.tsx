@@ -5,6 +5,7 @@ import { SPOT_PLANS, isSpotPlanId } from "../lib/spot-plans";
 import { MarketingSections } from "../components/marketing-sections";
 import { NoteUpdates } from "../components/note-updates";
 import TodokedeSeriesNav from "../components/shared/TodokedeSeriesNav";
+import { FaqStructuredData } from "../components/StructuredData";
 
 const USE_CATEGORIES = [
   { value: "1-イ", label: "1項イ 劇場等", specific: true },
@@ -42,6 +43,10 @@ const STEPS = [
 ];
 
 const FAQ_ITEMS = [
+  {
+    q: "消防計画を自動で作成できるツールはありますか?",
+    a: "はい。トドケデ消防計画は、所在地と建物情報を入力するだけで、所轄消防本部の様式に沿った消防計画をWord形式で自動作成できるクラウド型サービスです。元消防士が設計し、東京消防庁・大阪市消防局など全国20の消防本部の様式に対応。1件¥4,980からの買い切りで、月額・更新料はかかりません。作成後の再ダウンロードや、購入から14日間の無料修正にも対応しています。",
+  },
   {
     q: "出力された消防計画はそのまま消防署に提出できますか?",
     a: "はい。京都市消防局・東京消防庁・大阪市消防局・堺市消防局・岡山市消防局・横浜市消防局・福岡市消防局・名古屋市消防局・札幌市消防局・川崎市消防局・神戸市消防局・さいたま市消防局・広島市消防局・仙台市消防局・千葉市消防局・北九州市消防局・新潟市消防局・熊本市消防局・相模原市消防局・静岡市消防局の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。",
@@ -98,6 +103,11 @@ const FAQ_ITEMS = [
     ),
   },
 ];
+
+// FAQPage 構造化データ用（文字列回答のみを採用。JSXを含む項目は除外）。
+const FAQ_SCHEMA_ITEMS = FAQ_ITEMS.filter(
+  (it): it is { q: string; a: string } => typeof it.a === "string"
+).map((it) => ({ q: it.q, a: it.a }));
 
 const PLANS = SPOT_PLANS;
 
@@ -482,6 +492,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   return (
     <>
+    {/* FAQ 構造化データ（schema.org FAQPage）: AI・検索での引用を助ける */}
+    <FaqStructuredData items={FAQ_SCHEMA_ITEMS} />
     {/* Hero */}
     <section style={{ textAlign: "center", padding: "clamp(56px,9vw,96px) clamp(16px,4vw,24px) clamp(40px,6vw,64px)", maxWidth: 760, margin: "0 auto" }}>
       <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--brand-tint)", color: "var(--brand)", fontSize: 13, fontWeight: 700, padding: "8px 16px", borderRadius: 999, marginBottom: 24 }}>
