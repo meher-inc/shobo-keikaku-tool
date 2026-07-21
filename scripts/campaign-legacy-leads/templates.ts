@@ -10,7 +10,7 @@ export function buildBulkBody(): string {
   return `ご担当者様
 
 突然のご連絡失礼いたします。
-MeHer株式会社（2026年11月より株式会社トドケデへ商号変更予定）
+MeHer株式会社
 代表取締役の丸岡と申します。
 
 以前、弊社サイト「トドケデ」で消防関連書類に関する資料を
@@ -70,7 +70,6 @@ https://plan.todokede.jp/pricing
 
 丸岡 峻（まるおか しゅん）
 MeHer株式会社 代表取締役
-（2026年11月より 株式会社トドケデ へ商号変更予定）
 
 元京都市消防局（13年） / 現役防災士
 消防設備士 / 危険物取扱者
@@ -89,7 +88,7 @@ export function buildIndividualXBody(name: string, summaryOneLiner: string): str
   return `${name}様
 
 お世話になっております。
-MeHer株式会社（2026年11月より株式会社トドケデへ商号変更予定）
+MeHer株式会社
 代表取締役の丸岡と申します。
 
 以前、弊社サイト「トドケデ」より
@@ -151,7 +150,6 @@ BCP（業務継続計画）に対応したクラウドサービス
 
 丸岡 峻（まるおか しゅん）
 MeHer株式会社 代表取締役
-（2026年11月より 株式会社トドケデ へ商号変更予定）
 
 元京都市消防局（13年） / 現役防災士
 消防設備士 / 危険物取扱者
@@ -170,7 +168,7 @@ export function buildIndividualYBody(name: string, summaryOneLiner: string): str
   return `${name}様
 
 お世話になっております。
-MeHer株式会社（2026年11月より株式会社トドケデへ商号変更予定）
+MeHer株式会社
 代表取締役の丸岡と申します。
 
 以前、弊社サイト「トドケデ」より
@@ -232,7 +230,6 @@ ${summaryOneLiner}の件でお問い合わせをいただき、
 
 丸岡 峻（まるおか しゅん）
 MeHer株式会社 代表取締役
-（2026年11月より 株式会社トドケデ へ商号変更予定）
 
 元京都市消防局（13年） / 現役防災士
 消防設備士 / 危険物取扱者
@@ -251,7 +248,7 @@ export function buildIndividualZBody(name: string, summaryOneLiner: string): str
   return `${name}様
 
 お世話になっております。
-MeHer株式会社（2026年11月より株式会社トドケデへ商号変更予定）
+MeHer株式会社
 代表取締役の丸岡と申します。
 
 以前、弊社サイト「トドケデ」より
@@ -311,7 +308,6 @@ ${summaryOneLiner}の件でお問い合わせをいただき、
 
 丸岡 峻（まるおか しゅん）
 MeHer株式会社 代表取締役
-（2026年11月より 株式会社トドケデ へ商号変更予定）
 
 元京都市消防局（13年） / 現役防災士
 消防設備士 / 危険物取扱者

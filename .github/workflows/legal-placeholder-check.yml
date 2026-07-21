@@ -1,0 +1,30 @@
+name: Legal placeholder check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject provisional wording in legal pages
+        shell: bash
+        run: |
+          pattern='ドラフト|公開前|最終改定日未確定|TODO|要入力|差し替え|仮|TBD|FIXME|準備中|確定後に記載'
+          paths=()
+          for candidate in app/legal app/privacy app/terms app/tokusho app/tokushoho 'app/(legal)' components/legal; do
+            if [[ -e "$candidate" ]]; then
+              paths+=("$candidate")
+            fi
+          done
+          if (( ${#paths[@]} == 0 )); then
+            echo "No local legal pages; nothing to scan."
+            exit 0
+          fi
+          if grep -RInE "$pattern" "${paths[@]}"; then
+            echo "Legal pages contain provisional wording."
+            exit 1
+          fi
