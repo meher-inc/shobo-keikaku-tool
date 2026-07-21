@@ -68,6 +68,11 @@ export default function Footer() {
             })}
           </ul>
           <p style={{ marginTop: 18 }}>
+            <a href="https://guide.plan.todokede.jp/" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-muted)", textDecoration: "none" }}>
+              実務ガイド ↗
+            </a>
+          </p>
+          <p style={{ marginTop: 10 }}>
             <a href="https://services.todokede.jp" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-muted)", textDecoration: "none" }}>
               全てのトドケデサービス ↗
             </a>
