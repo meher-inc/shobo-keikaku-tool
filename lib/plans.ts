@@ -8,19 +8,6 @@
 export const PLAN_IDS = ["minimum", "standard"] as const;
 export type PlanId = (typeof PLAN_IDS)[number];
 
-/** Alias kept in sync with PlanId for clarity in subscription-specific code. */
-export type SubscriptionPlanId = PlanId;
-
-export type SubscriptionStatus =
-  | 'incomplete'
-  | 'incomplete_expired'
-  | 'trialing'
-  | 'active'
-  | 'past_due'
-  | 'canceled'
-  | 'unpaid'
-  | 'paused';
-
 export const BILLING_CYCLES = ["monthly", "yearly"] as const;
 export type BillingCycle = (typeof BILLING_CYCLES)[number];
 
@@ -84,18 +71,6 @@ export const PLANS: Plan[] = [
     ],
   },
 ];
-
-/**
- * Look up the Stripe Price ID for a given plan + billing cycle.
- * Throws if the plan ID is not found.
- */
-export function getPriceId(planId: PlanId, cycle: BillingCycle): string {
-  const plan = PLANS.find((p) => p.id === planId);
-  if (!plan) throw new Error(`Unknown plan: ${planId}`);
-  const priceId = plan.priceIds[cycle];
-  if (!priceId) throw new Error(`No price ID for ${planId}/${cycle}`);
-  return priceId;
-}
 
 /**
  * Reverse-lookup: find the plan + billing cycle for a Stripe Price ID.
