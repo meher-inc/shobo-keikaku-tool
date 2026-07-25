@@ -1,0 +1,40 @@
+name: Prohibited words check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject prohibited customer-facing wording
+        shell: bash
+        run: |
+          pattern='監修|お任せ|丸ごと.{0,4}任せ|引き受けます|すべてやります|消防署OB'
+          paths=()
+          for candidate in app components content pages src; do
+            if [[ -e "$candidate" ]]; then
+              paths+=("$candidate")
+            fi
+          done
+          if (( ${#paths[@]} == 0 )); then
+            echo "No content directories found; nothing to scan."
+            exit 0
+          fi
+          status=0
+          hits=$(grep -RInE --include='*.tsx' --include='*.ts' --include='*.astro' --include='*.md' --include='*.mdx' "$pattern" "${paths[@]}" | grep -v '/api/' || true)
+          if [[ -n "$hits" ]]; then
+            echo "禁止語を検出しました（正本: ~/00_Important_Context/rules/todokede-common.md）。"
+            echo "$hits"
+            status=1
+          fi
+          emoji=$(grep -RPln --include='*.tsx' --include='*.ts' --include='*.astro' --include='*.md' --include='*.mdx' $'[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' "${paths[@]}" 2>/dev/null | grep -v '/api/' || true)
+          if [[ -n "$emoji" ]]; then
+            echo "絵文字を検出しました（禁止）。"
+            echo "$emoji"
+            status=1
+          fi
+          exit $status
