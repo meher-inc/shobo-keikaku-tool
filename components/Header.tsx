@@ -15,7 +15,7 @@ export default function Header() {
           />
         </a>
         <span style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-          元消防士が監修
+          元消防士が設計
         </span>
         <ThemeToggle />
       </div>

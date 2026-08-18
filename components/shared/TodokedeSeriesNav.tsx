@@ -3,7 +3,7 @@
  *
  * 目的：各プロダクト（plan / care / koushin …）から、トドケデOS全体へ接続する。
  *   - シリーズ回遊：サービス一覧＋全サービスへのリンク
- *   - ハブ集約：更新管理（全プロダクトの期限を建物単位でまとめる）
+ *   - 提出まで：書類づくりから提出まではトドケデ消防書類代行へ
  *   - エスカレーション：個別案件はトドケデコンサルティングへ
  *
  * 配布方法：このファイルを各プロダクトのリポジトリ（components/ 等）にコピーし、
@@ -13,24 +13,19 @@
  *
  * 依存ゼロ（このrepoの data.ts / lib / テーマトークンに依存しない）。
  *   配色は明示HEX＋標準Tailwindのみ。URLは絶対パス。どのプロダクトでもそのまま動く。
- *   ※ 一部サブドメインは公開準備中（DNS反映後に有効）。
+ *   ※ 2026-08 の統廃合により、掲載は継続4サービス＋コンサルティングのみ。
  * ========================================================================== */
 
 const SERVICES_LIST_URL = "https://services.todokede.jp/";
-const KOSHIN_URL = "https://koushin.todokede.jp/"; // 更新管理ハブ
-const CONSULT_CONTACT_URL = "https://services.todokede.jp/#contact"; // 個別相談（コンサルティング）
+const DAIKO_URL = "https://daikou.todokede.jp/"; // 消防書類代行
+const CONSULT_CONTACT_URL = "https://meher-inc.co.jp/business/consulting"; // 個別相談（コンサルティング）
 
 const SERVICES: { id: string; name: string; url: string }[] = [
   { id: "shobo-keikaku", name: "消防計画", url: "https://plan.todokede.jp/" },
   { id: "shobo-shorui", name: "消防書類作成", url: "https://docs.todokede.jp/" },
   { id: "shobo-daiko", name: "消防書類代行", url: "https://daikou.todokede.jp/" },
-  { id: "bouka-kanri", name: "防火管理", url: "https://bouka.todokede.jp/" },
-  { id: "kunren", name: "訓練支援", url: "https://kunren.todokede.jp/" },
-  { id: "setsubi-tenken", name: "消防設備点検", url: "https://tenken.todokede.jp/" },
-  { id: "koshin-kanri", name: "更新管理", url: "https://koushin.todokede.jp/" },
   { id: "kaigo", name: "トドケデ介護", url: "https://care.todokede.jp/" },
-  { id: "kikenbutsu", name: "危険物", url: "https://kikenbutsu.todokede.jp/" },
-  { id: "bcp", name: "BCP", url: "https://bcp.todokede.jp/" },
+  { id: "consulting", name: "コンサルティング", url: "https://meher-inc.co.jp/business/consulting" },
 ];
 
 function withUtm(url: string, source: string, campaign: string) {
@@ -67,13 +62,13 @@ export default function TodokedeSeriesNav({
   const cards = [
     {
       title: "サービスを探す",
-      body: "消防・防災の10サービスから、必要なものを無料診断で。",
+      body: "消防・防災のサービスから、必要なものを無料診断で。",
       href: withUtm(SERVICES_LIST_URL, source, "series-list"),
     },
     {
-      title: "期限をまとめて管理",
-      body: "点検・届出・更新を、建物単位でひとつに（更新管理）。",
-      href: withUtm(KOSHIN_URL, source, "series-hub"),
+      title: "提出まで任せる",
+      body: "書類づくりから提出まで、行政書士連携の代行で。",
+      href: withUtm(DAIKO_URL, source, "series-daiko"),
     },
     {
       title: "個別案件を相談",
