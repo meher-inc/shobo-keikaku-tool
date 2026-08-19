@@ -90,7 +90,7 @@ export default function TodokedeSeriesNav({
           消防・防災の手続きを、ひとつに。
         </h2>
         <p className="mt-4 max-w-[640px] text-[14px] font-bold leading-[1.95] text-white/70">
-          トドケデは、新設から運用・点検・更新まで一気通貫で支えるサービス群です。必要なサービスへ、ここから。
+          トドケデは、消防計画の作成から書類の提出、介護施設の防災まで支えるサービス群です。必要なサービスへ、ここから。
         </p>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
