@@ -5,14 +5,8 @@ const series: { name: string; url?: string; current?: boolean }[] = [
   { name: "トドケデ消防計画", url: "/", current: true },
   { name: "トドケデ消防書類作成", url: "https://docs.todokede.jp/" },
   { name: "トドケデ消防書類代行", url: "https://daikou.todokede.jp/" },
-  { name: "トドケデ防火管理", url: "https://bouka.todokede.jp/" },
-  { name: "トドケデ訓練支援", url: "https://kunren.todokede.jp/" },
-  { name: "トドケデ消防設備点検", url: "https://tenken.todokede.jp/" },
-  { name: "トドケデ更新管理", url: "https://koushin.todokede.jp/" },
   { name: "トドケデ介護", url: "https://care.todokede.jp/" },
-  { name: "トドケデ危険物", url: "https://kikenbutsu.todokede.jp/" },
-  { name: "トドケデBCP", url: "https://bcp.todokede.jp/" },
-  { name: "トドケデコンサルティング", url: "https://services.todokede.jp/company/business/consulting" },
+  { name: "トドケデコンサルティング", url: "https://meher-inc.co.jp/business/consulting" },
 ];
 
 export default function Footer() {
@@ -20,7 +14,7 @@ export default function Footer() {
     <footer style={{ marginTop: 96, borderTop: "1px solid var(--border)", background: "var(--surface)", padding: "48px 24px" }}>
       <div style={{ maxWidth: 1080, margin: "0 auto", textAlign: "center", fontSize: 12, color: "var(--text-muted)" }}>
         <p style={{ margin: "0 0 8px", fontWeight: 700, color: "var(--text)" }}>MeHer株式会社</p>
-        <p style={{ margin: 0 }}>元消防士が監修する消防計画作成クラウドサービス</p>
+        <p style={{ margin: 0 }}>元消防士が設計した消防計画作成クラウドサービス</p>
 
         {/* トドケデシリーズ ラインナップ */}
         <div style={{ marginTop: 36, paddingTop: 28, borderTop: "1px solid var(--border)" }}>

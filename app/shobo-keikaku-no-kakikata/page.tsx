@@ -3,7 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "消防計画の書き方｜作成の手順・記載項目・提出先をやさしく解説",
   description:
-    "消防計画とは何か、誰に作成義務があるのか、記載する項目・作成手順・所轄消防署への提出方法までを、はじめての方向けにわかりやすく解説します。元消防士監修の自動作成ツールもご案内。",
+    "消防計画とは何か、誰に作成義務があるのか、記載する項目・作成手順・所轄消防署への提出方法までを、はじめての方向けにわかりやすく解説します。元消防士が設計した自動作成ツールもご案内。",
   openGraph: {
     title: "消防計画の書き方｜作成の手順・記載項目・提出先をやさしく解説",
     description:
@@ -118,7 +118,7 @@ export default function GuidePage() {
         <h2 style={{ ...h2, marginTop: 0, marginBottom: 10 }}>入力するだけで、提出できる消防計画に</h2>
         <p style={{ ...p, color: "var(--text-muted)", marginBottom: 20 }}>
           トドケデ消防計画なら、所在地から所轄消防本部を自動判定し、様式に沿った消防計画を約15分でWord作成。
-          元消防士監修・買い切りで、平面図テンプレートや提出のしかたも同梱します。
+          元消防士が設計・買い切りで、平面図テンプレートや提出のしかたも同梱します。
         </p>
         <Link href="/" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", padding: "15px 36px", borderRadius: 12, fontSize: 16, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.25)" }}>
           消防計画を作成する
