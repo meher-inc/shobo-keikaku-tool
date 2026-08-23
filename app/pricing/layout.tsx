@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "料金プラン | トドケデ消防計画",
   description:
-    "年額¥49,800のミニマムプラン、年額¥98,000のスタンダードプラン。元消防士が設計した消防計画クラウドサービス。",
+    "1件4,980円（税込）〜の買い切りで、月額料金・更新料はありません。全国20消防本部の様式に対応した、元消防士が設計する消防計画のクラウド型サービスです。",
 };
 
 export default function PricingLayout({
