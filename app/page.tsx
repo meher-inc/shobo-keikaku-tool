@@ -266,10 +266,15 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   }
 
   // Preselect plan when arriving from the pricing page (/?plan=standard など).
+  // 運営者ログインから戻った場合は、入力済み下書きの確認・生成ステップへ戻す。
   useEffect(() => {
-    const param = new URLSearchParams(window.location.search).get("plan");
-    if (param && isSpotPlanId(param)) {
-      setSelectedPlan(param);
+    const params = new URLSearchParams(window.location.search);
+    const planParam = params.get("plan");
+    if (planParam && isSpotPlanId(planParam)) {
+      setSelectedPlan(planParam);
+    }
+    if (params.get("owner_login") === "1") {
+      setStep(STEPS.length - 1);
     }
   }, []);
 
@@ -467,6 +472,15 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   const currentPlan = PLANS.find(p => p.id === selectedPlan)!;
 
+  function handleInternalLogin() {
+    const url = new URL(window.location.href);
+    url.searchParams.set("owner_login", "1");
+    url.hash = "form";
+    const returnTo = `${url.pathname}${url.search}${url.hash}`;
+    window.location.href =
+      `/internal/login?return_to=${encodeURIComponent(returnTo)}`;
+  }
+
   async function handleGenerate() {
     setLoading(true);
     setGenError("");
@@ -554,7 +568,45 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
     <div id="form" style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(48px,8vw,80px) 16px 40px", scrollMarginTop: 24 }}>
       <h2 style={{ fontSize: "clamp(22px,4.5vw,30px)", fontWeight: 800, textAlign: "center", letterSpacing: "-0.01em", marginBottom: 8 }}>消防計画をつくる</h2>
-      <p style={{ fontSize: 15, color: "var(--text-muted)", textAlign: "center", marginBottom: 32 }}>6ステップの入力で、提出できる計画書が完成します。</p>
+      <p style={{ fontSize: 15, color: "var(--text-muted)", textAlign: "center", marginBottom: internalAccess ? 12 : 16 }}>6ステップの入力で、提出できる計画書が完成します。</p>
+
+      {internalAccess ? (
+        <div
+          role="status"
+          style={{
+            maxWidth: 420,
+            margin: "0 auto 24px",
+            padding: "10px 14px",
+            borderRadius: 10,
+            background: "var(--ok-bg)",
+            border: "1px solid var(--ok-border)",
+            color: "var(--ok-text-strong)",
+            textAlign: "center",
+            fontSize: 13,
+            fontWeight: 600,
+          }}
+        >
+          運営者無料利用モードでログイン中
+        </div>
+      ) : (
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <button
+            type="button"
+            onClick={handleInternalLogin}
+            style={{
+              border: "none",
+              background: "transparent",
+              color: "var(--text-muted)",
+              fontSize: 12,
+              textDecoration: "underline",
+              cursor: "pointer",
+              padding: 4,
+            }}
+          >
+            運営者専用ログイン
+          </button>
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 4, marginBottom: 24, padding: 4, background: "var(--surface-muted)", borderRadius: 12 }}>
         {STEPS.map((s, i) => (
@@ -1120,6 +1172,26 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   <span>SSL暗号化通信</span>
                   <span>{internalAccess ? "社内利用・決済なし" : "Stripe安全決済"}</span>
                 </div>
+
+                {!internalAccess && (
+                  <div style={{ textAlign: "center", marginTop: 10 }}>
+                    <button
+                      type="button"
+                      onClick={handleInternalLogin}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        color: "var(--text-muted)",
+                        fontSize: 12,
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                        padding: 4,
+                      }}
+                    >
+                      運営者の方はこちら（無料利用ログイン）
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </div>
