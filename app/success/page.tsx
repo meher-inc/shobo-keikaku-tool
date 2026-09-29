@@ -12,15 +12,17 @@ const PLAN_NAMES: Record<string, string> = {
 function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const internalOrderId = searchParams.get("internal_order_id");
+  const isInternal = Boolean(internalOrderId);
   const plan = searchParams.get("plan") || "standard";
   const planName = PLAN_NAMES[plan] || "スタンダード";
   const [status, setStatus] = useState<"loading" | "ready" | "downloading" | "done" | "error">("loading");
   const [reviewStatus, setReviewStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
 
   useEffect(() => {
-    if (sessionId) setStatus("ready");
+    if (sessionId || internalOrderId) setStatus("ready");
     else setStatus("error");
-  }, [sessionId]);
+  }, [sessionId, internalOrderId]);
 
   async function sendPremiumReview(blob: Blob) {
     try {
@@ -58,7 +60,10 @@ function SuccessContent() {
   async function handleDownload() {
     setStatus("downloading");
     try {
-      const res = await fetch(`/api/download?session_id=${sessionId}`);
+      const downloadUrl = isInternal
+        ? `/api/download?internal_order_id=${encodeURIComponent(internalOrderId || "")}`
+        : `/api/download?session_id=${encodeURIComponent(sessionId || "")}`;
+      const res = await fetch(downloadUrl);
       if (!res.ok) throw new Error("Download failed");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -71,7 +76,7 @@ function SuccessContent() {
       URL.revokeObjectURL(url);
       setStatus("done");
 
-      if (plan === "premium" && reviewStatus === "idle") {
+      if (!isInternal && plan === "premium" && reviewStatus === "idle") {
         sendPremiumReview(blob);
       }
     } catch {
@@ -105,13 +110,18 @@ function SuccessContent() {
           {status === "ready" && (
             <>
               <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-              <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>お支払い完了</h1>
+              <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>
+                {isInternal ? "社内利用の生成準備完了" : "お支払い完了"}
+              </h1>
               <div style={{ display: "inline-block", fontSize: 12, fontWeight: 600, padding: "3px 12px", borderRadius: 20, background: "var(--brand-tint)", color: "var(--brand)", marginBottom: 12 }}>
-                {planName}プラン
+                {isInternal ? `社内利用（0円）・${planName}プラン` : `${planName}プラン`}
               </div>
               <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.6 }}>
-                ありがとうございます。<br />
-                下のボタンから消防計画をダウンロードしてください。
+                {isInternal ? (
+                  <>決済は発生していません。<br />下のボタンから消防計画をダウンロードしてください。</>
+                ) : (
+                  <>ありがとうございます。<br />下のボタンから消防計画をダウンロードしてください。</>
+                )}
               </p>
               <button onClick={handleDownload} style={{
                 width: "100%", padding: 16, borderRadius: 14, border: "none",
@@ -153,7 +163,7 @@ function SuccessContent() {
                 </a>
               )}
 
-              {showPremiumInfo && (
+              {showPremiumInfo && !isInternal && (
                 <div style={{
                   padding: "20px 24px", borderRadius: 16, marginBottom: 16,
                   background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", textAlign: "left",
@@ -205,8 +215,14 @@ function SuccessContent() {
               }}>
                 もう一度ダウンロード
               </button>
-              {sessionId && (
-                <a href={`/?edit=${encodeURIComponent(sessionId)}`} style={{
+              {(sessionId || internalOrderId) && (
+                <a
+                  href={
+                    isInternal
+                      ? `/?edit_internal=${encodeURIComponent(internalOrderId || "")}`
+                      : `/?edit=${encodeURIComponent(sessionId || "")}`
+                  }
+                  style={{
                   display: "block", padding: 14, borderRadius: 14, marginBottom: 12,
                   background: "var(--surface-muted)", color: "var(--text)", fontSize: 15, fontWeight: 600,
                   textDecoration: "none",
