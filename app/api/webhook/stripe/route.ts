@@ -7,6 +7,10 @@ import { sendPremiumReview } from "../../../../lib/sendPremiumReview";
 import { upsertSubscriptionFromStripe } from "../../../../lib/subscriptions";
 import { PLANS } from "../../../../lib/plans";
 import { FROM_EMAIL } from "../../../../lib/email";
+import {
+  GENERATE_AUTH_HEADER,
+  getGenerateAuthorizationSecret,
+} from "../../../../lib/generate-authorization";
 
 export const runtime = "nodejs";
 
@@ -128,7 +132,10 @@ async function handleOneTimePayment(session: Stripe.Checkout.Session) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const generateRes = await fetch(`${baseUrl}/api/generate-plan`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        [GENERATE_AUTH_HEADER]: getGenerateAuthorizationSecret(),
+      },
       body: JSON.stringify(order.form_data || {}),
     });
     if (!generateRes.ok) {
