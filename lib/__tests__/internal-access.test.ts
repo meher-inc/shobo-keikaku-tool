@@ -21,7 +21,7 @@ describe("internal-access", () => {
     expect(normalizeAccessEmail("  Owner@Example.COM ")).toBe("owner@example.com");
   });
 
-  it("uses explicit comma-separated allowlist first", () => {
+  it("allows only emails in INTERNAL_FREE_ACCESS_EMAILS", () => {
     process.env.INTERNAL_FREE_ACCESS_EMAILS =
       "owner@example.com, Staff@Example.com";
     process.env.REVIEW_TO_EMAIL = "review@example.com";
@@ -31,21 +31,21 @@ describe("internal-access", () => {
       "staff@example.com",
     ]);
     expect(isInternalFreeAccessEmail("OWNER@example.com")).toBe(true);
+    expect(isInternalFreeAccessEmail("staff@example.com")).toBe(true);
     expect(isInternalFreeAccessEmail("review@example.com")).toBe(false);
   });
 
-  it("falls back to REVIEW_TO_EMAIL when explicit allowlist is absent", () => {
+  it("grants free access to nobody when the explicit allowlist is absent", () => {
     delete process.env.INTERNAL_FREE_ACCESS_EMAILS;
-    process.env.REVIEW_TO_EMAIL = "owner@example.com";
+    process.env.REVIEW_TO_EMAIL = "review@example.com";
 
-    expect(isInternalFreeAccessEmail("owner@example.com")).toBe(true);
+    expect(getInternalFreeAccessEmails()).toEqual([]);
+    expect(isInternalFreeAccessEmail("review@example.com")).toBe(false);
+    expect(isInternalFreeAccessEmail("plan@todokede.jp")).toBe(false);
   });
 
-  it("falls back to the existing operator mailbox when no env is configured", () => {
-    delete process.env.INTERNAL_FREE_ACCESS_EMAILS;
-    delete process.env.REVIEW_TO_EMAIL;
-
-    expect(getInternalFreeAccessEmails()).toEqual(["plan@todokede.jp"]);
-    expect(isInternalFreeAccessEmail("plan@todokede.jp")).toBe(true);
+  it("grants free access to nobody when the explicit allowlist is blank", () => {
+    process.env.INTERNAL_FREE_ACCESS_EMAILS = "   ";
+    expect(getInternalFreeAccessEmails()).toEqual([]);
   });
 });
