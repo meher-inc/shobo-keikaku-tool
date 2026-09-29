@@ -17,6 +17,10 @@
  */
 
 import { supabaseAdmin } from "./supabase";
+import {
+  isInternalFreeAccessEmail,
+  normalizeAccessEmail,
+} from "./internal-access";
 
 export type AccessDecision =
   | { allowed: true; email: string }
@@ -26,7 +30,7 @@ const ALLOW_STATUSES = new Set(["active", "trialing"]);
 const PAY_REQUIRED_STATUSES = new Set(["past_due", "unpaid"]);
 
 export function normalizeEmail(email: string): string {
-  return email.toLowerCase().trim();
+  return normalizeAccessEmail(email);
 }
 
 /**
@@ -38,6 +42,12 @@ export function normalizeEmail(email: string): string {
  */
 export async function checkAccess(email: string): Promise<AccessDecision> {
   const normalized = normalizeEmail(email);
+
+  // Operator / owner accounts bypass billing entirely after email-link login.
+  // This is checked server-side only; client input cannot grant access.
+  if (isInternalFreeAccessEmail(normalized)) {
+    return { allowed: true, email: normalized };
+  }
 
   let rows: { status: string }[];
   try {

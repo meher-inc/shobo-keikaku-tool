@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { selectPackByLocation } from "../../../lib/engine-v2/city-dispatch";
+import {
+  GENERATE_AUTH_HEADER,
+  isAuthorizedGenerateHeader,
+} from "../../../lib/generate-authorization";
 
 /**
  * POST /api/generate-plan
@@ -19,6 +23,10 @@ import { selectPackByLocation } from "../../../lib/engine-v2/city-dispatch";
  * only engine — v1 was retired).
  */
 export async function POST(request: NextRequest) {
+  if (!isAuthorizedGenerateHeader(request.headers.get(GENERATE_AUTH_HEADER))) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const url = new URL(request.url);
     const form = await request.json();

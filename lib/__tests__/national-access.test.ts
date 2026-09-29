@@ -25,6 +25,8 @@ const { checkAccess, normalizeEmail, redirectPathForDecision } = await import(
 beforeEach(() => {
   mockRows = null;
   mockError = null;
+  delete process.env.INTERNAL_FREE_ACCESS_EMAILS;
+  delete process.env.REVIEW_TO_EMAIL;
 });
 
 afterEach(() => {
@@ -38,6 +40,14 @@ describe("normalizeEmail", () => {
 });
 
 describe("checkAccess", () => {
+  it("allows an internal owner email without a subscription row", async () => {
+    process.env.INTERNAL_FREE_ACCESS_EMAILS = "owner@example.com";
+    mockError = { message: "database should not be consulted" };
+
+    const d = await checkAccess(" OWNER@example.com ");
+    expect(d).toEqual({ allowed: true, email: "owner@example.com" });
+  });
+
   it("returns no_subscription when 0 rows", async () => {
     mockRows = [];
     const d = await checkAccess("a@b.co");
