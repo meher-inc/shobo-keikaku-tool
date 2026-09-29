@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseAdmin } from "../../../lib/supabase";
+import { getInternalSessionEmail } from "../../../lib/internal-session";
+import { normalizeAccessEmail } from "../../../lib/internal-access";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
@@ -38,20 +40,75 @@ async function resolvePaidOrder(sessionId: string) {
   return { order, withinWindow, editWindowDays: EDIT_WINDOW_DAYS };
 }
 
-// GET ?session_id= : 編集フォームのプリフィル用に form_data を返す。
+/**
+ * Internal zero-yen order resolution.
+ * A signed owner session must match the email stored on the order, and the
+ * order must be an actual zero-yen paid internal record.
+ */
+async function resolveInternalOrder(request: NextRequest, orderId: string) {
+  const internalEmail = await getInternalSessionEmail(request);
+  if (!internalEmail) {
+    return { error: "社内利用にはログインが必要です", status: 401 as const };
+  }
+
+  const { data: order, error } = await supabaseAdmin
+    .from("orders")
+    .select("id, plan_id, form_data, status, amount, customer_email, paid_at")
+    .eq("id", orderId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("[order-form] internal lookup error:", error);
+    return { error: "注文の取得に失敗しました", status: 500 as const };
+  }
+  if (!order) {
+    return { error: "注文が見つかりません", status: 404 as const };
+  }
+
+  const orderEmail =
+    typeof order.customer_email === "string"
+      ? normalizeAccessEmail(order.customer_email)
+      : "";
+
+  if (
+    order.status !== "paid" ||
+    Number(order.amount) !== 0 ||
+    orderEmail !== internalEmail
+  ) {
+    return { error: "Forbidden", status: 403 as const };
+  }
+
+  const paidMs = order.paid_at ? new Date(order.paid_at).getTime() : 0;
+  const ageDays = paidMs > 0 ? (Date.now() - paidMs) / 86_400_000 : Infinity;
+  const withinWindow = ageDays <= EDIT_WINDOW_DAYS;
+
+  return { order, withinWindow, editWindowDays: EDIT_WINDOW_DAYS };
+}
+
+// GET ?session_id= / ?internal_order_id= : 編集フォームのプリフィル用。
 export async function GET(request: NextRequest) {
   const sessionId = request.nextUrl.searchParams.get("session_id");
-  if (!sessionId) {
-    return NextResponse.json({ error: "session_id is required" }, { status: 400 });
+  const internalOrderId = request.nextUrl.searchParams.get("internal_order_id");
+
+  if (!sessionId && !internalOrderId) {
+    return NextResponse.json(
+      { error: "session_id or internal_order_id is required" },
+      { status: 400 }
+    );
   }
+
   try {
-    const r = await resolvePaidOrder(sessionId);
+    const r = internalOrderId
+      ? await resolveInternalOrder(request, internalOrderId)
+      : await resolvePaidOrder(sessionId!);
+
     if ("error" in r) return NextResponse.json({ error: r.error }, { status: r.status });
     return NextResponse.json({
       form_data: r.order.form_data || {},
       plan_id: r.order.plan_id,
       editable: r.withinWindow,
       edit_window_days: r.editWindowDays,
+      internal: Boolean(internalOrderId),
     });
   } catch (e) {
     console.error("[order-form GET] error:", e);
@@ -59,19 +116,29 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST { session_id, form_data } : 編集内容を保存する。
+// POST { session_id | internal_order_id, form_data } : 編集内容を保存する。
 // 改ざん防止のため form_data.plan は注文時の plan_id に固定し、
 // plan_id / amount / status / stripe_session_id は更新しない。
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const sessionId = body?.session_id;
+    const internalOrderId = body?.internal_order_id;
     const newForm = body?.form_data;
-    if (!sessionId || !newForm || typeof newForm !== "object" || Array.isArray(newForm)) {
+
+    if (
+      (!sessionId && !internalOrderId) ||
+      !newForm ||
+      typeof newForm !== "object" ||
+      Array.isArray(newForm)
+    ) {
       return NextResponse.json({ error: "不正なリクエストです" }, { status: 400 });
     }
 
-    const r = await resolvePaidOrder(sessionId);
+    const r = internalOrderId
+      ? await resolveInternalOrder(request, internalOrderId)
+      : await resolvePaidOrder(sessionId);
+
     if ("error" in r) return NextResponse.json({ error: r.error }, { status: r.status });
     if (!r.withinWindow) {
       return NextResponse.json(
