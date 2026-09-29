@@ -232,13 +232,17 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [genError, setGenError] = useState("");
   const [form, setForm] = useState(INITIAL_FORM);
   const [draftRestored, setDraftRestored] = useState(false);
-  // 購入後の編集モード（/?edit=<session_id> で起動）。聖域の order-form API と連携。
+  const [internalAccess, setInternalAccess] = useState(false);
+  // 購入後の編集モード。通常購入は /?edit=<session_id>、
+  // 社内利用は /?edit_internal=<order_id> で起動する。
   const [editSession, setEditSession] = useState<string | null>(null);
+  const [editInternalOrderId, setEditInternalOrderId] = useState<string | null>(null);
   const [editable, setEditable] = useState(true);
   const [editLoading, setEditLoading] = useState(false);
   const draftLoaded = useRef(false);
   const editMode = useRef(false);
   const stepScrollReady = useRef(false);
+  const isEditMode = Boolean(editSession || editInternalOrderId);
 
   // ステップ変更時にフォーム上部へスクロール（特にモバイルで新ステップ先頭を表示）。
   useEffect(() => {
@@ -269,17 +273,38 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     }
   }, []);
 
-  // 購入後の編集モード。/?edit=<session_id> で起動し、注文の form_data を
-  // サーバ（聖域 order-form API）から取得してフォームへ読み込む。
+  // ログイン済みの社内利用アカウントかを確認。メールアドレスは返さない。
   useEffect(() => {
-    const sid = new URLSearchParams(window.location.search).get("edit");
-    if (!sid) return;
+    (async () => {
+      try {
+        const res = await fetch("/api/internal-access", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        setInternalAccess(data.internal === true);
+      } catch {
+        // 社内判定に失敗しても一般ユーザーの決済導線はそのまま利用できる。
+      }
+    })();
+  }, []);
+
+  // 通常購入 / 社内利用の編集モード。注文の form_data を読み込む。
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sid = params.get("edit");
+    const internalOrderId = params.get("edit_internal");
+    if (!sid && !internalOrderId) return;
+
     editMode.current = true;
-    setEditSession(sid);
+    if (internalOrderId) setEditInternalOrderId(internalOrderId);
+    else if (sid) setEditSession(sid);
+
     setStep(STEPS.length - 1); // 確認・保存ステップで読込結果（成功/エラー）を表示
     (async () => {
       try {
-        const res = await fetch(`/api/order-form?session_id=${encodeURIComponent(sid)}`);
+        const query = internalOrderId
+          ? `internal_order_id=${encodeURIComponent(internalOrderId)}`
+          : `session_id=${encodeURIComponent(sid || "")}`;
+        const res = await fetch(`/api/order-form?${query}`);
         const data = await res.json();
         if (!res.ok) {
           setGenError(data.error || "購入情報の読み込みに失敗しました。");
@@ -298,7 +323,8 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   // 入力内容の下書きをブラウザから復元（マウント時）。サーバには保存しない。
   // 編集モードでは注文データを使うため復元しない。
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("edit")) {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("edit") || params.get("edit_internal")) {
       draftLoaded.current = true;
       return;
     }
@@ -456,7 +482,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
         try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
         window.location.href = data.url;
       } else {
-        setGenError("決済セッションの作成に失敗しました。時間をおいて再度お試しください。");
+        setGenError("生成準備に失敗しました。時間をおいて再度お試しください。");
       }
     } catch {
       setGenError("通信エラーが発生しました。電波状況をご確認のうえ再度お試しください。");
@@ -465,24 +491,29 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     }
   }
 
-  // 購入後の編集モード：修正を保存してから、追加料金なしで再生成・ダウンロードする。
+  // 購入後 / 社内利用の編集モード：修正を保存して再生成・ダウンロードする。
   async function handleSaveAndDownload() {
-    if (!editSession) return;
+    if (!editSession && !editInternalOrderId) return;
     setEditLoading(true);
     setGenError("");
     try {
+      const payload = editInternalOrderId
+        ? { internal_order_id: editInternalOrderId, form_data: form }
+        : { session_id: editSession, form_data: form };
       const res = await fetch("/api/order-form", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: editSession, form_data: form }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) {
         setGenError(data.error || "保存に失敗しました。時間をおいて再度お試しください。");
         return;
       }
-      // 修正版を再生成してダウンロード（決済は発生しない）。
-      window.location.href = `/api/download?session_id=${encodeURIComponent(editSession)}`;
+      // 修正版を再生成してダウンロード（追加決済は発生しない）。
+      window.location.href = editInternalOrderId
+        ? `/api/download?internal_order_id=${encodeURIComponent(editInternalOrderId)}`
+        : `/api/download?session_id=${encodeURIComponent(editSession || "")}`;
     } catch {
       setGenError("通信エラーが発生しました。電波状況をご確認のうえ再度お試しください。");
     } finally {
@@ -846,10 +877,10 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
         {step === 5 && (
           <div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>{editSession ? "内容を修正する" : "プランを選択"}</h2>
-            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24 }}>{editSession ? "購入済みの計画書を修正し、追加料金なしで再生成できます" : "内容を確認してプランを選んでください"}</p>
+            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>{isEditMode ? "内容を修正する" : "プランを選択"}</h2>
+            <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24 }}>{isEditMode ? "作成済みの計画書を修正し、追加料金なしで再生成できます" : "内容を確認してプランを選んでください"}</p>
 
-            {editSession && (
+            {isEditMode && (
               <div role="status" style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "12px 16px", borderRadius: 12, marginBottom: 20, background: "var(--ok-bg)", border: "1px solid var(--ok-border)", color: "var(--ok-text-strong)", fontSize: 13.5, lineHeight: 1.7 }}>
                 <span aria-hidden="true">✓</span>
                 <span>購入済みの計画を編集しています。各ステップで内容を修正し、下の「修正版を保存してダウンロード」で再生成できます（決済は発生しません）。</span>
@@ -917,8 +948,26 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
               </div>
             </div>
 
+            {internalAccess && !isEditMode && (
+              <div
+                role="status"
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: 12,
+                  marginBottom: 20,
+                  background: "var(--ok-bg)",
+                  border: "1px solid var(--ok-border)",
+                  color: "var(--ok-text-strong)",
+                  fontSize: 13.5,
+                  lineHeight: 1.7,
+                }}
+              >
+                社内利用アカウントでログイン中です。選択したプランを <strong>0円</strong> で生成します。Stripe決済は発生しません。
+              </div>
+            )}
+
             {/* Plan selector（編集モードではプラン固定のため非表示） */}
-            <div style={{ display: editSession ? "none" : "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+            <div style={{ display: isEditMode ? "none" : "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
               {PLANS.map(plan => {
                 const isSelected = selectedPlan === plan.id;
                 return (
@@ -1038,7 +1087,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             )}
 
             {/* CTA button */}
-            {editSession ? (
+            {isEditMode ? (
               <>
                 <button onClick={handleSaveAndDownload} disabled={completeness < 100 || editLoading || !editable} aria-busy={editLoading} style={{
                   width: "100%", padding: 16, borderRadius: 14, border: "none", fontSize: 17, fontWeight: 600,
@@ -1058,14 +1107,18 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   cursor: completeness === 100 && !loading ? "pointer" : "not-allowed",
                   background: completeness === 100 && !loading ? "var(--brand)" : "var(--border-strong)", color: "#fff",
                 }}>
-                  {loading ? (<><span className="spinner" aria-hidden="true" />決済画面に移動中...</>) : `${currentPlan.priceLabel} で生成する`}
+                  {loading ? (
+                    <><span className="spinner" aria-hidden="true" />{internalAccess ? "社内用に生成中..." : "決済画面に移動中..."}</>
+                  ) : (
+                    internalAccess ? "社内利用で生成（0円）" : `${currentPlan.priceLabel} で生成する`
+                  )}
                 </button>
                 {completeness < 100 && <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", marginTop: 10 }}>すべての必須項目を入力すると生成できます</p>}
 
                 {/* Trust badges */}
                 <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12, color: "var(--text-muted)" }}>
                   <span>SSL暗号化通信</span>
-                  <span>Stripe安全決済</span>
+                  <span>{internalAccess ? "社内利用・決済なし" : "Stripe安全決済"}</span>
                 </div>
               </>
             )}
