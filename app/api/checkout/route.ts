@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseAdmin } from "../../../lib/supabase";
+import { getInternalSessionEmail } from "../../../lib/internal-session";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
@@ -31,6 +32,41 @@ export async function POST(request: NextRequest) {
 
     const planId = formData.plan || "standard";
     const plan = PLAN_CONFIG[planId] || PLAN_CONFIG.standard;
+
+    // Internal operator path: a verified owner session skips Stripe entirely.
+    // We still persist a zero-yen paid order so download tracking and editing
+    // behave the same way as customer orders.
+    const internalEmail = await getInternalSessionEmail(request);
+    if (internalEmail) {
+      const { data: internalOrder, error: internalInsertError } = await supabaseAdmin
+        .from("orders")
+        .insert({
+          plan_id: planId,
+          amount: 0,
+          currency: "jpy",
+          form_data: { ...formData, plan: planId },
+          status: "paid",
+          paid_at: new Date().toISOString(),
+          customer_email: internalEmail,
+        })
+        .select("id")
+        .single();
+
+      if (internalInsertError || !internalOrder) {
+        console.error("[checkout] internal order insert error:", internalInsertError);
+        return NextResponse.json(
+          { error: "社内利用の注文作成に失敗しました" },
+          { status: 500 }
+        );
+      }
+
+      const successUrl =
+        `${request.nextUrl.origin}/success?internal_order_id=${encodeURIComponent(
+          internalOrder.id
+        )}&plan=${encodeURIComponent(planId)}`;
+
+      return NextResponse.json({ url: successUrl, internal: true });
+    }
 
     // Insert a pending order row in Supabase BEFORE creating the Stripe session.
     // The Stripe webhook later flips this row to status='paid'.
