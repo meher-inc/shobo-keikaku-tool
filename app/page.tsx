@@ -6,6 +6,8 @@ import { MarketingSections } from "../components/marketing-sections";
 import { NoteUpdates } from "../components/note-updates";
 import TodokedeSeriesNav from "../components/shared/TodokedeSeriesNav";
 import { FaqStructuredData } from "../components/StructuredData";
+import { FaqAnswer } from "../components/faq-answer";
+import { PLAN_SELECTION_FAQ, PREMIUM_FAQS, type FaqItem } from "../lib/premium-faqs";
 
 const USE_CATEGORIES = [
   { value: "1-イ", label: "1項イ 劇場等", specific: true },
@@ -42,14 +44,14 @@ const STEPS = [
   { id: "confirm", title: "生成", icon: "✅" },
 ];
 
-const FAQ_ITEMS = [
+const FAQ_ITEMS: FaqItem[] = [
   {
     q: "消防計画を自動で作成できるツールはありますか?",
-    a: "はい。トドケデ消防計画は、所在地と建物情報を入力するだけで、所轄消防本部の様式に沿った消防計画をWord形式で自動作成できるクラウド型サービスです。元消防士が設計し、東京消防庁・大阪市消防局など全国20の消防本部の様式に対応。1件¥4,980からの買い切りで、月額・更新料はかかりません。作成後の再ダウンロードや、購入から14日間の無料修正にも対応しています。",
+    a: "はい。トドケデ消防計画は、所在地と建物情報を入力するだけで、所轄消防本部の様式に沿った消防計画をWord形式で自動作成できるクラウド型サービスです。元消防士が設計し、東京消防庁・大阪市消防局など全国20の消防本部の様式に対応。1件¥4,980からの買い切りで、月額・更新料はかかりません。作成後の再ダウンロードに対応しています。購入から14日間は、ご自身で入力を直して追加料金なしで作り直せます。",
   },
   {
     q: "出力された消防計画はそのまま消防署に提出できますか?",
-    a: "はい。京都市消防局・東京消防庁・大阪市消防局・堺市消防局・岡山市消防局・横浜市消防局・福岡市消防局・名古屋市消防局・札幌市消防局・川崎市消防局・神戸市消防局・さいたま市消防局・広島市消防局・仙台市消防局・千葉市消防局・北九州市消防局・新潟市消防局・熊本市消防局・相模原市消防局・静岡市消防局の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。",
+    a: "はい。京都市消防局・東京消防庁・大阪市消防局・堺市消防局・岡山市消防局・横浜市消防局・福岡市消防局・名古屋市消防局・札幌市消防局・川崎市消防局・神戸市消防局・さいたま市消防局・広島市消防局・仙台市消防局・千葉市消防局・北九州市消防局・新潟市消防局・熊本市消防局・相模原市消防局・静岡市消防局の最新様式に準拠しており、そのまま印刷して提出できます。ただし管轄消防署によっては事前相談や追加の記入を求められる場合があります。不安な方はプレミアムプラン(元消防士によるチェック付き)をご利用ください。提出前に内容をご確認いただき、必要に応じて入力を直して作り直してください。受理の可否は所轄消防本部が判断します。",
   },
   {
     q: "対応している消防本部を教えてください。",
@@ -59,13 +61,11 @@ const FAQ_ITEMS = [
     q: "工事中（増改築・内装改修など）の建物の消防計画にも対応していますか?",
     a: "はい。建物情報のステップで「工事中の消防計画」を選ぶと、火気管理・危険物品の管理・避難経路の確保・消防用設備等の機能停止時の代替措置などを定めた、工事中の防火対象物用の消防計画を生成します。工事概要書や火気使用工事の事前承認書などの別表も同梱されます（スタンダード以上）。工事中の消防計画の届出様式や届出要否は消防本部ごとに運用が異なるため、提出前に所轄消防署へご確認ください。",
   },
-  {
-    q: "どのプランを選べばいいかわかりません。",
-    a: "迷ったらスタンダード(¥9,800)がおすすめです。消防計画本体に加えて別表すべてと記入ガイドPDFが付くので、初めて作成する方でも安心です。プレミアム(¥29,800)は「絶対に一発で通したい」「元消防士に直接見てほしい」方向けです。",
-  },
+  PLAN_SELECTION_FAQ,
+  ...PREMIUM_FAQS,
   {
     q: "入力した情報は保存されますか?",
-    a: "はい。フォームに入力された情報は、決済・書類生成に加えて、購入後の再ダウンロードや14日間の無料修正に対応するため、決済記録とあわせてサーバーに保存されます。保存期間は決済関連記録として取引完了日から7年間（法人税法等に基づく帳簿保存義務）で、詳細はプライバシーポリシーをご確認ください。削除をご希望の場合は、プライバシーポリシー記載のお問い合わせ先までご連絡ください。",
+    a: "はい。フォームに入力された情報は、決済・書類生成に加えて、購入後の再ダウンロードや、ご自身で入力を直して期間内に追加料金なしで作り直せるようにするため、決済記録とあわせてサーバーに保存されます。保存期間は決済関連記録として取引完了日から7年間（法人税法等に基づく帳簿保存義務）で、詳細はプライバシーポリシーをご確認ください。削除をご希望の場合は、プライバシーポリシー記載のお問い合わせ先までご連絡ください。",
   },
   {
     q: "決済後にダウンロードし忘れました。再ダウンロードできますか?",
@@ -89,25 +89,10 @@ const FAQ_ITEMS = [
   },
   {
     q: "法人として複数物件分まとめて購入できますか?",
-    a: (
-      <>
-        現在は1件ずつの購入となっております。管理会社様・フランチャイズ本部様などで複数物件の一括対応をご希望の場合は、
-        <a
-          href="/contact"
-          style={{ color: "var(--brand)", textDecoration: "underline" }}
-        >
-          法人・複数物件のご相談
-        </a>
-        からお問い合わせください。担当より折り返しご案内いたします。
-      </>
-    ),
+    a: "現在は1件ずつの購入となっております。管理会社様・フランチャイズ本部様などで複数物件の一括対応をご希望の場合は、法人・複数物件のご相談からお問い合わせください。担当より折り返しご案内いたします。",
+    link: { text: "法人・複数物件のご相談", href: "/contact" },
   },
 ];
-
-// FAQPage 構造化データ用（文字列回答のみを採用。JSXを含む項目は除外）。
-const FAQ_SCHEMA_ITEMS = FAQ_ITEMS.filter(
-  (it): it is { q: string; a: string } => typeof it.a === "string"
-).map((it) => ({ q: it.q, a: it.a }));
 
 const PLANS = SPOT_PLANS;
 
@@ -238,6 +223,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [editSession, setEditSession] = useState<string | null>(null);
   const [editInternalOrderId, setEditInternalOrderId] = useState<string | null>(null);
   const [editable, setEditable] = useState(true);
+  const [editExpiresAt, setEditExpiresAt] = useState<string | null>(null);
   const [editLoading, setEditLoading] = useState(false);
   const draftLoaded = useRef(false);
   const editMode = useRef(false);
@@ -319,6 +305,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
           setForm({ ...INITIAL_FORM, ...data.form_data });
         }
         setEditable(data.editable !== false);
+        setEditExpiresAt(data.edit_expires_at || null);
       } catch {
         setGenError("通信エラーが発生しました。時間をおいて再度お試しください。");
       }
@@ -538,7 +525,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
   return (
     <>
     {/* FAQ 構造化データ（schema.org FAQPage）: AI・検索での引用を助ける */}
-    <FaqStructuredData items={FAQ_SCHEMA_ITEMS} />
+    <FaqStructuredData items={FAQ_ITEMS} />
     {/* Hero */}
     <section style={{ textAlign: "center", padding: "clamp(56px,9vw,96px) clamp(16px,4vw,24px) clamp(40px,6vw,64px)", maxWidth: 760, margin: "0 auto" }}>
       <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--brand-tint)", color: "var(--brand)", fontSize: 13, fontWeight: 700, padding: "8px 16px", borderRadius: 999, marginBottom: 24 }}>
@@ -971,7 +958,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                   ["防火管理者", form.manager_name && `${form.manager_name}${form.manager_qual ? `（${form.manager_qual}）` : ""}`],
                   ["連絡先", form.manager_tel],
                   ["消防用設備", form.equipment.join("、")],
-                  ["各階配置", form.equipment_floors.filter(r => r.floor || r.detail).map(r => `${r.floor || "—"}: ${r.detail}`).join(" ／ ")],
+                  ["各階配置", form.equipment_floors.filter(r => r.floor || r.detail).map(r => `${r.floor || "-"}: ${r.detail}`).join(" ／ ")],
                   ["自衛消防隊", [form.leader_name && `隊長:${form.leader_name}`, form.tsuhou_member && `通報:${form.tsuhou_member}`, form.shoka_member && `初期消火:${form.shoka_member}`, form.hinan_member && `避難誘導:${form.hinan_member}`, form.kyugo_member && `救護:${form.kyugo_member}`, form.anzen_member && `安全:${form.anzen_member}`].filter(Boolean).join(" / ")],
                   ["避難場所", [form.evacuation_site, form.assembly_point].filter(Boolean).join(" / ")],
                 ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
@@ -1122,13 +1109,13 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
             {/* Summary */}
             <div style={{ padding: 20, borderRadius: 14, background: "var(--surface-3)", fontSize: 14, lineHeight: 2.2, marginBottom: 24 }}>
               <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>計画の種類</span>{isConstruction ? "工事中の消防計画" : "消防計画"}</div>
-              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>所轄</span>{deptName || "—"}</div>
-              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>建物</span>{form.building_name || "—"}</div>
-              {isConstruction && <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>工事</span>{[form.construction_type, [form.construction_start, form.construction_end].filter(Boolean).join("〜")].filter(Boolean).join(" / ") || "—"}</div>}
-              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>規模</span>{form.total_area || "—"}㎡ / {form.num_floors || "—"}階 / {form.capacity || "—"}人</div>
-              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>管理権原者</span>{form.owner_name || "—"}</div>
-              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>防火管理者</span>{form.manager_name || "—"}（{form.manager_qual}）</div>
-              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "—"}</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>所轄</span>{deptName || "-"}</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>建物</span>{form.building_name || "-"}</div>
+              {isConstruction && <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>工事</span>{[form.construction_type, [form.construction_start, form.construction_end].filter(Boolean).join("〜")].filter(Boolean).join(" / ") || "-"}</div>}
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>規模</span>{form.total_area || "-"}㎡ / {form.num_floors || "-"}階 / {form.capacity || "-"}人</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>管理権原者</span>{form.owner_name || "-"}</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>防火管理者</span>{form.manager_name || "-"}（{form.manager_qual}）</div>
+              <div><span style={{ color: "var(--text-muted)", display: "inline-block", width: 100 }}>設備</span>{form.equipment.join("、") || "-"}</div>
             </div>
 
             {/* 決済エラー（alert の置き換え・スクリーンリーダーに通知） */}
@@ -1151,6 +1138,11 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                 <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", marginTop: 10 }}>
                   {editable ? "追加料金はかかりません。修正内容で計画書を再生成します。" : "編集可能期間を過ぎているため保存できません。お手数ですがお問い合わせください。"}
                 </p>
+                {editExpiresAt && (
+                  <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center" }}>
+                    無料で作り直せる期限：{new Date(editExpiresAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}（日本時間）
+                  </p>
+                )}
               </>
             ) : (
               <>
@@ -1412,7 +1404,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                       color: "var(--text)",
                     }}
                   >
-                    {item.a}
+                    <FaqAnswer item={item} />
                   </div>
                 </div>
               )}
@@ -1455,7 +1447,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       </div>
     </section>
 
-    {/* 更新情報（note.com マガジン連携） — ページ下部 */}
+    {/* 更新情報（note.com マガジン連携） - ページ下部 */}
     <NoteUpdates />
     <TodokedeSeriesNav source="plan" currentId="shobo-keikaku" />
     </>

@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         if (session.mode === "payment") {
-          await handleOneTimePayment(session);
+          await handleOneTimePayment(session, event.created);
         } else if (session.mode === "subscription") {
           await handleSubscriptionCheckoutCompleted(session);
         }
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
 
 // ── checkout.session.completed — single-purchase (existing) ──────
 
-async function handleOneTimePayment(session: Stripe.Checkout.Session) {
+async function handleOneTimePayment(session: Stripe.Checkout.Session, completedAt: number) {
   const orderId = session.metadata?.order_id;
   if (!orderId) {
     console.warn("[webhook] checkout.session.completed without order_id metadata", session.id);
@@ -113,7 +113,8 @@ async function handleOneTimePayment(session: Stripe.Checkout.Session) {
     .from("orders")
     .update({
       status: "paid",
-      paid_at: new Date().toISOString(),
+      // Use the completion event time, not the possibly delayed webhook delivery.
+      paid_at: new Date(completedAt * 1000).toISOString(),
       customer_email: customerEmail,
       stripe_session_id: session.id,
     })

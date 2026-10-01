@@ -41,7 +41,7 @@ const reasons = [
   },
   {
     title: "元消防士による事前チェック",
-    body: "「一発で通したい」方はプレミアムへ。元消防士が内容を確認し、1回の修正まで対応します。",
+    body: "提出前に見てほしい方はプレミアムへ。元消防士が内容を確認し、気になる点を理由とあわせてお伝えします。指摘をもとに、ご自身で入力を直して作り直せます。",
   },
   {
     title: "購入後も作り直せる",
@@ -139,7 +139,7 @@ export function MarketingSections() {
             "間違ったまま出して、受理されない・立入検査で指摘されるのが不安。",
           ].map((t) => (
             <div key={t} style={{ display: "flex", gap: 12, alignItems: "flex-start", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 16px" }}>
-              <span aria-hidden="true" style={{ flexShrink: 0, color: "var(--text-faint)", fontWeight: 800, fontSize: 16, lineHeight: 1.6 }}>—</span>
+              <span aria-hidden="true" style={{ flexShrink: 0, color: "var(--text-faint)", fontWeight: 800, fontSize: 16, lineHeight: 1.6 }}>-</span>
               <p style={{ fontSize: 14.5, lineHeight: 1.8, color: "var(--text)" }}>{t}</p>
             </div>
           ))}
@@ -196,7 +196,7 @@ export function MarketingSections() {
               <figure key={t.author} style={{ ...card, background: "var(--surface)", margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
                 <blockquote style={{ margin: 0, fontSize: 14, lineHeight: 1.85, color: "var(--text)" }}>「{t.quote}」</blockquote>
                 <figcaption style={{ fontSize: 12.5, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 8 }}>
-                  — {t.author}
+                  - {t.author}
                   {t.placeholder && (
                     <span style={{ fontSize: 10, fontWeight: 700, color: "var(--warn-text-strong)", background: "var(--warn-bg)", border: "1px solid var(--warn-border)", borderRadius: 999, padding: "1px 8px" }}>
                       （サンプル）
@@ -365,6 +365,9 @@ export function MarketingSections() {
               </div>
             ))}
           </div>
+          <p style={{ textAlign: "center", fontSize: 14, lineHeight: 1.8, color: "var(--text-muted)", marginTop: 24 }}>
+            書類の作成や修正まで任せたい方は、<a href="https://daikou.todokede.jp/" style={{ color: BRAND, textDecoration: "underline" }}>行政書士連携の代行サービス</a>をご利用ください。
+          </p>
           <div style={{ textAlign: "center", marginTop: 32 }}>
             <a href="/pricing" style={{ fontSize: 14, fontWeight: 600, color: BRAND, textDecoration: "underline" }}>
               プランの詳しい比較を見る
