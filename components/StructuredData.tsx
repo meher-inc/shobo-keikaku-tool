@@ -45,12 +45,12 @@ export function SiteStructuredData() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
     />
   );
 }
 
-/** FAQ ページ用。表示中のFAQ（文字列回答）と一致させて渡すこと。 */
+/** FAQ ページ用。表示中のFAQと同じ回答テキストを渡すこと。 */
 export function FaqStructuredData({ items }: { items: { q: string; a: string }[] }) {
   const data = {
     "@context": "https://schema.org",
@@ -64,7 +64,7 @@ export function FaqStructuredData({ items }: { items: { q: string; a: string }[]
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
     />
   );
 }

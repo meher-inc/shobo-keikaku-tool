@@ -22,7 +22,7 @@ const PLAN_CONFIG: Record<string, { price: number; name: string; description: st
   premium: {
     price: 29800,
     name: "トドケデ消防計画（プレミアム）",
-    description: "消防計画＋別表＋記入ガイド＋元消防士による内容チェック＋修正1回",
+    description: "消防計画＋別表＋記入ガイド＋元消防士による内容チェック（指摘コメント）＋指摘後の作り直しに対応（ご自身で再入力）",
   },
 };
 
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
             currency: "jpy",
             product_data: {
               name: plan.name,
-              description: `${formData.building_name} — ${plan.description}`,
+              description: `${formData.building_name} / ${plan.description}`,
             },
             unit_amount: plan.price,
           },

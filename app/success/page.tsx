@@ -169,7 +169,7 @@ function SuccessContent() {
                   background: "var(--brand-tint)", border: "1px solid var(--brand-tint-border)", textAlign: "left",
                 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--brand-dark)", marginBottom: 10 }}>
-                    🔍 内容チェック＋修正1回（プレミアム特典）
+                    元消防士による内容チェック（指摘コメント）
                   </div>
 
                   {reviewStatus === "sending" && (
@@ -184,7 +184,7 @@ function SuccessContent() {
                         ✅ <strong>チェック依頼を自動で送信しました</strong>
                       </p>
                       <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.8, margin: 0 }}>
-                        ご登録のメール宛に受付確認メールをお送りしました。元消防士の担当者が <strong>3営業日以内</strong> に修正版のWordをご返送いたします。
+                        ご登録のメール宛に受付確認メールをお送りしました。指摘コメントは、決済完了日から起算して営業日3日以内にお送りします。
                       </p>
                     </>
                   )}
@@ -202,9 +202,12 @@ function SuccessContent() {
                       }}>
                         📧 plan@todokede.jp
                       </div>
-                      <div>3営業日以内にチェック済みファイルを返送いたします。</div>
+                      <div>指摘コメントは、決済完了日から起算して営業日3日以内にお送りします。</div>
                     </div>
                   )}
+                  <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.8, margin: "12px 0 0" }}>
+                    当社が計画書を書き換えることはありません。元消防士が気になる箇所とその理由、参考となる根拠をお送りしますので、入力を直して計画書を作り直してください。作り直した計画書は、指摘が反映されているか1回確認します。書類の作成や修正を他人に依頼できるのは行政書士です。任せたい場合は<a href="https://daikou.todokede.jp/" style={{ color: "var(--brand)", textDecoration: "underline" }}>行政書士連携の代行サービス</a>をご利用ください。
+                  </p>
                 </div>
               )}
 

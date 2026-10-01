@@ -4,13 +4,11 @@ import Stripe from "stripe";
 import { supabaseAdmin } from "../../../lib/supabase";
 import { getInternalSessionEmail } from "../../../lib/internal-session";
 import { normalizeAccessEmail } from "../../../lib/internal-access";
+import { getOrderEditWindow, PURCHASE_EDIT_DAYS } from "../../../lib/order-edit-window";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
 });
-
-// 購入後に入力を編集できる期間（決済からの日数）。
-const EDIT_WINDOW_DAYS = 14;
 
 /**
  * 決済済みセッションに紐づく注文を取得し、編集可否を判定する。
@@ -21,13 +19,9 @@ async function resolvePaidOrder(sessionId: string) {
   if (session.payment_status !== "paid") {
     return { error: "支払いが完了していません", status: 400 as const };
   }
-  const createdMs = (session.created || 0) * 1000;
-  const ageDays = createdMs > 0 ? (Date.now() - createdMs) / 86_400_000 : Infinity;
-  const withinWindow = ageDays <= EDIT_WINDOW_DAYS;
-
   const { data: order, error } = await supabaseAdmin
     .from("orders")
-    .select("id, plan_id, form_data, status")
+    .select("id, plan_id, form_data, status, paid_at, premium_comments_sent_at")
     .eq("stripe_session_id", sessionId)
     .maybeSingle();
   if (error) {
@@ -37,7 +31,16 @@ async function resolvePaidOrder(sessionId: string) {
   if (!order) {
     return { error: "注文が見つかりません", status: 404 as const };
   }
-  return { order, withinWindow, editWindowDays: EDIT_WINDOW_DAYS };
+  // Legacy rows without paid_at retain the previous Checkout-created fallback.
+  const paidAt = order.paid_at ?? (session.created
+    ? new Date(session.created * 1000).toISOString()
+    : null);
+  const window = getOrderEditWindow({
+    planId: order.plan_id,
+    paidAt,
+    commentsSentAt: order.premium_comments_sent_at,
+  });
+  return { order, ...window };
 }
 
 /**
@@ -53,7 +56,7 @@ async function resolveInternalOrder(request: NextRequest, orderId: string) {
 
   const { data: order, error } = await supabaseAdmin
     .from("orders")
-    .select("id, plan_id, form_data, status, amount, customer_email, paid_at")
+    .select("id, plan_id, form_data, status, amount, customer_email, paid_at, premium_comments_sent_at")
     .eq("id", orderId)
     .maybeSingle();
 
@@ -78,11 +81,12 @@ async function resolveInternalOrder(request: NextRequest, orderId: string) {
     return { error: "Forbidden", status: 403 as const };
   }
 
-  const paidMs = order.paid_at ? new Date(order.paid_at).getTime() : 0;
-  const ageDays = paidMs > 0 ? (Date.now() - paidMs) / 86_400_000 : Infinity;
-  const withinWindow = ageDays <= EDIT_WINDOW_DAYS;
-
-  return { order, withinWindow, editWindowDays: EDIT_WINDOW_DAYS };
+  const window = getOrderEditWindow({
+    planId: order.plan_id,
+    paidAt: order.paid_at,
+    commentsSentAt: order.premium_comments_sent_at,
+  });
+  return { order, ...window };
 }
 
 // GET ?session_id= / ?internal_order_id= : 編集フォームのプリフィル用。
@@ -106,8 +110,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       form_data: r.order.form_data || {},
       plan_id: r.order.plan_id,
-      editable: r.withinWindow,
-      edit_window_days: r.editWindowDays,
+      editable: r.editable,
+      edit_window_days: PURCHASE_EDIT_DAYS,
+      edit_expires_at: r.expiresAt,
       internal: Boolean(internalOrderId),
     });
   } catch (e) {
@@ -140,9 +145,9 @@ export async function POST(request: NextRequest) {
       : await resolvePaidOrder(sessionId);
 
     if ("error" in r) return NextResponse.json({ error: r.error }, { status: r.status });
-    if (!r.withinWindow) {
+    if (!r.editable) {
       return NextResponse.json(
-        { error: `編集可能期間（${EDIT_WINDOW_DAYS}日）を過ぎています` },
+        { error: "無料で作り直せる期間を過ぎています", edit_expires_at: r.expiresAt },
         { status: 403 }
       );
     }

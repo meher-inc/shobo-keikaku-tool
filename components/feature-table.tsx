@@ -30,7 +30,7 @@ const featureGroups: {
     name: "内容チェック",
     features: [
       { name: "元消防士による内容チェック", light: false, standard: false, premium: true },
-      { name: "修正1回対応", light: false, standard: false, premium: true },
+      { name: "指摘後の作り直し", light: false, standard: false, premium: true },
     ],
   },
 ]
@@ -141,6 +141,9 @@ export function FeatureTable() {
             </div>
           ))}
         </div>
+        <p className="mt-6 text-sm leading-relaxed text-gray-600">
+          元消防士のチェックでは、記載内容の気になる点とその理由をお伝えします。当社が計画書を書き換えることはありません。作成や修正まで任せたい方は<a href="https://daikou.todokede.jp/" className="text-[#2E5F9E] underline">行政書士連携の代行サービス</a>をご利用ください。
+        </p>
       </div>
     </section>
   )

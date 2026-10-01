@@ -162,9 +162,10 @@ export async function sendPremiumReview(args: SendPremiumReviewArgs): Promise<vo
       <table style="border-collapse:collapse;width:100%;font-size:13px;border:1px solid #e5e5e7;border-radius:8px;overflow:hidden;">
         ${rowsHtml}
       </table>
-      <p style="margin-top:24px;">添付Wordを確認し、修正版を <strong>このメールに返信</strong> する形で顧客(${escapeHtml(
-        customerEmail
-      )})宛に送ってください。</p>
+      <p style="margin-top:24px;">プレミアムでは、消防業務の経験を有する当社の担当者が、お客様が作成した消防計画書を確認し、気になる箇所、その理由および参考となる根拠を書面にてお伝えします（以下「指摘コメント」）。</p>
+      <p>指摘コメントは、決済完了日から起算して営業日3日以内にお送りします。</p>
+      <p>当社は、指摘コメントに基づく計画書の加筆、修正および書き換えを行いません。指摘の反映は、お客様が本サービスの入力を修正し、計画書を再生成することにより行っていただきます。</p>
+      <p>再生成後の計画書について、指摘事項の反映状況を1回に限り確認します。</p>
     </div>`;
 
   const r1 = await resend.emails.send({
@@ -185,12 +186,14 @@ export async function sendPremiumReview(args: SendPremiumReviewArgs): Promise<vo
       <div style="background:#f5f5f7;padding:20px;border-radius:12px;margin:24px 0;">
         <h3 style="margin-top:0;">📋 今後の流れ</h3>
         <ol>
-          <li><strong>3営業日以内</strong>に修正版Wordを返送します</li>
-          <li>ご質問はそのまま返信してください(修正1回まで対応)</li>
-          <li>完成した消防計画を所轄消防本部へご提出ください</li>
+          <li>決済完了日から営業日3日以内に、決済時のメールアドレスへお送りします。無料で作り直せる期間（決済から14日）が残り少ない場合は、指摘の送付日から7日間に延長します。</li>
+          <li>当社は、指摘コメントに基づく計画書の加筆、修正および書き換えを行いません。指摘の反映は、お客様が本サービスの入力を修正し、計画書を再生成することにより行っていただきます。</li>
+          <li>再生成後の計画書について、指摘事項の反映状況を1回に限り確認します。</li>
+          <li>提出前に内容をご確認いただき、必要に応じて入力を直して作り直してください。受理の可否は所轄消防本部が判断します。</li>
         </ol>
       </div>
       <p>添付に、ご入力内容をもとに自動生成した消防計画Wordを同封しています。</p>
+      <p>書類の作成や修正まで任せたい方は、<a href="https://daikou.todokede.jp/">行政書士連携の代行サービス</a>をご利用ください。</p>
       <hr style="border:none;border-top:1px solid #e5e5e7;margin:32px 0;"/>
       <p style="color:#888;font-size:13px;">トドケデ / MeHer株式会社<br/>お問い合わせ: ${escapeHtml(
         REVIEW_TO_EMAIL
