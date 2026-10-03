@@ -35,7 +35,12 @@ describe("analytics privacy boundary", () => {
 });
 
 describe("purchase delivery and replay", () => {
-  beforeEach(() => { vi.stubEnv("GA4_API_SECRET", "test-only-secret"); vi.stubEnv("VERCEL_ENV", "preview"); });
+  beforeEach(() => {
+    vi.stubEnv("GA4_API_SECRET", "test-only-secret"); vi.stubEnv("VERCEL_ENV", "preview");
+    vi.spyOn(console, "info").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
+  });
+  const logs = (level: "info" | "error") => vi.mocked(console[level]).mock.calls.map(([line]) => JSON.parse(String(line).replace("[ga4.purchase] ", "")));
   function fixture() {
     let metadata: Record<string, string> = {};
     const retrieve = vi.fn(async () => ({ metadata }));
@@ -50,6 +55,7 @@ describe("purchase delivery and replay", () => {
     expect(await sendPurchase(stripe, session(), at)).toBe("sent");
     expect(await sendPurchase(stripe, session(), at)).toBe("duplicate");
     expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(logs("info").map(entry => entry.outcome)).toEqual(["acknowledged", "duplicate"]);
   });
   it.each(["", "[SENSITIVE]"])("does not send or mark an unavailable secret: %s", async secret => {
     const { stripe, fetcher, update } = fixture();
@@ -57,18 +63,22 @@ describe("purchase delivery and replay", () => {
     await expect(sendPurchase(stripe, session(), at)).rejects.toThrow("GA4_API_SECRET is not available");
     expect(fetcher).not.toHaveBeenCalled();
     expect(update).not.toHaveBeenCalled();
+    expect(logs("error")).toMatchObject([{ outcome: "failed", stage: "configuration", secret_configured: false }]);
   });
   it("does not mark failed transports and allows retry", async () => {
     const { stripe, fetcher, update } = fixture();
     fetcher.mockResolvedValueOnce(new Response(null, { status: 503 }));
     await expect(sendPurchase(stripe, session(), at)).rejects.toThrow("HTTP 503");
     expect(update).not.toHaveBeenCalled();
+    expect(logs("error")).toMatchObject([{ outcome: "failed", stage: "transport", http_status: 503 }]);
     await expect(sendPurchase(stripe, session(), at)).resolves.toBe("sent");
   });
   it("reuses the transaction id when a crash prevents storing the sent marker", async () => {
     const { stripe, fetcher, update } = fixture();
     update.mockRejectedValueOnce(new Error("temporary Stripe failure"));
     await expect(sendPurchase(stripe, session(), at)).rejects.toThrow();
+    expect(logs("error")).toMatchObject([{ outcome: "failed", stage: "delivery_marker", http_status: 204 }]);
+    expect(logs("info")).toHaveLength(0);
     await sendPurchase(stripe, session(), at);
     const ids = fetcher.mock.calls.map(([, init]) => JSON.parse(init.body).events[0].params.transaction_id);
     expect(ids).toEqual(["pi_testFixture", "pi_testFixture"]);
@@ -79,5 +89,35 @@ describe("purchase delivery and replay", () => {
     expect(fetcher).not.toHaveBeenCalled();
     fetcher.mockRejectedValueOnce(new Error("api_secret=private"));
     await expect(sendPurchase(stripe, session(), at)).rejects.toThrow("GA4 purchase transport failed");
+    expect(JSON.stringify(logs("error"))).not.toMatch(/api_secret|private|test-only-secret|秘密|customer@|09012345678/);
+  });
+  it("logs a production acknowledgement with identifiers but no secret, payload or PII", async () => {
+    const { stripe } = fixture();
+    vi.stubEnv("VERCEL_ENV", "production");
+    await sendPurchase(stripe, session({ livemode: true, id: "cs_live_fixture" }), at);
+    expect(logs("info")).toEqual([{
+      event: "ga4_purchase_delivery", measurement_id: "G-TF01DPKTPQ", environment: "production",
+      checkout_session_id: "cs_live_fixture", transaction_id: "pi_testFixture", plan: "standard",
+      secret_configured: true, outcome: "acknowledged", stage: "delivery_marker", http_status: 204,
+    }]);
+    expect(JSON.stringify(logs("info"))).not.toMatch(/test-only-secret|client_id|session_id.*123456|秘密|customer@|09012345678|google-analytics.com/);
+  });
+  it("logs a no-cost purchase as skipped without contacting Google or Stripe", async () => {
+    const { stripe, fetcher, update } = fixture();
+    expect(await sendPurchase(stripe, session({ amount_total: 0, payment_status: "no_payment_required", payment_intent: null }), at)).toBe("skipped");
+    expect(logs("info")).toMatchObject([{ outcome: "skipped", stage: "payload" }]);
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(stripe.checkout.sessions.retrieve).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
+  });
+  it("does not log unrecognized identifiers or arbitrary metadata when skipping", async () => {
+    const { stripe } = fixture();
+    await sendPurchase(stripe, session({ id: "customer@example.com", payment_intent: "api_secret=private", metadata: { plan: "秘密氏名" } }), at);
+    const entries = logs("info");
+    expect(entries).toMatchObject([{ outcome: "skipped" }]);
+    expect(entries[0]).not.toHaveProperty("checkout_session_id");
+    expect(entries[0]).not.toHaveProperty("transaction_id");
+    expect(entries[0]).not.toHaveProperty("plan");
+    expect(JSON.stringify(entries)).not.toMatch(/api_secret|private|秘密|customer@/);
   });
 });
