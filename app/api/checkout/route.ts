@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { checkoutAnalyticsMetadata } from "../../../lib/analytics-schema";
 import { supabaseAdmin } from "../../../lib/supabase";
 import { getInternalSessionEmail } from "../../../lib/internal-session";
 
@@ -28,9 +29,14 @@ const PLAN_CONFIG: Record<string, { price: number; name: string; description: st
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.json();
+    // A preview must never create a live charge or a production order.
+    if (process.env.VERCEL_ENV === "preview" &&
+        (!process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_") || process.env.ANALYTICS_TEST_DATA_ISOLATED !== "true")) {
+      return NextResponse.json({ error: "プレビュー決済には分離したテスト環境が必要です" }, { status: 503 });
+    }
+    const { analytics, ...formData } = await request.json();
 
-    const planId = formData.plan || "standard";
+    const planId = Object.hasOwn(PLAN_CONFIG, formData.plan) ? formData.plan : "standard";
     const plan = PLAN_CONFIG[planId] || PLAN_CONFIG.standard;
 
     // Internal operator path: a verified owner session skips Stripe entirely.
@@ -94,6 +100,7 @@ export async function POST(request: NextRequest) {
     const orderId = orderRow.id;
 
     const metadata: Record<string, string> = {
+      ...checkoutAnalyticsMetadata(analytics),
       order_id: orderId,
       plan: planId,
       building_name: formData.building_name || "",
