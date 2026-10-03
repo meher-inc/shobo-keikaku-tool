@@ -1,0 +1,32 @@
+.socialStats {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 12px;
+  max-width: 760px;
+  margin: 40px auto 0;
+}
+
+.statLabel,
+.statNote {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.statLabel {
+  margin-bottom: 4px;
+}
+
+.statNote {
+  margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+  .socialStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statWithNote {
+    grid-column: 1 / -1;
+  }
+}
