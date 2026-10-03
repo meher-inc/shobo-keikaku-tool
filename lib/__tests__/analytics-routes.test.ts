@@ -67,4 +67,15 @@ describe("checkout and signed webhook analytics boundary", () => {
     mocks.event.mockReturnValueOnce({ type: "checkout.session.async_payment_succeeded", livemode: false, created: 1791000001, data: { object: payment } });
     expect((await webhook(request())).status).toBe(200); expect(fetcher).toHaveBeenCalledTimes(1);
   });
+  it("preserves the Stripe retry response even when the production failure notification also fails", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.stubEnv("RESEND_API_KEY", "notification-test-only");
+    mocks.event.mockReturnValue({ type: "checkout.session.completed", livemode: true, created: 1791000000, data: { object: { ...payment, livemode: true } } });
+    fetcher.mockResolvedValueOnce(new Response(null, { status: 503 }));
+    fetcher.mockResolvedValueOnce(new Response(null, { status: 500 }));
+    expect((await webhook(request())).status).toBe(500);
+    expect(fetcher.mock.calls.map(([url]) => new URL(String(url)).hostname)).toEqual(["www.google-analytics.com", "api.resend.com"]);
+    expect(mocks.marker).not.toHaveBeenCalled();
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
 });
