@@ -1,6 +1,8 @@
 import "./globals.css";
 import { Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
+import { FunnelPageView } from "../components/funnel-page-view";
+import { FUNNEL_MEASUREMENT_ID } from "../lib/analytics-schema";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { SiteStructuredData } from "../components/StructuredData";
@@ -48,19 +50,31 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://www.googletagmanager.com/gtag/js?id=AW-18069681696"
           strategy="afterInteractive"
         />
-        <Script id="google-tag-init" strategy="afterInteractive">
+        <Script id="google-tag-init" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
+            var safeUrl = new URL(location.href);
+            var query = new URLSearchParams();
+            for (var key of ['utm_source','utm_medium','utm_campaign','utm_id','utm_term','utm_content','gclid','gbraid','wbraid']) {
+              var value = safeUrl.searchParams.get(key) || '';
+              var isClick = ['gclid','gbraid','wbraid'].includes(key);
+              if (isClick ? /^[a-zA-Z0-9_-]{1,200}$/.test(value) : /^[a-zA-Z0-9_.~-]{1,100}$/.test(value) && !/[0-9]{7,}/.test(value)) query.set(key, value);
+            }
+            safeUrl.search = query.toString(); safeUrl.hash = '';
+            var safeRef = '';
+            try { safeRef = document.referrer ? new URL(document.referrer).origin : ''; } catch (_) {}
+            gtag('set', { page_location: safeUrl.href, page_referrer: safeRef });
             gtag('config', 'AW-18069681696');
-            gtag('config', 'G-7611WP9PEY');
+            gtag('config', 'G-7611WP9PEY', { send_page_view: false });
             // NEXT_PUBLIC_GA_ID はマーケ統合プロパティ(G-TF01DPKTPQ)。
             // 既存 G-7611WP9PEY(運用分析)と並列 config 方式で並存。
-            ${process.env.NEXT_PUBLIC_GA_ID ? `gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');` : ""}
+            ${[...new Set([process.env.NEXT_PUBLIC_GA_ID, FUNNEL_MEASUREMENT_ID])].filter(id => id && id !== 'G-7611WP9PEY' && /^G-[A-Z0-9]+$/.test(id)).map(id => `gtag('config', '${id}', { send_page_view: false });`).join('\n')}
           `}
         </Script>
 
+        <FunnelPageView />
         <a href="#main-content" className="skip-link">本文へスキップ</a>
         <Header />
         <main id="main-content">{children}</main>

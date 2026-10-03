@@ -1,5 +1,7 @@
 "use client";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { checkoutAnalytics, trackBeginCheckout, trackFormComplete, trackFormStart, trackFormStep } from "../lib/analytics-client";
+import { analyticsContext } from "../lib/analytics-schema";
 import { SAMPLE_PAGES_COUNT } from "../lib/sample_pages_count";
 import { SPOT_PLANS, isSpotPlanId } from "../lib/spot-plans";
 import { MarketingSections } from "../components/marketing-sections";
@@ -248,6 +250,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
       return;
     }
     setStepError("");
+    if (!isEditMode && !internalAccess) trackFormStep(step + 1, analyticsContext(deptName, form.use_category));
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }
 
@@ -425,6 +428,23 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     : form.city ? "標準様式"
     : "";
 
+  useEffect(() => {
+    if (step === 5 && !isEditMode && !internalAccess && !editMode.current && new URLSearchParams(window.location.search).get("owner_login") !== "1") {
+      trackFormComplete(analyticsContext(deptName, form.use_category));
+    }
+  }, [step, isEditMode, internalAccess, deptName, form.use_category]);
+
+  function selectStep(next: number) {
+    if (next > step && !isEditMode && !internalAccess) {
+      for (let i = step; i < Math.min(next, 5); i++) {
+        if ((STEP_REQUIRED[i] || []).every(r => r.ok(form))) {
+          trackFormStep(i + 1, analyticsContext(deptName, form.use_category));
+        }
+      }
+    }
+    setStep(next);
+  }
+
   // 専用様式はないが所轄が判明している消防本部（標準様式で作成する）。
   // 画面では所轄名を出しつつ「標準様式で作成」と明示し、専用対応と誤認させない。
   const NAMED_STANDARD_DEPTS = new Set(["浜松市消防局"]);
@@ -472,13 +492,15 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
     setLoading(true);
     setGenError("");
     try {
+      const analytics = await checkoutAnalytics(analyticsContext(deptName, form.use_category));
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, plan: selectedPlan }),
+        body: JSON.stringify({ ...form, plan: selectedPlan, analytics }),
       });
       const data = await res.json();
       if (data.url) {
+        if (!data.internal) await trackBeginCheckout(selectedPlan, analyticsContext(deptName, form.use_category));
         // 決済に進むので下書きを消す（生成後に古い入力が残らないように）。
         try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
         window.location.href = data.url;
@@ -553,7 +575,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
     <MarketingSections />
 
-    <div id="form" style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(48px,8vw,80px) 16px 40px", scrollMarginTop: 24 }}>
+    <div id="form" onChangeCapture={() => { if (!isEditMode && !internalAccess) trackFormStart(analyticsContext(deptName, form.use_category)); }} onClickCapture={(event) => { if (!isEditMode && !internalAccess && (event.target as HTMLElement).closest("input, select, textarea, button")) trackFormStart(analyticsContext(deptName, form.use_category)); }} style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(48px,8vw,80px) 16px 40px", scrollMarginTop: 24 }}>
       <h2 style={{ fontSize: "clamp(22px,4.5vw,30px)", fontWeight: 800, textAlign: "center", letterSpacing: "-0.01em", marginBottom: 8 }}>消防計画をつくる</h2>
       <p style={{ fontSize: 15, color: "var(--text-muted)", textAlign: "center", marginBottom: internalAccess ? 12 : 16 }}>6ステップの入力で、提出できる計画書が完成します。</p>
 
@@ -597,7 +619,7 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
       <div style={{ display: "flex", gap: 4, marginBottom: 24, padding: 4, background: "var(--surface-muted)", borderRadius: 12 }}>
         {STEPS.map((s, i) => (
-          <button key={s.id} onClick={() => setStep(i)} style={{
+          <button key={s.id} onClick={() => selectStep(i)} style={{
             flex: 1, padding: "10px 4px", border: "none", cursor: "pointer", borderRadius: 10, fontSize: 12, fontWeight: 600,
             background: i === step ? "var(--surface)" : "transparent", color: i === step ? "var(--text)" : i < step ? "var(--ok-solid)" : "var(--text-muted)",
             boxShadow: i === step ? "0 1px 4px rgba(0,0,0,0.08)" : "none",

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { sendPurchase } from "../../../../lib/analytics-purchase";
 import { Resend } from "resend";
 import { supabaseAdmin } from "../../../../lib/supabase";
 import { sendPremiumReview } from "../../../../lib/sendPremiumReview";
@@ -42,13 +43,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Route to handler by event type. Every handler is wrapped in
-  // try-catch and always returns 200 to prevent Stripe retries.
+  if (process.env.VERCEL_ENV === "preview" &&
+      (event.livemode || process.env.ANALYTICS_TEST_DATA_ISOLATED !== "true")) {
+    return NextResponse.json({ error: "Preview webhook requires isolated test data" }, { status: 503 });
+  }
+
+  // Keep existing fulfilment behaviour; analytics retries run independently.
   try {
     switch (event.type) {
+      case "checkout.session.async_payment_succeeded":
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        if (session.mode === "payment") {
+        if (session.mode === "payment" && session.payment_status === "paid") {
           await handleOneTimePayment(session, event.created);
         } else if (session.mode === "subscription") {
           await handleSubscriptionCheckoutCompleted(session);
@@ -75,6 +81,15 @@ export async function POST(req: NextRequest) {
     console.error(`[webhook] ${event.type} handler error:`, err?.message || err);
   }
 
+  if (["checkout.session.completed", "checkout.session.async_payment_succeeded"].includes(event.type)) {
+    try {
+      await sendPurchase(stripe, event.data.object as Stripe.Checkout.Session, event.created);
+    } catch {
+      // Do not log a request URL (it contains the MP secret) or payment/customer data.
+      console.error("[ga4] purchase delivery failed; Stripe retry required");
+      return NextResponse.json({ error: "Analytics delivery pending" }, { status: 500 });
+    }
+  }
   return NextResponse.json({ received: true });
 }
 

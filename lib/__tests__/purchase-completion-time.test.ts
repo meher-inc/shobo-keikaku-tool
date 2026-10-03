@@ -16,7 +16,7 @@ beforeEach(() => {
   vi.setSystemTime(new Date("2026-09-20T00:00:00Z"));
   mocks.event.mockReturnValue({
     type: "checkout.session.completed", created: Date.parse("2026-09-01T03:00:00Z") / 1000,
-    data: { object: { id: "cs_test", mode: "payment", metadata: { order_id: "order-test" }, created: Date.parse("2026-09-01T02:00:00Z") / 1000 } },
+    data: { object: { id: "cs_test", mode: "payment", payment_status: "paid", metadata: { order_id: "order-test" }, created: Date.parse("2026-09-01T02:00:00Z") / 1000 } },
   });
   mocks.lookup.mockResolvedValue({ data: { id: "order-test", status: "pending", plan_id: "standard" }, error: null });
   mocks.update.mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
