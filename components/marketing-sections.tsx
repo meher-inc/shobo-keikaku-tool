@@ -1,5 +1,6 @@
 import { SPOT_PLANS } from "../lib/spot-plans";
 import { NEWLY_ADDED_DEPTS } from "../lib/updates";
+import styles from "./marketing-sections.module.css";
 
 const BRAND = "var(--brand)";
 
@@ -74,8 +75,8 @@ const comparison = [
 //   （景品表示法・ステマ規制の観点）。未確定の項目は placeholder:true にすると
 //   画面に「（サンプル）」バッジが付き、公開前提でない旨が明示される。
 // ─────────────────────────────────────────────────────────────
-const socialStats: { value: string; label: string; placeholder: boolean }[] = [
-  { value: "100件", label: "累計作成数", placeholder: false },
+const socialStats: { value: string; label: string; note?: string; placeholder: boolean }[] = [
+  { value: "累計100件", label: "消防書類の作成実績", note: "（代行実績を含む）", placeholder: false },
   { value: "20本部", label: "対応消防本部", placeholder: false }, // 実数（政令市19＋東京消防庁）
   { value: "4.9", label: "5段階評価", placeholder: false },
 ];
@@ -176,11 +177,16 @@ export function MarketingSections() {
           <h2 style={sectionHeading}>ご利用の実績とお客様の声</h2>
 
           {/* 実績数値 */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginTop: 40, maxWidth: 640, marginLeft: "auto", marginRight: "auto" }}>
+          <div className={styles.socialStats}>
             {socialStats.map((s) => (
-              <div key={s.label} style={{ ...card, background: "var(--surface)", textAlign: "center", padding: "20px 12px" }}>
+              <div key={s.label} className={s.note ? styles.statWithNote : undefined} style={{ ...card, background: "var(--surface)", textAlign: "center", padding: "20px 12px" }}>
+                {s.note && <div className={styles.statLabel}>{s.label}{" "}</div>}
                 <div style={{ fontSize: "clamp(22px,5vw,30px)", fontWeight: 800, color: BRAND, letterSpacing: "-0.01em" }}>{s.value}</div>
-                <div style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 4 }}>{s.label}</div>
+                {s.note ? (
+                  <div className={styles.statNote}>{s.note}</div>
+                ) : (
+                  <div style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 4 }}>{s.label}</div>
+                )}
                 {s.placeholder && (
                   <div style={{ marginTop: 6, fontSize: 10, fontWeight: 700, color: "var(--warn-text-strong)", background: "var(--warn-bg)", border: "1px solid var(--warn-border)", borderRadius: 999, padding: "1px 8px", display: "inline-block" }}>
                     （サンプル）
