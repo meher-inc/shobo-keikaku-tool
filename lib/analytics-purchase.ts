@@ -38,7 +38,7 @@ export async function sendPurchase(stripe: Stripe, session: Stripe.Checkout.Sess
   const expectedLive = process.env.VERCEL_ENV === "production";
   if (process.env.VERCEL_ENV && session.livemode !== expectedLive) throw new Error("GA4 payment environment mismatch");
   const secret = process.env.GA4_API_SECRET;
-  if (!secret) throw new Error("GA4_API_SECRET is not configured");
+  if (!secret || secret === "[SENSITIVE]") throw new Error("GA4_API_SECRET is not available");
   const marker = `ga4_sent_${FUNNEL_MEASUREMENT_ID.replace(/-/g, "_")}`;
   const current = await stripe.checkout.sessions.retrieve(session.id);
   if (current.metadata?.[marker]) return "duplicate";
