@@ -1,11 +1,11 @@
 # GA4購入ファネル
 
-本番リリース前の実装。Measurement Protocol の受信・購入の実計上は、対象ストリームの API シークレット設定後に検証する。
+本番リリース前の実装。2026年10月3日、分離したテスト決済のpurchaseをGA4 DebugViewとリアルタイムで1件確認した。本番リリースは承認待ち。
 
 ## 送信先と環境
 
 - GA4: `G-TF01DPKTPQ`（プロパティ `533715167`、ストリーム `14399216063`）。変更時は `NEXT_PUBLIC_FUNNEL_GA_ID` をビルド時と実行時にそろえる。
-- `GA4_API_SECRET`: 上記ストリームのサーバー専用シークレット。`NEXT_PUBLIC_` を付けない。
+- `GA4_API_SECRET`: 上記ストリームのサーバー専用シークレット。`NEXT_PUBLIC_` を付けない。VercelのSecretはpull時に実値ではなく`[SENSITIVE]`を返す場合がある。この伏せ字をローカルの認証情報として使用しない。送信処理でも伏せ字を拒否し、送信済みマーカーを付けない。
 - 検証時のみ `NEXT_PUBLIC_ANALYTICS_DEBUG=true`（ビルド時）、`ANALYTICS_DEBUG=true`（サーバー実行時）。本番では両方を未設定にする。
 - Preview の決済には Stripe テストキー、対応する Webhook 署名シークレット、分離した Supabase、および `ANALYTICS_TEST_DATA_ISOLATED=true` が必要。このフラグだけで DB は分離されない。必ず接続先を確認する。
 - 既存 Preview は本番 DB・Stripe キーを共有しているため、上記が未設定なら Checkout は DB 書き込み前に503を返す。
@@ -55,3 +55,15 @@ Measurement Protocol のセッション帰属には同じ client_id/session_id �
 プライバシーポリシーには既にGA4・Google広告の利用・送信情報等の記載があるため、この変更では本文を編集していない。
 
 一次資料: [Measurement Protocol](https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events)、[セッション帰属](https://developers.google.com/analytics/devguides/collection/protocol/ga4/use-cases)、[購入の重複排除](https://support.google.com/analytics/answer/12313109)、[検証エンドポイント](https://developers.google.com/analytics/devguides/collection/protocol/ga4/validating-events)。
+
+## 実受信の検証記録（2026年10月3日）
+
+- Stripeテストモードでstandard・9,800円を1件決済。分離したローカルDBの支払済みも1件。成功画面は検証用プロキシで停止した。
+- Vercel Secretをローカルへ読み戻せないため、Previewの一時検証環境に本PRの送信モジュールをそのまま配置。署名検証・テストイベントID固定・Stripeテストキーで保護し、DBアクセスを行わず同じ決済イベントを処理した。
+- Previewの実行環境でAPIシークレットが22文字であることを確認。実値は出力していない。
+- 16:29 JSTの送信後、DebugViewでpurchase 1件、リアルタイムのイベント数・キーイベント数ともpurchase 1件を確認。通常レポートの日次確定値は別途処理される。
+- transaction_idは`pi_3UMMabLw9VCVXHlZ1DqpyXNz`、value=9800、currency=JPY、plan=standard、itemsはstandard×1、fire_department=京都市消防局、building_use=3-ロ、元のsession_idと初回流入も確認。
+- 同じ署名済みイベントを3回再送し、すべて`duplicate`。GA4は1件のまま。
+- 初回のローカル検証ではpull結果の`[SENSITIVE]`を実値と誤認した。11文字という観測は伏せ字の長さであり、Vercelの設定ミスを示すものではなかった。検証手順を修正し、伏せ字の送信防止を追加した。
+
+本番のGA4_API_SECRETはSecret設定で保存されているため、pull結果から実値の文字数は確認できない。Previewの22文字確認をProductionの文字数確認と読み替えない。

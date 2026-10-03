@@ -51,6 +51,13 @@ describe("purchase delivery and replay", () => {
     expect(await sendPurchase(stripe, session(), at)).toBe("duplicate");
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
+  it.each(["", "[SENSITIVE]"])("does not send or mark an unavailable secret: %s", async secret => {
+    const { stripe, fetcher, update } = fixture();
+    vi.stubEnv("GA4_API_SECRET", secret);
+    await expect(sendPurchase(stripe, session(), at)).rejects.toThrow("GA4_API_SECRET is not available");
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
+  });
   it("does not mark failed transports and allows retry", async () => {
     const { stripe, fetcher, update } = fixture();
     fetcher.mockResolvedValueOnce(new Response(null, { status: 503 }));
