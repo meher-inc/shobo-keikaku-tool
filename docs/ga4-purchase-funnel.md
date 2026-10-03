@@ -1,6 +1,6 @@
 # GA4購入ファネル
 
-2026年10月3日、分離したテスト決済のpurchaseをGA4 DebugViewとリアルタイムで1件確認した。GitHub上では元の実装PR #98が同日15:13 JSTにマージ済みで、本番は16:19 JSTにそのマージコミット`25732b2`へ更新されていた。この検証作業では本番を変更していない。伏せ字の送信防止は別の追加修正として扱う。
+2026年10月3日、分離したテスト決済のpurchaseをGA4 DebugViewとリアルタイムで1件確認した。元の実装PR #98は同日15:13 JST、伏せ字の送信防止PR #100は17:08 JSTにマージ済み。本番はPR #100のマージコミット`41ab70b`でREADY。以降の本番テスト決済はユーザーの方針変更で行わず、最初の通常の有料購入をログで照合する。以下の構造化ログは追加修正の本番反映後に利用できる。
 
 ## 送信先と環境
 
@@ -67,3 +67,37 @@ Measurement Protocol のセッション帰属には同じ client_id/session_id �
 - 初回のローカル検証ではpull結果の`[SENSITIVE]`を実値と誤認した。11文字という観測は伏せ字の長さであり、Vercelの設定ミスを示すものではなかった。検証手順を修正し、伏せ字の送信防止を追加した。
 
 本番のGA4_API_SECRETはSecret設定で保存されているため、pull結果から実値の文字数は確認できない。Previewの22文字確認をProductionの文字数確認と読み替えない。
+
+## 本番の無課金確認と初回購入の照合
+
+2026年10月3日17:09 JSTに、Productionデプロイ`dpl_3d1RycBFUuVKWx9K4Yt1trxM82D2`が`plan.todokede.jp`を指すこと、注入される環境変数のキー一覧に`GA4_API_SECRET`が含まれること、Secretの更新がデプロイより前であることを確認した。デバッグ環境変数は未設定。秘密値は読み出していない。これは設定・注入対象の確認であり、実行時の値の妥当性やGA4での本番purchase受信を証明するものではない。
+
+Checkout作成時に`allow_promotion_codes`を指定していない。本番の既存Checkoutセッション2件でも同項目は`null`。100%割引の入力欄を使うにはコード変更が必要なため、割引コードの作成・0円注文・実購入・返金は行わない。Stripeでは0円注文でも`checkout.session.completed`を扱えるがPaymentIntentが付かない。本実装の購入条件（金額0円超、paid、PaymentIntentあり）を満たさず、purchaseは送られない。
+
+### 送信ログ
+
+追加修正後は、署名検証済みWebhookからの`sendPurchase`呼び出しごとに、`[ga4.purchase]`で始まるJSONを1件記録する。記録項目は結果、処理段階、HTTPステータス、測定ID、環境、Checkout ID、決済ID、許可されたプランID、`secret_configured`のみ。シークレット値・長さ・MPのURL・生のエラー・client_id・氏名・住所・メール・電話・フォーム・任意のmetadataは出力しない。
+
+|outcome|意味|確認・対応|
+|---|---|---|
+|acknowledged|Googleの2xx応答後、Stripeに送信済みマーカーを保存した|送信処理の成功。GA4での1件計上は別途照合する|
+|duplicate|送信済みマーカーがあり再送を省略した|同じ決済IDの既存送信記録を確認する|
+|skipped|購入条件またはGAクライアント情報の条件を満たさない|未払い・0円・サブスク・広告ブロック等でclient_idがない場合を確認する|
+|failed|処理に失敗した|stageとhttp_statusで切り分け。既存Webhookは500を返しStripe再配信を待つ|
+
+`secret_configured=true`は、その呼び出しの実行環境で空でも伏せ字でもない値を読めたことを示す。正しいGA4シークレットであることまでは保証しない。`stage`は`payload`、`environment`、`configuration`、`duplicate_check`、`transport`、`delivery_marker`のいずれか。たとえば`failed / configuration / secret_configured=false`は設定不足、`failed / transport / http_status=503`はGoogleのHTTPエラー、`failed / delivery_marker / http_status=204`は送信後のマーカー保存失敗を示す。
+
+### 最初の通常購入時の手順
+
+1. Stripeの通常の有料購入から対象の`pi_…`と`cs_…`を取得する。再送による新しい決済やテスト注文は作らない。
+2. VercelのProductionログで`[ga4.purchase]`と対象決済IDを検索する。CLIで調べる場合はPreviewブランチの暗黙フィルターを避ける。
+
+   ```sh
+   vercel logs --project shobo-keikaku-tool --environment production --no-branch --since 24h --query 'ga4_purchase_delivery' --json
+   ```
+
+3. `secret_configured=true`、`outcome=acknowledged`、HTTP 2xx、およびStripe Checkout metadataの`ga4_sent_G_TF01DPKTPQ`を確認する。`failed`なら段階ごとに調査し、Stripeの再配信後に再確認する。ログの保持期間を過ぎた場合、マーカーは送信処理の過去の成功を補助的に示すが、GA4計上の証明には使わない。
+4. GA4で同じ`transaction_id`、実決済額、プランを照合する。リアルタイムに加え、処理後の探索で取引IDを完全一致指定し、`purchase`のイベント数が1件か確認する。本番のdebug_modeは有効化しない。HTTP 2xxだけで計上確認済みとはしない。
+5. 確認時刻・決済ID・送信結果・GA4件数を報告書に記録する。自然発生した実購入なのでテスト除外・返金は不要。自動監視・通知はこの修正には含めず、ログを使って確認する。
+
+一次資料: [Stripeの割引コード](https://docs.stripe.com/payments/checkout/discounts?payment-ui=stripe-hosted)、[0円注文とPaymentIntent](https://docs.stripe.com/payments/checkout/no-cost-orders?payment-ui=stripe-hosted)、[Measurement Protocolの応答](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#transport)。

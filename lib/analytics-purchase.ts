@@ -33,28 +33,65 @@ export function purchasePayload(session: Stripe.Checkout.Session, completedAt: n
 }
 
 export async function sendPurchase(stripe: Stripe, session: Stripe.Checkout.Session, completedAt: number): Promise<"sent" | "duplicate" | "skipped"> {
-  const payload = purchasePayload(session, completedAt);
-  if (!payload) return "skipped";
-  const expectedLive = process.env.VERCEL_ENV === "production";
-  if (process.env.VERCEL_ENV && session.livemode !== expectedLive) throw new Error("GA4 payment environment mismatch");
   const secret = process.env.GA4_API_SECRET;
-  if (!secret || secret === "[SENSITIVE]") throw new Error("GA4_API_SECRET is not available");
-  const marker = `ga4_sent_${FUNNEL_MEASUREMENT_ID.replace(/-/g, "_")}`;
-  const current = await stripe.checkout.sessions.retrieve(session.id);
-  if (current.metadata?.[marker]) return "duplicate";
-  const endpoint = new URL("https://www.google-analytics.com/mp/collect");
-  endpoint.searchParams.set("measurement_id", FUNNEL_MEASUREMENT_ID);
-  endpoint.searchParams.set("api_secret", secret);
-  let response: Response;
+  const secretConfigured = Boolean(secret && secret !== "[SENSITIVE]");
+  const transactionId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
+  const identity = {
+    event: "ga4_purchase_delivery",
+    measurement_id: FUNNEL_MEASUREMENT_ID,
+    environment: process.env.VERCEL_ENV === "production" ? "production" : process.env.VERCEL_ENV === "preview" ? "preview" : "local",
+    checkout_session_id: /^cs_[a-zA-Z0-9_]{1,250}$/.test(session.id) ? session.id : undefined,
+    transaction_id: transactionId && /^pi_[a-zA-Z0-9]{1,250}$/.test(transactionId) ? transactionId : undefined,
+    plan: isSpotPlanId(session.metadata?.plan || "") ? session.metadata!.plan : undefined,
+    secret_configured: secretConfigured,
+  };
+  let stage = "payload";
+  let httpStatus: number | undefined;
+  const log = (outcome: "acknowledged" | "duplicate" | "skipped" | "failed") => {
+    // Never log the MP URL, raw errors, client identifiers, or customer metadata.
+    const entry = JSON.stringify({ ...identity, outcome, stage, http_status: httpStatus });
+    if (outcome === "failed") console.error(`[ga4.purchase] ${entry}`);
+    else console.info(`[ga4.purchase] ${entry}`);
+  };
   try {
-    response = await fetch(endpoint, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload), signal: AbortSignal.timeout(8000),
-    });
-  } catch { throw new Error("GA4 purchase transport failed"); }
-  if (!response.ok) throw new Error(`GA4 purchase HTTP ${response.status}`);
-  // Replays skip after acknowledgement. Concurrent sends / a crash before this
-  // marker are reconciled by GA4 using the same client_id + transaction_id.
-  await stripe.checkout.sessions.update(session.id, { metadata: { [marker]: String(completedAt) } });
-  return "sent";
+    const payload = purchasePayload(session, completedAt);
+    if (!payload) {
+      log("skipped");
+      return "skipped";
+    }
+    stage = "environment";
+    const expectedLive = process.env.VERCEL_ENV === "production";
+    if (process.env.VERCEL_ENV && session.livemode !== expectedLive) throw new Error("GA4 payment environment mismatch");
+    stage = "configuration";
+    if (!secretConfigured) throw new Error("GA4_API_SECRET is not available");
+    stage = "duplicate_check";
+    const marker = `ga4_sent_${FUNNEL_MEASUREMENT_ID.replace(/-/g, "_")}`;
+    const current = await stripe.checkout.sessions.retrieve(session.id);
+    if (current.metadata?.[marker]) {
+      log("duplicate");
+      return "duplicate";
+    }
+    const endpoint = new URL("https://www.google-analytics.com/mp/collect");
+    endpoint.searchParams.set("measurement_id", FUNNEL_MEASUREMENT_ID);
+    endpoint.searchParams.set("api_secret", secret!);
+    stage = "transport";
+    let response: Response;
+    try {
+      response = await fetch(endpoint, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload), signal: AbortSignal.timeout(8000),
+      });
+    } catch { throw new Error("GA4 purchase transport failed"); }
+    httpStatus = response.status;
+    if (!response.ok) throw new Error(`GA4 purchase HTTP ${response.status}`);
+    // Replays skip after acknowledgement. Concurrent sends / a crash before this
+    // marker are reconciled by GA4 using the same client_id + transaction_id.
+    stage = "delivery_marker";
+    await stripe.checkout.sessions.update(session.id, { metadata: { [marker]: String(completedAt) } });
+    log("acknowledged");
+    return "sent";
+  } catch (error) {
+    log("failed");
+    throw error;
+  }
 }
