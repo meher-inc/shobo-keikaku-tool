@@ -98,6 +98,36 @@ Checkout作成時に`allow_promotion_codes`を指定していない。本番の�
 
 3. `secret_configured=true`、`outcome=acknowledged`、HTTP 2xx、およびStripe Checkout metadataの`ga4_sent_G_TF01DPKTPQ`を確認する。`failed`なら段階ごとに調査し、Stripeの再配信後に再確認する。ログの保持期間を過ぎた場合、マーカーは送信処理の過去の成功を補助的に示すが、GA4計上の証明には使わない。
 4. GA4で同じ`transaction_id`、実決済額、プランを照合する。リアルタイムに加え、処理後の探索で取引IDを完全一致指定し、`purchase`のイベント数が1件か確認する。本番のdebug_modeは有効化しない。HTTP 2xxだけで計上確認済みとはしない。
-5. 確認時刻・決済ID・送信結果・GA4件数を報告書に記録する。自然発生した実購入なのでテスト除外・返金は不要。自動監視・通知はこの修正には含めず、ログを使って確認する。
+5. 確認時刻・決済ID・送信結果・GA4件数を報告書に記録する。自然発生した実購入なのでテスト除外・返金は不要。検知した送信エラーは下記のメール通知で知らせる。GA4レポートの計上件数を自動監視する機能は含まない。
 
 一次資料: [Stripeの割引コード](https://docs.stripe.com/payments/checkout/discounts?payment-ui=stripe-hosted)、[0円注文とPaymentIntent](https://docs.stripe.com/payments/checkout/no-cost-orders?payment-ui=stripe-hosted)、[Measurement Protocolの応答](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#transport)。
+
+## purchase送信エラーのメール通知
+
+この追加修正の本番反映後、ProductionかつStripe本番モードの`sendPurchase`が例外終了する場合に、`info@meher-inc.co.jp`へResendで通知する。送信元は既存の`トドケデ <noreply@todokede.jp>`、認証は既存の`RESEND_API_KEY`を使用する。新しい環境変数は不要。
+
+- メールにはサイト名、障害概要、ログ検索手順、Checkout IDから計算した照合用参照IDだけを含める。決済ID、Checkout ID、購入金額・プラン、フォーム内容、氏名・住所・メール・電話、GA client_id、秘密値、生の例外、MPのURLは含めない。
+- 参照IDは`[ga4.purchase]`と`[ga4.alert]`の`alert_reference`に記録する。実際の失敗段階・HTTPステータスはVercelのProductionログで確認する。
+- 通知成功後はCheckout metadataの`ga4_alert_G_TF01DPKTPQ=sent`を記録し、以後の再配信は通知を省略する。Resendには固定のidempotency keyと同一本文を渡し、同時処理・タイムアウト・マーカー保存前の障害に備える。
+- Resendの重複防止キーの保持は24時間。Stripeのマーカーを保存できない障害が24時間以上続く場合は、重複通知の可能性が残る。通知の本文に現在時刻や変動するエラー内容を入れず、再試行で同一キーと異なる本文が衝突しないようにする。
+- 通知処理はStripe読み取り・書き込み各2秒（自動リトライなし）、Resend送信5秒を上限とする。通知処理の失敗も固定項目だけでログに残し、元のGA4エラーを維持する。既存Webhookは500を返してStripeの再配信を待つ。
+- メール送信が失敗した場合は、次のGA4送信失敗時に再試行する。GA4が次回に回復した場合の通知の後追い送信や、通知専用キューは設けていない。
+- Preview・ローカル・Stripeテストモードでは自動通知しない。`skipped`・`duplicate`・正常送信も通知対象外。HTTP 2xxでもGA4レポートで未計上となるケースはこの処理では検知できないため、初回購入のGA4照合は必要。
+
+動作確認ではGA4・Stripeを模擬したローカルの検証環境から、宛先を上記アドレスに固定して「通知テスト」と明記したメールを1通送信し、Resendで`delivered`を確認した。GA4・Stripeへの通信と本番DBへの書き込みは行っていない。同じ模擬エラーの2回目はマーカーにより通知をスキップし、Resendへ同一リクエストを再送しても同じメールIDが返ることを確認した。
+
+一次資料: [Resendの重複防止](https://resend.com/docs/dashboard/emails/idempotency-keys)、[Resendメール送信API](https://resend.com/docs/api-reference/emails/send-email)。
+
+## form_start / form_complete のキーイベント設定可否
+
+2026年10月3日、GA4プロパティ`533715167`の管理→イベント→最近のイベントで、`form_start`と`form_complete`の両方を確認した。ストリーム表示は`plan.todokede.jp (app)`。両方ともキーイベントのスターは未選択で、切り替え操作は有効。今回は設定可否の確認依頼のため、設定は変更していない。
+
+- `form_start`: 通常フォームの最初の操作。1セッション1回。
+- `form_complete`: 通常フォームのステップ6（生成）到達。コード上は0始まりの`step === 5`。同一セッションの重複を抑止する。
+- 購入後の編集・社内無料発行等は計測対象外。イベント名と発火条件を変更する必要はない。
+
+Google広告とのリンク後は、対象イベントをキーイベントに設定し、Google広告へ取り込んだコンバージョンのアクション最適化を「副次」にする。副次は通常の入札最適化には使わず「すべてのコンバージョン」で確認するが、カスタム目標に含めた場合は入札に使われ得るため、補助指標として扱うならカスタム目標にも含めない。
+
+このGA4プロパティは他サービスと共用しているため、広告へ取り込む前に同名イベントの対象ホストを確認する。混在する場合は`event_name`と`page_location`のホスト条件から`plan_form_start` / `plan_form_complete`などの専用イベントを作成し、そのイベントをキーイベントとして取り込む。管理画面のストリーム名だけで対象ドメインが限定されるとは判断しない。今回、Google広告リンク・インポート・キーイベント変更は実施していない。
+
+一次資料: [キーイベントとしてマーク](https://support.google.com/analytics/answer/13128484)、[Google広告への取り込み](https://support.google.com/google-ads/answer/2375435)、[メインとサブのコンバージョン](https://support.google.com/google-ads/answer/11461796)。

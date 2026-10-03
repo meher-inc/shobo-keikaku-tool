@@ -1,6 +1,7 @@
 import type Stripe from "stripe";
 import { FUNNEL_MEASUREMENT_ID, ATTRIBUTION_KEYS, sanitizeCheckoutAnalytics } from "./analytics-schema";
 import { isSpotPlanId } from "./spot-plans";
+import { notifyPurchaseFailure, purchaseAlertReference } from "./analytics-purchase-alert";
 
 export function purchasePayload(session: Stripe.Checkout.Session, completedAt: number) {
   const meta = session.metadata || {};
@@ -38,6 +39,7 @@ export async function sendPurchase(stripe: Stripe, session: Stripe.Checkout.Sess
   const transactionId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
   const identity = {
     event: "ga4_purchase_delivery",
+    alert_reference: purchaseAlertReference(session.id),
     measurement_id: FUNNEL_MEASUREMENT_ID,
     environment: process.env.VERCEL_ENV === "production" ? "production" : process.env.VERCEL_ENV === "preview" ? "preview" : "local",
     checkout_session_id: /^cs_[a-zA-Z0-9_]{1,250}$/.test(session.id) ? session.id : undefined,
@@ -92,6 +94,7 @@ export async function sendPurchase(stripe: Stripe, session: Stripe.Checkout.Sess
     return "sent";
   } catch (error) {
     log("failed");
+    await notifyPurchaseFailure(stripe, session.id, session.livemode);
     throw error;
   }
 }

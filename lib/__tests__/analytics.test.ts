@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type Stripe from "stripe";
 import { analyticsContext, checkoutAnalyticsMetadata, safePageLocation, sanitizeAttribution } from "../analytics-schema";
 import { purchasePayload, sendPurchase } from "../analytics-purchase";
+import { purchaseAlertReference } from "../analytics-purchase-alert";
 
 const at = 1790899200;
 const context = { client_id: "123456.1790899200", session_id: "1790899200", fire_department: "京都市消防局", building_use: "3-ロ", attribution: { utm_source: "google", utm_medium: "cpc", utm_campaign: "plan_fall", gclid: "TEST_click_12345678", referrer: "https://example.com/private?email=test@example.com" } };
@@ -97,6 +98,7 @@ describe("purchase delivery and replay", () => {
     await sendPurchase(stripe, session({ livemode: true, id: "cs_live_fixture" }), at);
     expect(logs("info")).toEqual([{
       event: "ga4_purchase_delivery", measurement_id: "G-TF01DPKTPQ", environment: "production",
+      alert_reference: purchaseAlertReference("cs_live_fixture"),
       checkout_session_id: "cs_live_fixture", transaction_id: "pi_testFixture", plan: "standard",
       secret_configured: true, outcome: "acknowledged", stage: "delivery_marker", http_status: 204,
     }]);
