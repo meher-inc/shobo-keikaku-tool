@@ -78,7 +78,6 @@ const comparison = [
 const socialStats: { value: string; label: string; note?: string; placeholder: boolean }[] = [
   { value: "累計100件", label: "消防書類の作成実績", note: "（代行実績を含む）", placeholder: false },
   { value: "20本部", label: "対応消防本部", placeholder: false }, // 実数（政令市19＋東京消防庁）
-  { value: "4.9", label: "5段階評価", placeholder: false },
 ];
 
 const testimonials: { quote: string; author: string; placeholder: boolean }[] = [
