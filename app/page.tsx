@@ -667,13 +667,13 @@ const [faqOpen, setFaqOpen] = useState<number | null>(null);
                     if (v.replace(/[^0-9]/g, "").length === 7) lookupPostal(v);
                   }}
                   placeholder="6000000（ハイフン不要）"
-                  style={{ flex: 1, padding: "12px 16px", fontSize: 16, border: "1px solid var(--border-strong)", borderRadius: 12, outline: "none", background: "var(--surface-input)" }}
+                  style={{ flex: 1, minWidth: 0, padding: "12px 16px", fontSize: 16, border: "1px solid var(--border-strong)", borderRadius: 12, outline: "none", background: "var(--surface-input)" }}
                 />
                 <button
                   type="button"
                   onClick={() => lookupPostal(form.postal)}
                   disabled={postalStatus === "loading"}
-                  style={{ padding: "0 18px", fontSize: 14, fontWeight: 600, color: "#fff", background: "var(--brand)", border: "none", borderRadius: 12, cursor: "pointer", whiteSpace: "nowrap", opacity: postalStatus === "loading" ? 0.6 : 1 }}
+                  style={{ flexShrink: 0, padding: "0 18px", fontSize: 14, fontWeight: 600, color: "#fff", background: "var(--brand)", border: "none", borderRadius: 12, cursor: "pointer", whiteSpace: "nowrap", opacity: postalStatus === "loading" ? 0.6 : 1 }}
                 >
                   {postalStatus === "loading" ? "検索中…" : "住所を入力"}
                 </button>
