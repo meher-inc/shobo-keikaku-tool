@@ -13,6 +13,7 @@ import { loadPack } from "../engine";
 import type { RenderData } from "../helpers/placeholder";
 import type { TemplatePack, Chapter, Section } from "../types/template-pack";
 import { buildChildrenFromPack, type SectionOverride } from "../builders/document";
+import { buildBodyWithTables, NAGOYA_SECTIONS_WITH_TABLES } from "../builders/nagoya/body-tables";
 import { buildCoverPage } from "../builders/shared/cover-page";
 import {
   buildNagoyaAppendices,
@@ -136,10 +137,16 @@ export async function buildNagoyaFull(form: any): Promise<Buffer> {
 
   const filteredPack = filterPack(loaded, data);
 
-  // No TS table overrides in Phase 2A Step 2 — Step 3 may add some
-  // (e.g. 第3/4/6/7/8/11 条 のインラインテーブル emit) for Phase 2B
-  // builders/nagoya/tables/, but Step 2 smoke does not depend on them.
-  const overrides: Record<string, SectionOverride> = {};
+  // 第4・6・8・11条は本文中に記入用の表を挟む（テンプレートの「<<table:…>>」行を置き換える）。
+  const sectionById = new Map(
+    filteredPack.chapters.flatMap((c) => c.sections).map((sec) => [sec.id, sec])
+  );
+  const overrides: Record<string, SectionOverride> = Object.fromEntries(
+    NAGOYA_SECTIONS_WITH_TABLES.filter((id) => sectionById.has(id)).map((id) => [
+      id,
+      (d: RenderData) => buildBodyWithTables(sectionById.get(id)!, d),
+    ])
+  );
 
   const coverChildren = buildCoverPage(data, {
     subtitle: "【中規模防火対象物用】",

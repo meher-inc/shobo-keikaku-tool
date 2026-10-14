@@ -5,7 +5,6 @@ import { styledTable } from "../shared/table-helpers";
 import {
   appendixHeading,
   pageBreak,
-  plainText,
   sectionHeading,
 } from "../shared/paragraph-helpers";
 import { applicableLabel } from "./logic";
@@ -38,7 +37,7 @@ import { applicableLabel } from "./logic";
  */
 
 /** Phase 2A interim theme — 名古屋市ライトオレンジ系。Brand color TBD. */
-const nagoyaTheme: TableTheme = {
+export const nagoyaTheme: TableTheme = {
   headerFill: "D77A1F",
   altFill: "FCF3E8",
 };
@@ -49,8 +48,17 @@ function buildAppendix1PreventionOrgStub(): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("１", "予防管理組織編成"),
-    plainText(
-      "（Phase 2B で完全実装：階・区域 × 防火管理者・防火担当責任者・火元責任者の任務分担表、第3条のインラインテーブル由来）"
+    styledTable(
+      ["階・区域", "防火管理者", "防火担当責任者", "火元責任者"],
+      [
+        ["　", "　", "　", "　"],
+        ["　", "　", "　", "　"],
+        ["　", "　", "　", "　"],
+        ["　", "　", "　", "　"],
+        ["　", "　", "　", "　"],
+      ],
+      [2400, 2200, 2200, 2226],
+      nagoyaTheme
     ),
   ];
 }
@@ -61,8 +69,17 @@ function buildAppendix2InspectionChecklistStub(): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("２", "自主点検チェックリスト"),
-    plainText(
-      "（Phase 2B で完全実装：第4条 建築物等の自主検査票 + 第6条 消防用設備等の法定点検時期表、検査対象 × 実施月日 / 機器点検 × 総合点検）"
+    styledTable(
+      ["検査対象", "検査内容", "結果"],
+      [
+        ["建築物", "壁・柱・床・天井に損傷はないか", "良 ・ 否"],
+        ["通路・階段等", "避難の障害となる物品が置かれていないか", "良 ・ 否"],
+        ["火気使用設備", "周囲に可燃物がなく、適正に使用されているか", "良 ・ 否"],
+        ["防火区画等", "防火戸の閉鎖の障害となる物品はないか", "良 ・ 否"],
+        ["消防用設備等", "設置場所・外観・機能に異常はないか", "良 ・ 否"],
+      ],
+      [2800, 4200, 2026],
+      nagoyaTheme
     ),
   ];
 }

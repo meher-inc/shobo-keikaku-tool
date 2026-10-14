@@ -181,7 +181,7 @@ describe("osaka 中・小規模 v2 smoke tests", () => {
     expect(xml).not.toContain("山田太郎");
     expect(xml).not.toContain("佐藤花子");
     // tbl: 1 (list) + 1 (別表9) = 2 (stubs are plainText, not tbl)
-    expect(tblCount).toBe(3);
+    expect(tblCount).toBe(8);
   });
 
   // ── O4: outsourced=false × plan=standard × full members ──────
@@ -209,27 +209,20 @@ describe("osaka 中・小規模 v2 smoke tests", () => {
     expect(xml).toContain("田中美咲");
     expect(xml).toContain("渡辺健太");
     // tbl: 1 (list) + 1 (別表9) = 2 (別表1 hidden, all others stub plainText)
-    expect(tblCount).toBe(3);
+    expect(tblCount).toBe(7);
   });
 
   // ── Auxiliary 7 (placed last): osaka-specific appendix fields land ──
 
   it("osaka-specific fields (casualtyEstimate / propertyDamageEstimate) flow into RenderData", async () => {
-    // These fields are extendForOsaka extensions used by Step 3
-    // builders. In Phase 2A Step 4 the appendix bodies (別表2) are
-    // STUBs so the values do not yet appear in xml — the test
-    // asserts the adapter accepts them without error and that
-    // STUB structure is intact.
+    // 別表2（災害想定）は記入用の表として出力し、入力値はその欄に入る。
     const { xml } = await renderAndUnzip({
       casualty_estimate: "軽傷者数名を想定",
       property_damage_estimate: "什器転倒・落下、軽微な内装損傷",
     });
-    // Appendix 2 stub still emits its TODO marker
     expect(xml).toContain("別表２　災害想定");
-    expect(xml).toContain("人的被害想定・物的被害想定");
-    // The values themselves are not yet in xml because 別表2 is a
-    // stub; this is the expected Phase 2A state. Phase 2B will
-    // implement 別表2 fully and a follow-up smoke test will check
-    // that the values land.
+    expect(xml).toContain("軽傷者数名を想定");
+    expect(xml).toContain("什器転倒・落下、軽微な内装損傷");
+    expect(xml).not.toContain("Phase 2B");
   });
 });
