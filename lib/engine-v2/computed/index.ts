@@ -1,4 +1,5 @@
 import type { ComputedFnName } from "../types/template-pack";
+import { formatEraDateJst } from "../helpers/plan-text";
 
 /**
  * Computed function registry.
@@ -24,12 +25,7 @@ function eraDate(isoDate: string | undefined): string {
   if (Number.isNaN(d.getTime())) {
     return "";
   }
-  return d.toLocaleDateString("ja-JP-u-ca-japanese", {
-    era: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  return formatEraDateJst(d);
 }
 
 /**

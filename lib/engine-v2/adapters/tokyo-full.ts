@@ -17,6 +17,9 @@ import { buildFloorPlanGuide } from "../builders/shared/floor-plan-guide";
 import { toRenderData } from "./to-render-data";
 import tokyoTfdFull from "../templates/tokyo-tfd.full.json";
 
+/** 第3の2⑵「建物及び消防用設備等の確認」と別表5 の実施時期の初期値。 */
+export const TOKYO_PERIODIC_CHECK_DEFAULT = "5月と11月";
+
 // Tokyo chapter table overrides.
 import { buildCh2DutiesTable } from "../builders/tokyo/tables/ch2-duties";
 import { buildCh5EducationTable } from "../builders/tokyo/tables/ch5-education";
@@ -53,9 +56,15 @@ export async function buildTokyoFull(form: any): Promise<Buffer> {
     const d = new Date(data.creationDateIso);
     if (!Number.isNaN(d.getTime())) {
       data.creationDate = d.toLocaleDateString("ja-JP-u-ca-japanese", {
+        timeZone: "Asia/Tokyo",
         era: "long", year: "numeric", month: "long", day: "numeric",
       });
     }
+  }
+
+  // 定期の確認時期は、第3の2⑵と別表5で同じ値を使う（フォームに入力欄がないため初期値をここで決める）。
+  if (!data.periodicCheckMonths) {
+    data.periodicCheckMonths = TOKYO_PERIODIC_CHECK_DEFAULT;
   }
 
   // ── section filtering ─────────────────────────────────────

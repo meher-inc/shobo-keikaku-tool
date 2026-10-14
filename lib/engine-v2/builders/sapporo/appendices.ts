@@ -7,6 +7,7 @@ import {
   pageBreak,
   sectionHeading,
 } from "../shared/paragraph-helpers";
+import { extinguishingDuty } from "../shared/equipment-rows";
 
 /**
  * 札幌市消防局（中規模用）別表ビルダ。
@@ -61,7 +62,7 @@ function buildAppendix2FireBrigade(data: RenderData): (Paragraph | Table)[] {
   const rows: string[][] = [
     ["指揮班", data.leaderName ?? MEMBER_FALLBACK, "指揮所の設置、消火・通報・避難状況の把握、隊員への指示・命令の伝達、消防隊への協力"],
     ["通報連絡班", data.tsuhouMember ?? MEMBER_FALLBACK, "119番通報、自衛消防隊長への報告、放送設備による周知、消防隊への情報提供"],
-    ["消火班", data.shokaMember ?? MEMBER_FALLBACK, "消火器・屋内消火栓設備等による初期消火、消防隊への情報提供"],
+    ["消火班", data.shokaMember ?? MEMBER_FALLBACK, extinguishingDuty(data, "消火器・屋内消火栓設備等による初期消火、消防隊への情報提供", (n) => `${n}等による初期消火、消防隊への情報提供`)],
     ["避難誘導班", data.hinanMember ?? MEMBER_FALLBACK, "在館者の避難誘導、非常口の開放、避難経路の障害物除去、未避難者の確認"],
     ["救護班", data.kyugoMember ?? MEMBER_FALLBACK, "応急救護所の設置、負傷者の応急救護"],
   ];

@@ -9,6 +9,7 @@ import {
   sectionHeading,
 } from "../shared/paragraph-helpers";
 import { applicableLabel } from "./logic";
+import { extinguishingDuty } from "../shared/equipment-rows";
 
 /**
  * Fukuoka City Fire Bureau (中規模防火対象物用) appendix builders.
@@ -94,9 +95,9 @@ function buildAppendix3FireBrigade(data: RenderData): (Paragraph | Table)[] {
     ["隊長", data.leaderName ?? fallback, "全体の指揮，消防隊との連携"],
     ["副隊長", data.defenseSubLeader ?? fallback, "隊長の補佐，隊長不在時の代行"],
     ["通報連絡係", data.tsuhouMember ?? fallback, "119番通報、関係機関への連絡"],
-    ["消火係", data.shokaMember ?? fallback, "消火器・屋内消火栓による初期消火・延焼拡大防止"],
+    ["消火係", data.shokaMember ?? fallback, extinguishingDuty(data, "消火器・屋内消火栓による初期消火・延焼拡大防止", (n) => `${n}による初期消火・延焼拡大防止`)],
     ["避難誘導係", data.hinanMember ?? fallback, "適切な避難経路の選択・避難誘導"],
-    ["安全防護係", data.anzenMember ?? fallback, "排煙口操作、防火戸・防火シャッター閉鎖"],
+    ["安全防護係", data.anzenMember ?? fallback, "排煙口操作、防火戸等の閉鎖"],
     ["救護係", data.kyugoMember ?? fallback, "救護所設置、応急手当、救急隊との連絡"],
   ];
   return [

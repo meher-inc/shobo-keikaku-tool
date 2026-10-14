@@ -131,6 +131,7 @@ export async function buildOsakaFull(form: any): Promise<Buffer> {
     const d = new Date(data.creationDateIso);
     if (!Number.isNaN(d.getTime())) {
       data.creationDate = d.toLocaleDateString("ja-JP-u-ca-japanese", {
+        timeZone: "Asia/Tokyo",
         era: "long",
         year: "numeric",
         month: "long",
@@ -206,6 +207,11 @@ export async function buildOsakaFull(form: any): Promise<Buffer> {
 function extendForOsaka(data: RenderData, form: any): void {
   // 第1章 / 第2章 / 第6章 / 第7章 / 第8章 placeholders used in body
   data.kengenRange = str(form?.kengen_range);
+  // 管理権原範囲の文言。kengen_range（自由記述）があれば従来どおり「（…）部分」、
+  // なければ共通フォームの「管理権原の範囲（建物の一部）」から組み立てた文を使う。
+  data.kengenRangePhrase = data.kengenRange
+    ? `（${data.kengenRange}）部分`
+    : data.managementScope;
   data.reportMonth = str(form?.report_month);
   data.tsunamiEvac = str(form?.tsunami_evac);
   data.drillFireMonth1 = str(form?.drill_fire_month1);

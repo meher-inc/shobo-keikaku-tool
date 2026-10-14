@@ -30,9 +30,10 @@
           "id": "ch1-management-scope",
           "heading": "３　管理権原の及ぶ範囲",
           "body": [
-            { "type": "text", "value": "　管理について権原の及ぶ範囲（以下「管理権原範囲」という。）は、（" },
-            { "type": "placeholder", "key": "kengenRange", "fallback": "建物全体" },
-            { "type": "text", "value": "）部分とする。" }
+            { "type": "text", "value": "　管理について権原の及ぶ範囲（以下「管理権原範囲」という。）は、" },
+            { "type": "placeholder", "key": "kengenRangePhrase", "fallback": "（建物全体）部分" },
+            { "type": "text", "value": "とする。" },
+            { "type": "placeholder", "key": "scopeConformSentence", "fallback": "" }
           ]
         },
         {

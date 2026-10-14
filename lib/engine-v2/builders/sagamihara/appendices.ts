@@ -3,6 +3,7 @@ import type { RenderData } from "../../helpers/placeholder";
 import type { TableTheme } from "../shared/table-helpers";
 import { styledTable } from "../shared/table-helpers";
 import { pageBreak, sectionHeading } from "../shared/paragraph-helpers";
+import { equipmentRows, extinguishingDuty } from "../shared/equipment-rows";
 
 /**
  * 相模原市消防局（中規模用）別表ビルダ。
@@ -74,18 +75,22 @@ function buildBesso4Quake(): (Paragraph | Table)[] {
   ];
 }
 
-function buildBesso5Equip(): (Paragraph | Table)[] {
+function buildBesso5Equip(data: RenderData): (Paragraph | Table)[] {
   return [
     pageBreak(),
     sectionHeading("別表５　消防用設備等自主点検チェック表"),
     styledTable(
       ["設備名", "点検項目", "結果"],
-      [
-        ["消火器", "設置場所・外形・圧力に異常はないか", B],
-        ["屋内消火栓設備", "ホース・ノズル・開閉弁に損傷・障害はないか", B],
-        ["自動火災報知設備", "受信機・感知器の表示・機能に異常はないか", B],
-        ["避難器具・誘導灯", "設置・操作・点灯に障害はないか", B],
-      ],
+      equipmentRows(
+        data,
+        [
+          ["消火器", "設置場所・外形・圧力に異常はないか", B],
+          ["屋内消火栓設備", "ホース・ノズル・開閉弁に損傷・障害はないか", B],
+          ["自動火災報知設備", "受信機・感知器の表示・機能に異常はないか", B],
+          ["避難器具・誘導灯", "設置・操作・点灯に障害はないか", B],
+        ],
+        (n) => [n, "外観・機能に異常はないか", B]
+      ),
       [2600, 5426, 1000],
       sagamiharaTheme
     ),
@@ -96,7 +101,7 @@ function buildBesso8FireOrg(data: RenderData): (Paragraph | Table)[] {
   const rows: string[][] = [
     ["自衛消防隊長", data.leaderName ?? NAME, "自衛消防活動全般の指揮統括"],
     ["通報連絡班", data.tsuhouMember ?? NAME, "119番通報、館内放送、関係機関への連絡"],
-    ["初期消火班", data.shokaMember ?? NAME, "消火器・屋内消火栓設備等による初期消火"],
+    ["初期消火班", data.shokaMember ?? NAME, extinguishingDuty(data, "消火器・屋内消火栓設備等による初期消火", (n) => `${n}等による初期消火`)],
     ["避難誘導班", data.hinanMember ?? NAME, "在館者の避難誘導、避難経路の確保"],
     ["救護班", data.kyugoMember ?? NAME, "負傷者の応急救護、救護所の設置"],
     ["安全防護班", data.anzenMember ?? NAME, "防火戸の閉鎖、火気・電源の遮断、二次災害の防止"],
@@ -151,7 +156,7 @@ export function buildSagamiharaAppendices(data: RenderData): (Paragraph | Table)
     ...buildBesso2Daily(),
     ...buildBesso3Periodic(),
     ...buildBesso4Quake(),
-    ...buildBesso5Equip(),
+    ...buildBesso5Equip(data),
     ...buildBesso8FireOrg(data),
     ...buildBessoOutsource(),
   ];

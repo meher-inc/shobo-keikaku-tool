@@ -50,6 +50,7 @@ export async function buildConstructionFull(form: any, basePack: V2Pack): Promis
     const d = new Date(data.creationDateIso);
     if (!Number.isNaN(d.getTime())) {
       data.creationDate = d.toLocaleDateString("ja-JP-u-ca-japanese", {
+        timeZone: "Asia/Tokyo",
         era: "long", year: "numeric", month: "long", day: "numeric",
       });
     }
