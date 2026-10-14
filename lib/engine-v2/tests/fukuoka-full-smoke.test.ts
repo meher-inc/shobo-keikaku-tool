@@ -163,7 +163,7 @@ describe("fukuoka 中規模防火対象物用 v2 smoke tests", () => {
     // 第19条 still hidden
     expect(xml).not.toContain("第１９条　統括防火管理者への報告");
     // tbl: 1 (list) + 1 (別表3) + 1 (別記様式) = 3
-    expect(tblCount).toBe(5);
+    expect(tblCount).toBe(7);
   });
 
   // ── F3: requires_unified_fpm=true ─────────────────────────────
@@ -179,7 +179,7 @@ describe("fukuoka 中規模防火対象物用 v2 smoke tests", () => {
     expect(xml).not.toContain("第３条　委託状況等");
     expect(xml).not.toContain("別記様式　防火・防災管理業務の委託状況表");
     // tbl: 1 (list) + 1 (別表3) = 2 (no 別記様式 since !outsourced)
-    expect(tblCount).toBe(4);
+    expect(tblCount).toBe(6);
   });
 
   // ── F4: all flags on (composite gating) ───────────────────────
@@ -198,7 +198,7 @@ describe("fukuoka 中規模防火対象物用 v2 smoke tests", () => {
     expect(xml).toMatch(APPENDIX3_HEADING_RE);
     expect(xml).toContain("別記様式　防火・防災管理業務の委託状況表");
     // tbl: 1 (list) + 1 (別表3) + 1 (別記様式) = 3
-    expect(tblCount).toBe(5);
+    expect(tblCount).toBe(7);
   });
 
   // ── F5: plan=standard × all flags false (include_appendix verify) ──
@@ -219,6 +219,6 @@ describe("fukuoka 中規模防火対象物用 v2 smoke tests", () => {
     expect(xml).toContain("山田太郎");
     expect(xml).toContain("佐藤花子");
     // tbl: 1 (list) + 1 (別表3) = 2 (stubs are plainText, no tbl contribution)
-    expect(tblCount).toBe(4);
+    expect(tblCount).toBe(6);
   });
 });

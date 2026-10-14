@@ -5,7 +5,6 @@ import { styledTable } from "../shared/table-helpers";
 import {
   appendixHeading,
   pageBreak,
-  plainText,
   sectionHeading,
 } from "../shared/paragraph-helpers";
 import { applicableLabel } from "./logic";
@@ -44,8 +43,17 @@ function buildAppendix1PreventionOrgStub(): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("１", "火災予防のための組織編成"),
-    plainText(
-      "（Phase 2B で完全実装：階・区域 × 防火担当責任者・火元責任者の編成表）"
+    styledTable(
+      ["階・区域", "防火担当責任者", "火元責任者"],
+      [
+        ["　", "　", "　"],
+        ["　", "　", "　"],
+        ["　", "　", "　"],
+        ["　", "　", "　"],
+        ["　", "　", "　"],
+      ],
+      [3000, 3013, 3013],
+      fukuokaTheme
     ),
   ];
 }
@@ -56,8 +64,16 @@ function buildAppendix2InspectionOrgStub(): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("２", "自主点検を実施するための組織編成表（例）"),
-    plainText(
-      "（Phase 2B で完全実装：点検班区分 × 点検班員 × 点検対象設備の編成表）"
+    styledTable(
+      ["点検班の区分", "点検班員", "点検対象の設備等"],
+      [
+        ["消防用設備等", "　", "消火器、自動火災報知設備、誘導灯等"],
+        ["建物・避難施設", "　", "廊下、階段、避難口、防火戸等"],
+        ["火気使用設備器具", "　", "厨房設備、暖房器具等"],
+        ["電気設備", "　", "分電盤、配線等"],
+      ],
+      [2800, 2800, 3426],
+      fukuokaTheme
     ),
   ];
 }

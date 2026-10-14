@@ -5,7 +5,6 @@ import { styledTable } from "../shared/table-helpers";
 import {
   appendixHeading,
   pageBreak,
-  plainText,
   sectionHeading,
 } from "../shared/paragraph-helpers";
 import { applicableLabel } from "./logic";
@@ -49,32 +48,71 @@ function buildAppendix1OutsourceStub(): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("１", "防火・防災管理業務委託状況表"),
-    plainText(
-      "（Phase 2B で完全実装：委託方式・受託者氏名・住所・業務範囲・業務時間帯）"
+    styledTable(
+      ["項目", "内容"],
+      [
+        ["委託方式", "常駐 ・ 巡回 ・ 遠隔移報 ・ その他（　　　　）"],
+        ["受託者氏名（名称）", "　"],
+        ["受託者住所", "　"],
+        ["委託する業務の範囲", "　"],
+        ["業務を行う時間帯", "　"],
+      ],
+      [3000, 6026],
+      osakaTheme
     ),
   ];
 }
 
 // ── 別表2: 災害想定 (STUB) ─────────────────────────────────────
 
-function buildAppendix2DisasterStub(): (Paragraph | Table)[] {
+function buildAppendix2DisasterStub(data: RenderData): (Paragraph | Table)[] {
+  const v = (x?: string) => (x && x.trim() ? x : "　");
   return [
     pageBreak(),
     appendixHeading("２", "災害想定"),
-    plainText(
-      "（Phase 2B で完全実装：地震規模・想定災害・人的被害想定・物的被害想定）"
+    styledTable(
+      ["項目", "想定の内容"],
+      [
+        ["地震の規模", "　"],
+        ["想定される災害", "　"],
+        ["人的被害の想定", v(data.casualtyEstimate)],
+        ["物的被害の想定", v(data.propertyDamageEstimate)],
+      ],
+      [3000, 6026],
+      osakaTheme
     ),
   ];
 }
 
 // ── 別表3: 防火・防災対象物実態把握表 (STUB) ──────────────────────
 
-function buildAppendix3PropertyStub(): (Paragraph | Table)[] {
+function buildAppendix3PropertyStub(data: RenderData): (Paragraph | Table)[] {
+  const v = (x?: string) => (x && x.trim() ? x : "　");
+  const floors =
+    data.floorsAbove || data.floorsBelow
+      ? `地上${data.floorsAbove ?? "　"}階・地下${data.floorsBelow ?? "　"}階`
+      : data.numFloors
+        ? `${data.numFloors}階`
+        : "　";
   return [
     pageBreak(),
     appendixHeading("３", "防火・防災対象物実態把握表"),
-    plainText(
-      "（Phase 2B で完全実装：所有形態・建築年月日・構造・階数・延べ面積・管理権原範囲・収容人員・主用途・危険物・消防用設備）"
+    styledTable(
+      ["項目", "内容"],
+      [
+        ["所有形態", data.buildingOwnership ?? "自社所有 ・ 賃借 ・ その他（　　　　）"],
+        ["建築年月日", v(data.buildingConstructedDate)],
+        ["構造", v(data.buildingStructure)],
+        ["階数", floors],
+        ["延べ面積", v(data.totalAreaM2 ? `${data.totalAreaM2}㎡` : data.totalArea ? `${data.totalArea}㎡` : undefined)],
+        ["管理権原範囲", v(data.kengenRange ?? data.managementScope)],
+        ["収容人員", v(data.occupancy ?? (data.capacity ? `${data.capacity}人` : undefined))],
+        ["主用途", v(data.mainUsage ?? data.useCategory)],
+        ["危険物の有無", data.hasHazardousMaterials ?? "有（品名・数量：　　　　） ・ 無"],
+        ["消防用設備等", v(data.fireEquipmentSummary ?? (data.fireEquipmentList ?? "").split(",").filter(Boolean).join("、"))],
+      ],
+      [3000, 6026],
+      osakaTheme
     ),
   ];
 }
@@ -85,20 +123,49 @@ function buildAppendix7RecordsStub(): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("７", "防火・防災管理維持台帳に編冊する書類等"),
-    plainText(
-      "（Phase 2B で完全実装：講習修了証・各種届出書・点検記録等の 12 項目）"
+    styledTable(
+      ["書類等", "編冊の有無"],
+      [
+        ["防火・防災管理者の講習修了証の写し", "有 ・ 無"],
+        ["防火・防災管理者選任（解任）届出書の控え", "有 ・ 無"],
+        ["消防計画作成（変更）届出書の控え", "有 ・ 無"],
+        ["消防用設備等点検結果報告書の控え", "有 ・ 無"],
+        ["防火対象物点検結果報告書の控え（該当する場合）", "有 ・ 無"],
+        ["防災管理点検結果報告書の控え（該当する場合）", "有 ・ 無"],
+        ["自衛消防訓練の実施記録", "有 ・ 無"],
+        ["防火・防災教育の実施記録", "有 ・ 無"],
+        ["自主検査・自主点検の記録", "有 ・ 無"],
+        ["消防機関からの通知書・指導事項等", "有 ・ 無"],
+        ["防火・防災管理業務の委託契約書等の写し（該当する場合）", "有 ・ 無"],
+        ["その他防火・防災管理上必要な書類", "有 ・ 無"],
+      ],
+      [6500, 2526],
+      osakaTheme
     ),
   ];
 }
 
 // ── 別表8: 非常用物品等の一覧 (STUB) ─────────────────────────────
 
-function buildAppendix8SuppliesStub(): (Paragraph | Table)[] {
+function buildAppendix8SuppliesStub(data: RenderData): (Paragraph | Table)[] {
+  const place = data.storageLocation ?? "　";
   return [
     pageBreak(),
     appendixHeading("８", "非常用物品等の一覧"),
-    plainText(
-      "（Phase 2B で完全実装：飲料水・非常食・懐中電灯・ラジオ・救急医薬品・毛布・簡易トイレ・ヘルメット）"
+    styledTable(
+      ["品目", "数量", "保管場所"],
+      [
+        ["飲料水", "　", place],
+        ["非常食", "　", place],
+        ["懐中電灯", "　", place],
+        ["ラジオ", "　", place],
+        ["救急医薬品", "　", place],
+        ["毛布", "　", place],
+        ["簡易トイレ", "　", place],
+        ["ヘルメット", "　", place],
+      ],
+      [3500, 2000, 3526],
+      osakaTheme
     ),
   ];
 }
@@ -169,10 +236,10 @@ export function buildOsakaAppendices(data: RenderData): (Paragraph | Table)[] {
   const outsourced = data.hasOutsourcedManagement === "true";
   return [
     ...(outsourced ? buildAppendix1OutsourceStub() : []),
-    ...buildAppendix2DisasterStub(),
-    ...buildAppendix3PropertyStub(),
+    ...buildAppendix2DisasterStub(data),
+    ...buildAppendix3PropertyStub(data),
     ...buildAppendix7RecordsStub(),
-    ...buildAppendix8SuppliesStub(),
+    ...buildAppendix8SuppliesStub(data),
     ...buildAppendix9FireBrigade(data),
   ];
 }
