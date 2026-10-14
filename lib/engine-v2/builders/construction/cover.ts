@@ -66,7 +66,7 @@ function buildFrontMatter(data: RenderData): (Paragraph | Table)[] {
   ];
 }
 
-/** 工事中の消防計画の提出についての注意（記入ガイドに載せる）。 */
+/** 工事中の消防計画の提出についての注意（提出前チェックシートに載せる）。 */
 export function constructionSubmitNote(dept: ConstructionDeptMeta): string {
   return dept.deptName
     ? dept.hasDedicatedForm

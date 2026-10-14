@@ -19,7 +19,7 @@ import { constructionDeptMeta } from "../builders/construction/dept-meta";
 const GOTHIC = "游ゴシック";
 
 /**
- * 記入ガイド（提出しない案内用のWord）。
+ * 提出前チェックシート（提出しない案内用のWord）。
  *
  * 提出用の消防計画とは別ファイルにして、次の案内だけを載せる。
  *   - ご提出前に追記・確認が必要な事項
@@ -38,7 +38,7 @@ export async function buildPlanGuide(form: any, pack: V2Pack): Promise<Buffer> {
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 120 },
-      children: [new TextRun({ text: "消防計画 記入ガイド", size: 36, bold: true, font: GOTHIC })],
+      children: [new TextRun({ text: "消防計画 提出前チェックシート", size: 36, bold: true, font: GOTHIC })],
     }),
     ...(name
       ? [
@@ -50,7 +50,7 @@ export async function buildPlanGuide(form: any, pack: V2Pack): Promise<Buffer> {
         ]
       : []),
     plainText(
-      "このガイドは、消防計画を提出する前の確認と準備のための資料です。所轄の消防署へ提出するのは、別ファイルの消防計画（提出用）です。このガイドは提出しません。"
+      "この提出前チェックシートは、消防計画を提出する前の確認と準備のための資料です。所轄の消防署へ提出するのは、別ファイルの消防計画（提出用）です。この提出前チェックシートは提出しません。"
     ),
     sectionHeading(isConstruction ? "ご提出前に追記・確認が必要な事項（工事中の消防計画）" : "ご提出前に追記・確認が必要な事項"),
     ...checklist.map((c) => plainText(`・${c}`)),
@@ -75,7 +75,7 @@ export async function buildPlanGuide(form: any, pack: V2Pack): Promise<Buffer> {
               new Paragraph({
                 alignment: AlignmentType.CENTER,
                 children: [
-                  new TextRun({ text: "記入ガイド（提出不要）  ", size: 18, font: GOTHIC }),
+                  new TextRun({ text: "提出前チェックシート（提出不要）  ", size: 18, font: GOTHIC }),
                   new TextRun({ children: [PageNumber.CURRENT], size: 18, font: GOTHIC }),
                   new TextRun({ text: " / ", size: 18, font: GOTHIC }),
                   new TextRun({ children: [PageNumber.TOTAL_PAGES], size: 18, font: GOTHIC }),

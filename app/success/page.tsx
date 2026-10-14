@@ -57,7 +57,7 @@ function SuccessContent() {
     }
   }
 
-  // 記入ガイド（提出しない案内用のWord）。提出用の消防計画とは別ファイルで配る。
+  // 提出前チェックシート（提出しない案内用のWord）。提出用の消防計画とは別ファイルで配る。
   const guideUrl = isInternal
     ? `/api/download?internal_order_id=${encodeURIComponent(internalOrderId || "")}&part=guide`
     : `/api/download?session_id=${encodeURIComponent(sessionId || "")}&part=guide`;
@@ -140,10 +140,10 @@ function SuccessContent() {
                 background: "var(--surface-muted)", color: "var(--text)", fontSize: 15, fontWeight: 600,
                 textDecoration: "none", textAlign: "center",
               }}>
-                記入ガイド（Word）をダウンロード
+                提出前チェックシート（Word）をダウンロード
               </a>
               <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, lineHeight: 1.6 }}>
-                記入ガイドには、提出前の確認事項・提出のしかた・平面図の記入用テンプレートが入っています。消防署へは提出しません。
+                提出前チェックシートには、提出前の確認事項・提出のしかた・平面図の記入用テンプレートが入っています。消防署へは提出しません。
               </p>
             </>
           )}
@@ -165,14 +165,14 @@ function SuccessContent() {
               </div>
               <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.6 }}>
                 消防計画（提出用）のWordファイルがダウンロードされました。<br />
-                記入ガイドで提出前の確認事項と提出のしかたをご確認のうえ、所轄の消防署に届け出てください。
+                提出前チェックシートで提出前の確認事項と提出のしかたをご確認のうえ、所轄の消防署に届け出てください。
               </p>
 
               <a href={guideUrl} style={{
                 display: "block", width: "100%", boxSizing: "border-box", padding: 14, borderRadius: 14, background: "var(--brand)", color: "#fff", fontSize: 15, fontWeight: 600,
                 textDecoration: "none", marginBottom: 12, textAlign: "center",
               }}>
-                記入ガイド（Word）をダウンロード
+                提出前チェックシート（Word）をダウンロード
               </a>
               <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "-4px 0 16px", lineHeight: 1.6 }}>
                 提出前の確認事項・提出のしかた・平面図の記入用テンプレートが入っています。消防署へは提出しません。
@@ -184,7 +184,7 @@ function SuccessContent() {
                   textDecoration: "none", marginBottom: 12, textAlign: "center",
                   border: "1px solid var(--ok-border)",
                 }}>
-                  📘 記入ガイドPDF（書き方の解説）をダウンロード
+                  📘 記入ガイドPDFをダウンロード
                 </a>
               )}
 

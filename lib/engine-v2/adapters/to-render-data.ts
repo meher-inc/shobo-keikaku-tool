@@ -69,7 +69,7 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
     // 建物の一部の場合だけ置く条項。様式ごとの項番号に合わせて複数用意する。
     scopeConformItem3: partScope ? `\n⑶\u3000${PART_SCOPE_CONFORM_CLAUSE}` : undefined,
     scopeConformItem4: partScope ? `\n⑷\u3000${PART_SCOPE_CONFORM_CLAUSE}` : undefined,
-    // 建物の一部の場合の使用階（記入ガイドの平面図テンプレートで使う）。
+    // 建物の一部の場合の使用階（提出前チェックシートの平面図テンプレートで使う）。
     usedFloors: partScope ? scope.usedFloors : undefined,
     scopeConformSentence: partScope ? `\n\u3000${PART_SCOPE_CONFORM_CLAUSE}` : undefined,
 

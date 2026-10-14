@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   try {
     const sessionId = request.nextUrl.searchParams.get("session_id");
     const internalOrderId = request.nextUrl.searchParams.get("internal_order_id");
-    // part=guide で記入ガイド（提出しない案内用のWord）を返す。既定は提出用の消防計画。
+    // part=guide で提出前チェックシート（提出しない案内用のWord）を返す。既定は提出用の消防計画。
     const part = request.nextUrl.searchParams.get("part") === "guide" ? "guide" : "plan";
 
     if (!sessionId && !internalOrderId) {
@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
       return new NextResponse(new Uint8Array(guide), {
         headers: {
           "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(`記入ガイド_${buildingName}.docx`)}`,
+          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(`提出前チェックシート_${buildingName}.docx`)}`,
         },
       });
     }

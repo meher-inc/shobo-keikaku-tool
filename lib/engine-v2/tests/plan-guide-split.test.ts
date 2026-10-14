@@ -4,8 +4,8 @@ import { runV2Adapter, type V2Pack } from "../adapters/generate-plan";
 import { buildPlanGuide } from "../adapters/generate-guide";
 
 /**
- * 提出用の消防計画と記入ガイドを別ファイルに分けたことの確認。
- * 提出用には案内文・チェックリスト・平面図テンプレートを入れず、記入ガイドにだけ入れる。
+ * 提出用の消防計画と提出前チェックシートを別ファイルに分けたことの確認。
+ * 提出用には案内文・チェックリスト・平面図テンプレートを入れず、提出前チェックシートにだけ入れる。
  */
 
 const FORM = {
@@ -61,11 +61,11 @@ describe("提出用の消防計画", () => {
   });
 });
 
-describe("記入ガイド", () => {
+describe("提出前チェックシート", () => {
   it("確認事項・提出のしかた・平面図テンプレートを含み、提出不要と明記する", async () => {
     const t = await text(await buildPlanGuide(FORM, "tokyo-full"));
-    expect(t).toContain("消防計画 記入ガイド");
-    expect(t).toContain("このガイドは提出しません。");
+    expect(t).toContain("消防計画 提出前チェックシート");
+    expect(t).toContain("この提出前チェックシートは提出しません。");
     expect(t).toContain("ご提出前に追記・確認が必要な事項");
     expect(t).toContain("作成後の提出のしかた");
     expect(t).toContain("各階平面図・避難経路図（記入用テンプレート）");
