@@ -36,24 +36,45 @@ const yokohamaTheme: TableTheme = {
 
 // ── 別表1: 自主点検チェックリスト (STUB) ──────────────────────────
 
-function buildAppendix1SelfCheck(): (Paragraph | Table)[] {
+function buildAppendix1SelfCheck(data: RenderData): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("１", "自主点検チェックリスト"),
-    plainText(
-      "（Phase 2B で完全実装：建物名・記載年月日・記載者・項目別の点検結果欄）"
+    plainText(`建物名：${data.buildingName ?? "　　　　　　"}\u3000\u3000記載年月日：　　年　　月　　日\u3000\u3000記載者：　　　　　`),
+    styledTable(
+      ["点検項目", "点検内容", "結果"],
+      [
+        ["避難口・廊下・階段", "避難の障害となる物品が置かれていないか", "良 ・ 否"],
+        ["防火戸", "閉鎖の障害となる物品が置かれていないか", "良 ・ 否"],
+        ["火気使用設備器具", "周囲に可燃物がなく、適正に使用されているか", "良 ・ 否"],
+        ["電気設備", "配線・コンセントに異常はないか", "良 ・ 否"],
+        ["消防用設備等", "消火器・誘導灯等の設置場所・外観に異常はないか", "良 ・ 否"],
+        ["その他", "　", "良 ・ 否"],
+      ],
+      [2800, 4200, 2026],
+      yokohamaTheme
     ),
   ];
 }
 
 // ── 別表2: 自衛消防隊の組織及び任務分担 (STUB) ────────────────────
 
-function buildAppendix2FireBrigade(): (Paragraph | Table)[] {
+function buildAppendix2FireBrigade(data: RenderData): (Paragraph | Table)[] {
+  const fallback = "(    )";
   return [
     pageBreak(),
     appendixHeading("２", "自衛消防隊の組織及び任務分担"),
-    plainText(
-      "（Phase 2B で完全実装：自衛消防隊長／通報連絡班／初期消火班／避難誘導班／応急救護班の編成と任務）"
+    styledTable(
+      ["班", "氏名", "任務"],
+      [
+        ["自衛消防隊長", data.leaderName ?? data.managerName ?? fallback, "自衛消防隊の指揮、消防隊への情報提供"],
+        ["通報連絡班", data.tsuhouMember ?? fallback, "119番通報、館内への連絡"],
+        ["初期消火班", data.shokaMember ?? fallback, "消火器等による初期消火"],
+        ["避難誘導班", data.hinanMember ?? fallback, "在館者の避難誘導、逃げ遅れた者の確認"],
+        ["応急救護班", data.kyugoMember ?? fallback, "負傷者の応急手当、救急隊への引継ぎ"],
+      ],
+      [2500, 3000, 3526],
+      yokohamaTheme
     ),
   ];
 }
@@ -116,8 +137,8 @@ export function buildYokohamaAppendices(data: RenderData): (Paragraph | Table)[]
   const outsourced = data.hasOutsourcedManagement === "true";
   const hasDisasterCenter = data.hasDisasterCenter === "true";
   return [
-    ...buildAppendix1SelfCheck(),
-    ...buildAppendix2FireBrigade(),
+    ...buildAppendix1SelfCheck(data),
+    ...buildAppendix2FireBrigade(data),
     ...(hasDisasterCenter ? buildAppendix3DisasterCenter() : []),
     ...(outsourced ? buildAppendix4Outsource(data) : []),
   ];
