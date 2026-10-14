@@ -3,6 +3,7 @@ import type { RenderData } from "../../../helpers/placeholder";
 import type { TableTheme } from "../table-helpers";
 import { styledTable } from "../table-helpers";
 import { appendixHeading, pageBreak, plainText, spacerParagraph } from "../paragraph-helpers";
+import { extinguishingDuty } from "../equipment-rows";
 
 /**
  * Shared appendix builders — identical or near-identical structures
@@ -181,13 +182,20 @@ export function buildEquipmentCheck(
 
 type BrigadeRow = [string, string, string]; // [role, name, duty]
 
-const COMMON_BRIGADE_ROWS: BrigadeRow[] = [
-  ["通報連絡担当", "(    )", "119番通報、館内・関係者への連絡"],
-  ["初期消火担当", "(    )", "消火器・屋内消火栓による初期消火"],
-  ["避難誘導担当", "(    )", "避難経路の確保、在館者の誘導"],
-  ["安全防護担当", "(    )", "防火戸・防火シャッターの閉鎖確認"],
-  ["応急救護担当", "(    )", "負傷者の応急手当、救急隊への引継ぎ"],
-];
+/**
+ * 初期消火担当・安全防護担当の任務は入力された設備に合わせる。
+ * 初期消火は設置されている消火設備だけを挙げ、防火シャッターは入力項目がないため挙げない。
+ */
+function commonBrigadeRows(data: RenderData): BrigadeRow[] {
+  const shoka = extinguishingDuty(data, "消火器・屋内消火栓による初期消火", (n) => `${n}による初期消火`);
+  return [
+    ["通報連絡担当", "(    )", "119番通報、館内・関係者への連絡"],
+    ["初期消火担当", "(    )", shoka],
+    ["避難誘導担当", "(    )", "避難経路の確保、在館者の誘導"],
+    ["安全防護担当", "(    )", "防火戸等の閉鎖確認"],
+    ["応急救護担当", "(    )", "負傷者の応急手当、救急隊への引継ぎ"],
+  ];
+}
 
 export function buildFireBrigade(
   data: RenderData,
@@ -204,7 +212,7 @@ export function buildFireBrigade(
   const rows: string[][] = [
     leaderRow,
     ...(opts.extraLeaderRows ?? []),
-    ...COMMON_BRIGADE_ROWS,
+    ...commonBrigadeRows(data),
   ];
   // Tokyo uses 班 naming (通報連絡班) vs kyoto 担当. For now the
   // common rows use kyoto naming; tokyo can override if needed in

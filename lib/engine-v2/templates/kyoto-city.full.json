@@ -24,10 +24,9 @@
           "heading": "２　適用範囲",
           "body": [
             { "type": "text", "value": "⑴　当該管理権原の及ぶ範囲は" },
-            { "type": "placeholder", "key": "buildingName", "fallback": "当該防火対象物" },
-            { "type": "text", "value": "の" },
-            { "type": "placeholder", "key": "managementScope", "fallback": "建物全体" },
-            { "type": "text", "value": "とする。\n⑵　この計画を適用する者の範囲は、管理権原者、防火管理者およびその他勤務する全ての者とする。" }
+            { "type": "placeholder", "key": "managementScopeWithBuilding", "fallback": "当該防火対象物の建物全体" },
+            { "type": "text", "value": "とする。\n⑵　この計画を適用する者の範囲は、管理権原者、防火管理者およびその他勤務する全ての者とする。" },
+            { "type": "placeholder", "key": "scopeConformItem3", "fallback": "" }
           ]
         },
         {
@@ -35,11 +34,10 @@
           "heading": "２　適用範囲",
           "body": [
             { "type": "text", "value": "⑴　当該管理権原の及ぶ範囲は" },
-            { "type": "placeholder", "key": "buildingName", "fallback": "当該防火対象物" },
-            { "type": "text", "value": "の" },
-            { "type": "placeholder", "key": "managementScope", "fallback": "建物全体" },
+            { "type": "placeholder", "key": "managementScopeWithBuilding", "fallback": "当該防火対象物の建物全体" },
             { "type": "text", "value": "とする。\n⑵　この計画を適用する者の範囲は、管理権原者、防火管理者およびその他勤務する全ての者とする。\n⑶　防火管理業務の一部を受託している者　" },
-            { "type": "placeholder", "key": "outsourceCompany", "fallback": "(未設定)" }
+            { "type": "placeholder", "key": "outsourceCompany", "fallback": "(未設定)" },
+            { "type": "placeholder", "key": "scopeConformItem4", "fallback": "" }
           ]
         },
         {
@@ -182,7 +180,7 @@
             { "type": "text", "value": "）、防火管理者（" },
             { "type": "placeholder", "key": "managerName", "fallback": "(    )" },
             { "type": "text", "value": "）へ連絡する。\n⑵　初期消火\n　ア　初期消火担当は、出火場所に急行し、積極的に初期消火活動を行う。\n　イ　初期消火担当は、" },
-            { "type": "computed", "fn": "joinArray", "args": ["fireEquipmentList"] },
+            { "type": "placeholder", "key": "extinguishingEquipmentText", "fallback": "消火器" },
             { "type": "text", "value": "等の適切な消防用設備等を用いて消火する。\n⑶　避難誘導\n　ア　避難誘導担当は、避難経路図に基づいて、避難誘導する。\n　イ　拡声器、メガホン等を使用して落ち着いて行動するよう誘導する。\n　ウ　避難方向が分かりにくいときは、曲がり角などに誘導員が立って、誘導する。\n　エ　避難誘導担当は、負傷者及び逃げ遅れた者の確認を行い、自衛消防隊長に報告する。\n⑷　安全防護\n　ア　逃げ遅れた者がいないことを確認した後、防火戸や防火シャッターを閉鎖する。\n⑸　応急救護\n　ア　応急救護担当は、負傷者の応急手当を行い、救急隊と連絡を密にして、負傷者を速やかに運ぶことができるようにする。\n　イ　応急救護担当は、負傷者の氏名、負傷程度など必要事項を記録する。" }
           ]
         },

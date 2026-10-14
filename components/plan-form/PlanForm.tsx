@@ -30,6 +30,9 @@ const EQUIPMENT = [
   "連結送水管", "排煙設備"
 ];
 
+// 火気使用設備の選択肢。「なし」は他と同時に選べない。
+const FIRE_USE_OPTIONS = ["厨房設備", "ガス機器", "なし"];
+
 const STEPS = [
   { id: "location", title: "所在地", icon: "📍" },
   { id: "building", title: "建物", icon: "🏢" },
@@ -45,12 +48,16 @@ const PLANS = SPOT_PLANS;
 const INITIAL_FORM = {
   postal: "",
   prefecture: "京都府", city: "京都市", ward: "", address_detail: "",
-  building_name: "", use_category: "", total_area: "", num_floors: "", capacity: "",
+  building_name: "", use_category: "", use_name: "", total_area: "", num_floors: "", capacity: "",
+  // 管理権原の範囲（whole: 建物全体 / part: 建物の一部）。part のときビル名・使用階・使用面積から適用範囲の文を作る。
+  management_scope_type: "whole", tenant_building_name: "", used_floors: "", used_area: "",
   owner_name: "", manager_name: "", manager_qual: "甲種", manager_date: "", manager_tel: "",
   has_outsource: false, outsource_company: "",
   equipment: [] as string[], inspection_company: "",
   // 各階の設備配置（任意）。階ごとの設備・数量。
   equipment_floors: [] as { floor: string; detail: string }[],
+  // 火気使用設備（「なし」を含む。未選択の旧データは全条項を出す扱い）。
+  fire_use_equipment: [] as string[],
   emergency_name: "", emergency_tel: "",
   evacuation_site: "", assembly_point: "",
   drill_months: "4月・10月", education_months: "4月・10月",
@@ -132,6 +139,7 @@ const STEP_REQUIRED: Record<number, { label: string; ok: (f: typeof INITIAL_FORM
     { label: "延べ面積", ok: (f) => !!f.total_area },
     { label: "階数", ok: (f) => !!f.num_floors },
     { label: "収容人員", ok: (f) => !!f.capacity },
+    { label: "使用階", ok: (f) => f.management_scope_type !== "part" || !!f.used_floors },
     // 工事中の消防計画を選んだ場合のみ必須になる項目。
     { label: "工事種別", ok: (f) => f.plan_kind !== "construction" || !!f.construction_type },
     { label: "着工日", ok: (f) => f.plan_kind !== "construction" || !!f.construction_start },
@@ -143,7 +151,10 @@ const STEP_REQUIRED: Record<number, { label: string; ok: (f: typeof INITIAL_FORM
     { label: "防火管理者 氏名", ok: (f) => !!f.manager_name },
     { label: "連絡先", ok: (f) => !!f.manager_tel && !telError(f.manager_tel) },
   ],
-  3: [{ label: "消防用設備（1つ以上）", ok: (f) => f.equipment.length > 0 }],
+  3: [
+    { label: "消防用設備（1つ以上）", ok: (f) => f.equipment.length > 0 },
+    { label: "火気使用設備（「なし」を含む）", ok: (f) => f.fire_use_equipment.length > 0 },
+  ],
   4: [
     { label: "緊急連絡先 氏名", ok: (f) => !!f.emergency_name },
     { label: "緊急連絡先 TEL", ok: (f) => !!f.emergency_tel && !telError(f.emergency_tel) },
@@ -340,6 +351,12 @@ const [selectedPlan, setSelectedPlan] = useState("standard");
   };
   const toggleEquip = (e: string) => set("equipment", form.equipment.includes(e) ? form.equipment.filter((x: string) => x !== e) : [...form.equipment, e]);
   // 各階の設備配置（任意）の行操作
+  const toggleFireUse = (e: string) => {
+    const cur = form.fire_use_equipment;
+    if (cur.includes(e)) return set("fire_use_equipment", cur.filter((x: string) => x !== e));
+    if (e === "なし") return set("fire_use_equipment", ["なし"]);
+    set("fire_use_equipment", [...cur.filter((x: string) => x !== "なし"), e]);
+  };
   const addFloorRow = () => set("equipment_floors", [...form.equipment_floors, { floor: "", detail: "" }]);
   const updateFloorRow = (i: number, k: "floor" | "detail", v: string) =>
     set("equipment_floors", form.equipment_floors.map((r, idx) => (idx === i ? { ...r, [k]: v } : r)));
@@ -661,11 +678,45 @@ const [selectedPlan, setSelectedPlan] = useState("standard");
               </select>
               {selectedUse && <div style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 20, background: isSpecific ? "var(--warn-bg)" : "var(--info-bg)", color: isSpecific ? "var(--warn-accent)" : "var(--info-text)" }}>{isSpecific ? "● 特定防火対象物" : "● 非特定防火対象物"}</div>}
             </div>
+            <Field label="用途の名称（任意）" value={form.use_name} onChange={(e: { target: { value: string } }) => set("use_name", e.target.value)} placeholder="スポーツクラブ" hint="入力すると、計画書の用途欄が「スポーツクラブ（令別表第一（15）項）」のように出力されます。" />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
               <Field label="延べ面積（㎡）" value={form.total_area} onChange={(e: any) => set("total_area", e.target.value)} type="number" required hint="建物すべての階の床面積の合計（㎡）です。登記事項証明書や検査済証で確認できます。" />
               <Field label="階数" value={form.num_floors} onChange={(e: any) => set("num_floors", e.target.value)} type="number" required hint="地上階数を入力します（地階がある場合は備考や以降の住所欄で補足してください）。" />
               <Field label="収容人員" value={form.capacity} onChange={(e: any) => set("capacity", e.target.value)} type="number" required hint="その建物・テナントに通常いる人数（従業員＋利用者など）の合計です。消防法令の算定基準で求めた人数を入力します。" />
             </div>
+
+            {/* 管理権原の範囲。建物の一部（テナント等）の場合は適用範囲の文と適合条項を計画に入れる。 */}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>
+                管理権原の範囲<span style={{ color: "var(--err-solid)" }}> *</span>
+                <Hint text="ビルの一室・一フロアを借りて使う場合など、管理の権限が建物の一部に限られるときは「建物の一部」を選びます。計画の適用範囲が「○○ビル○階のうち、○○として使用する部分」になります。" />
+              </label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {([
+                  ["whole", "建物全体", "建物すべてを管理している"],
+                  ["part", "建物の一部", "テナントなど、一部を使用している"],
+                ] as [string, string, string][]).map(([val, title, desc]) => {
+                  const active = form.management_scope_type === val;
+                  return (
+                    <button key={val} onClick={() => set("management_scope_type", val)} style={{
+                      padding: "14px 14px", borderRadius: 12, border: "none", cursor: "pointer", textAlign: "left" as const,
+                      background: active ? "var(--brand-tint)" : "var(--surface-3)",
+                      outline: active ? "2px solid var(--brand)" : "1px solid transparent",
+                    }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: active ? "var(--brand-dark)" : "var(--text)" }}>{title}</div>
+                      <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, lineHeight: 1.5 }}>{desc}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            {form.management_scope_type === "part" && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                <Field label="建物（ビル）の名称" value={form.tenant_building_name} onChange={(e: { target: { value: string } }) => set("tenant_building_name", e.target.value)} placeholder="○○ビル" />
+                <Field label="使用階" value={form.used_floors} onChange={(e: { target: { value: string } }) => set("used_floors", e.target.value)} placeholder="1階" required />
+                <Field label="使用部分の面積（㎡）" value={form.used_area} onChange={(e: { target: { value: string } }) => set("used_area", e.target.value)} type="number" hint="空欄の場合は延べ面積の値を使います。" />
+              </div>
+            )}
 
             {/* 工事中の消防計画を選んだ場合の工事情報 */}
             {form.plan_kind === "construction" && (
@@ -771,6 +822,29 @@ const [selectedPlan, setSelectedPlan] = useState("standard");
                   </button>
                 );
               })}
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>
+                火気使用設備<span style={{ color: "var(--err-solid)" }}> *</span>
+                <Hint text="厨房設備やガス機器がある場合は選択してください。選んだ設備に応じて、火気管理の守るべき事項が計画に入ります。ない場合は「なし」を選びます。" />
+              </label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                {FIRE_USE_OPTIONS.map(e => {
+                  const active = form.fire_use_equipment.includes(e);
+                  return (
+                    <button key={e} onClick={() => toggleFireUse(e)} style={{
+                      display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, border: "none", cursor: "pointer",
+                      background: active ? "var(--brand-tint)" : "var(--surface-3)", outline: active ? "2px solid var(--brand)" : "1px solid transparent",
+                      fontSize: 14, fontWeight: 500, textAlign: "left" as const,
+                    }}>
+                      <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, background: active ? "var(--brand)" : "var(--surface)", border: active ? "none" : "2px solid var(--border-strong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {active && <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>✓</span>}
+                      </div>
+                      {e}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <Field label="点検委託先" value={form.inspection_company} onChange={(e: any) => set("inspection_company", e.target.value)} placeholder="○○防災設備株式会社" />
 
@@ -888,13 +962,15 @@ const [selectedPlan, setSelectedPlan] = useState("standard");
                   ["工事概要", isConstruction ? [form.construction_name, form.construction_type, form.construction_scope].filter(Boolean).join(" / ") : ""],
                   ["工事期間", isConstruction ? [form.construction_start, form.construction_end].filter(Boolean).join(" 〜 ") : ""],
                   ["施工者", isConstruction ? [form.contractor_name, form.construction_site_manager && `現場責任者:${form.construction_site_manager}`, form.contractor_tel].filter(Boolean).join(" / ") : ""],
-                  ["用途", form.use_category],
+                  ["用途", [form.use_name, selectedUse?.label].filter(Boolean).join(" / ")],
+                  ["管理権原の範囲", form.management_scope_type === "part" ? `建物の一部（${[form.tenant_building_name, form.used_floors, form.used_area && `${form.used_area}㎡`].filter(Boolean).join(" ")}）` : "建物全体"],
                   ["規模", [form.total_area && `${form.total_area}㎡`, form.num_floors && `${form.num_floors}階`, form.capacity && `${form.capacity}人`].filter(Boolean).join(" / ")],
                   ["管理権原者", form.owner_name],
                   ["防火管理者", form.manager_name && `${form.manager_name}${form.manager_qual ? `（${form.manager_qual}）` : ""}`],
                   ["連絡先", form.manager_tel],
                   ["消防用設備", form.equipment.join("、")],
-                  ["各階配置", form.equipment_floors.filter(r => r.floor || r.detail).map(r => `${r.floor || "-"}: ${r.detail}`).join(" ／ ")],
+                  ["火気使用設備", form.fire_use_equipment.join("、")],
+                  ["各階配置", form.equipment_floors.filter(r => r.floor || r.detail).map(r => (r.floor ? `${r.floor}: ${r.detail}` : r.detail)).join(" ／ ")],
                   ["自衛消防隊", [form.leader_name && `隊長:${form.leader_name}`, form.tsuhou_member && `通報:${form.tsuhou_member}`, form.shoka_member && `初期消火:${form.shoka_member}`, form.hinan_member && `避難誘導:${form.hinan_member}`, form.kyugo_member && `救護:${form.kyugo_member}`, form.anzen_member && `安全:${form.anzen_member}`].filter(Boolean).join(" / ")],
                   ["避難場所", [form.evacuation_site, form.assembly_point].filter(Boolean).join(" / ")],
                 ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (

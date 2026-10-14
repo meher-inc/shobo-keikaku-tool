@@ -7,6 +7,7 @@ import {
   pageBreak,
   sectionHeading,
 } from "../shared/paragraph-helpers";
+import { extinguishingDuty } from "../shared/equipment-rows";
 
 /**
  * 神戸市消防局（オフィスビル用・防火防災）別表ビルダ。
@@ -121,7 +122,7 @@ function buildAppendix6FireOrg(data: RenderData): (Paragraph | Table)[] {
   const rows: string[][] = [
     ["自衛消防隊長", data.leaderName ?? NAME, "自衛消防活動全般の指揮統括"],
     ["通報連絡班", data.tsuhouMember ?? NAME, "119番通報、館内放送、関係機関への連絡"],
-    ["初期消火班", data.shokaMember ?? NAME, "消火器・屋内消火栓設備等による初期消火"],
+    ["初期消火班", data.shokaMember ?? NAME, extinguishingDuty(data, "消火器・屋内消火栓設備等による初期消火", (n) => `${n}等による初期消火`)],
     ["避難誘導班", data.hinanMember ?? NAME, "在館者の避難誘導、避難経路の確保"],
     ["救護班", data.kyugoMember ?? NAME, "負傷者の応急救護、救護所の設置"],
     ["安全防護班", data.anzenMember ?? NAME, "防火戸の閉鎖、火気・電源の遮断、二次災害の防止"],
@@ -133,7 +134,7 @@ function buildAppendix6FireOrg(data: RenderData): (Paragraph | Table)[] {
   ];
 }
 
-function buildAppendix7Duties(): (Paragraph | Table)[] {
+function buildAppendix7Duties(data: RenderData): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("７", "自衛消防組織の任務分担"),
@@ -141,10 +142,10 @@ function buildAppendix7Duties(): (Paragraph | Table)[] {
       ["班", "任務分担"],
       [
         ["通報連絡班", "119番通報、自衛消防隊長への報告、館内放送、関係機関・消防隊への情報提供"],
-        ["初期消火班", "出火場所への消火器・屋内消火栓設備等による初期消火活動"],
+        ["初期消火班", extinguishingDuty(data, "出火場所への消火器・屋内消火栓設備等による初期消火活動", (n) => `出火場所への${n}等による初期消火活動`)],
         ["避難誘導班", "避難開始の伝達、非常口の開放、在館者の避難誘導、未避難者の確認"],
         ["救護班", "応急救護所の設置、負傷者の応急手当と搬送"],
-        ["安全防護班", "防火戸・防火シャッターの閉鎖、火気・電源の遮断、避難障害物の除去"],
+        ["安全防護班", "防火戸等の閉鎖、火気・電源の遮断、避難障害物の除去"],
       ],
       [2200, 6826],
       kobeTheme
@@ -202,7 +203,7 @@ export function buildKobeAppendices(data: RenderData): (Paragraph | Table)[] {
     ...buildAppendix4Inspectors(),
     ...buildAppendix5Supplies(),
     ...buildAppendix6FireOrg(data),
-    ...buildAppendix7Duties(),
+    ...buildAppendix7Duties(data),
     ...buildAppendix8Contacts(),
   ];
 }

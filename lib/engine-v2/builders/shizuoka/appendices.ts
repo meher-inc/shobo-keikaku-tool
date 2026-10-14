@@ -3,6 +3,7 @@ import type { RenderData } from "../../helpers/placeholder";
 import type { TableTheme } from "../shared/table-helpers";
 import { styledTable } from "../shared/table-helpers";
 import { pageBreak, sectionHeading } from "../shared/paragraph-helpers";
+import { extinguishingDuty } from "../shared/equipment-rows";
 
 /**
  * 静岡市消防局（単一権原・作成例2）別表ビルダ。
@@ -59,7 +60,7 @@ function buildBesso3FireOrg(data: RenderData): (Paragraph | Table)[] {
   const rows: string[][] = [
     ["自衛消防隊長", data.leaderName ?? NAME, "自衛消防活動全般の指揮統括"],
     ["通報連絡班", data.tsuhouMember ?? NAME, "119番通報、館内放送、関係機関への連絡"],
-    ["初期消火班", data.shokaMember ?? NAME, "消火器・屋内消火栓設備等による初期消火"],
+    ["初期消火班", data.shokaMember ?? NAME, extinguishingDuty(data, "消火器・屋内消火栓設備等による初期消火", (n) => `${n}等による初期消火`)],
     ["避難誘導班", data.hinanMember ?? NAME, "在館者の避難誘導、避難経路の確保"],
     ["救護班", data.kyugoMember ?? NAME, "負傷者の応急救護、救護所の設置"],
     ["安全防護班", data.anzenMember ?? NAME, "防火戸の閉鎖、火気・電源の遮断、二次災害の防止"],

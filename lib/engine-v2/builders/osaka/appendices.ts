@@ -9,6 +9,7 @@ import {
   sectionHeading,
 } from "../shared/paragraph-helpers";
 import { applicableLabel } from "./logic";
+import { extinguishingDuty } from "../shared/equipment-rows";
 
 /**
  * Osaka City Fire Bureau (中・小規模 事業所・テナント用) appendix builders.
@@ -127,7 +128,7 @@ function buildAppendix9FireBrigade(data: RenderData): (Paragraph | Table)[] {
   const rows: string[][] = [
     ["隊長", data.leaderName ?? fallback, "全体の指揮統括"],
     ["通報連絡班", data.tsuhouMember ?? fallback, "119番通報、館内放送、関係機関連絡"],
-    ["初期消火班", data.shokaMember ?? fallback, "消火器・屋内消火栓による初期消火"],
+    ["初期消火班", data.shokaMember ?? fallback, extinguishingDuty(data, "消火器・屋内消火栓による初期消火", (n) => `${n}による初期消火`)],
     ["避難誘導班", data.hinanMember ?? fallback, "在館者の避難誘導、避難経路確保"],
     ["救護班", data.kyugoMember ?? fallback, "負傷者の応急手当、安全な場所への搬送"],
     ["安全防護班", data.anzenMember ?? fallback, "防火戸閉鎖、危険物の除去、二次災害防止"],

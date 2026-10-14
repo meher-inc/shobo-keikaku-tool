@@ -1,4 +1,16 @@
 import type { RenderData } from "../helpers/placeholder";
+import {
+  PART_SCOPE_CONFORM_CLAUSE,
+  circledLines,
+  formatEquipmentByFloor,
+  formatUseCategory,
+  isPartScope,
+  isSpecificUseCode,
+  managementScopePhrase,
+  pickExtinguishingEquipment,
+  tokyoFireControlItems,
+  type ScopeInput,
+} from "../helpers/plan-text";
 
 /**
  * Convert a v1-shape POST body (snake_case, see
@@ -17,12 +29,47 @@ function str(v: unknown): string | undefined {
   return undefined;
 }
 
+function strList(v: unknown): string[] | undefined {
+  if (Array.isArray(v)) return (v as unknown[]).filter((x): x is string => typeof x === "string");
+  if (typeof v === "string" && v.length > 0) return v.split(",").map((s) => s.trim()).filter(Boolean);
+  return undefined;
+}
+
 export function toRenderData(form: Record<string, unknown>): RenderData {
+  const equipment = strList(form.equipment) ?? strList(form.fire_equipment) ?? [];
+  const extinguishing = pickExtinguishingEquipment(equipment);
+  // 火気使用設備。旧データ（項目なし・未選択）は undefined として従来の全条項を出す。
+  // 「なし」を選んだ場合は ["なし"] が届く。
+  const fireUseRaw = strList(form.fire_use_equipment);
+  const fireUse = fireUseRaw && fireUseRaw.length > 0 ? fireUseRaw : undefined;
+  const useCode = str(form.use_category) ?? str(form.use_category_label);
+  const scope: ScopeInput = {
+    managementScope: str(form.management_scope),
+    scopeType: str(form.management_scope_type),
+    tenantBuildingName: str(form.tenant_building_name),
+    usedFloors: str(form.used_floors),
+    usedArea: str(form.used_area) ?? str(form.total_area),
+    occupantName: str(form.building_name),
+  };
+  const scopePhrase = managementScopePhrase(scope);
+  const partScope = isPartScope(scope);
+  const buildingName = str(form.building_name);
+
   return {
     // Building identity
-    buildingName: str(form.building_name),
-    companyName: str(form.company_name) ?? str(form.building_name),
-    managementScope: str(form.management_scope),
+    buildingName,
+    companyName: str(form.company_name) ?? buildingName,
+
+    // 管理権原の範囲。建物の一部の場合は「〇〇ビル〇階のうち、〇〇として使用する部分（〇〇㎡）」。
+    managementScope: scopePhrase,
+    // 京都ベース様式の「当該管理権原の及ぶ範囲は＿＿とする」用（建物名を前置する旧表記を維持）。
+    managementScopeWithBuilding: partScope
+      ? scopePhrase
+      : `${buildingName ?? "当該防火対象物"}の${scopePhrase ?? "建物全体"}`,
+    // 建物の一部の場合だけ置く条項。様式ごとの項番号に合わせて複数用意する。
+    scopeConformItem3: partScope ? `\n⑶\u3000${PART_SCOPE_CONFORM_CLAUSE}` : undefined,
+    scopeConformItem4: partScope ? `\n⑷\u3000${PART_SCOPE_CONFORM_CLAUSE}` : undefined,
+    scopeConformSentence: partScope ? `\n\u3000${PART_SCOPE_CONFORM_CLAUSE}` : undefined,
 
     // Address parts — consumed by joinAddress computed fn
     prefecture: str(form.prefecture),
@@ -44,11 +91,14 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
     // inclusion can still read these.
     isUnifiedManagement: str(form.is_unified_management),
     hasOutsourcedManagement: str(form.has_outsourced_management) ?? str(form.has_outsource),
-    isSpecificUse: str(form.is_specific_use),
+    // フォームは is_specific_use を送らないため、未指定なら用途の項から判定する。
+    isSpecificUse:
+      str(form.is_specific_use) ??
+      (isSpecificUseCode(useCode) === undefined ? undefined : String(isSpecificUseCode(useCode))),
     capacity: str(form.capacity),
 
     // 建物概要（入力概要セクションで使用）
-    useCategory: str(form.use_category) ?? str(form.use_category_label),
+    useCategory: formatUseCategory(useCode, str(form.use_name)),
     totalArea: str(form.total_area),
     numFloors: str(form.num_floors),
 
@@ -65,18 +115,19 @@ export function toRenderData(form: Record<string, unknown>): RenderData {
     // resolveBody / joinArray computed fn can consume it。
     // フォームは equipment で送るため、fire_equipment と両対応にする
     // （以前は fire_equipment のみ参照で入力が反映されていなかった）。
-    fireEquipmentList: Array.isArray(form.equipment)
-      ? (form.equipment as string[]).join(",")
-      : Array.isArray(form.fire_equipment)
-        ? (form.fire_equipment as string[]).join(",")
-        : str(form.fire_equipment) ?? str(form.equipment),
+    fireEquipmentList: equipment.length > 0 ? equipment.join(",") : undefined,
+    // 初期消火に使う設備だけ（誘導灯・自動火災報知設備などは含めない）。
+    extinguishingEquipmentList: extinguishing.length > 0 ? extinguishing.join(",") : undefined,
+    extinguishingEquipmentText: extinguishing.length > 0 ? extinguishing.join("\u3001") : undefined,
+
+    // 火気使用設備（CSV）と、東京消防庁様式 第4の1⑵ の項目行。
+    fireUseEquipment: fireUse?.join(","),
+    tokyoFireControlLines: circledLines(tokyoFireControlItems(fireUse)),
 
     // 各階の設備配置（任意）。入力概要で「○階: 設備…」形式に整形して表示。
+    // 階の名前が空の行は「—:」を付けずに内容だけ出す。
     equipmentByFloor: Array.isArray(form.equipment_floors)
-      ? (form.equipment_floors as { floor?: string; detail?: string }[])
-          .filter((r) => r && (r.floor || r.detail))
-          .map((r) => `${(r.floor || "").trim() || "—"}: ${(r.detail || "").trim()}`.trim())
-          .join(" ／ ") || undefined
+      ? formatEquipmentByFloor(form.equipment_floors as { floor?: string; detail?: string }[])
       : undefined,
 
     // Chapter 7: emergency contacts

@@ -90,6 +90,7 @@ export async function buildYokohamaFull(form: any): Promise<Buffer> {
     const d = new Date(data.creationDateIso);
     if (!Number.isNaN(d.getTime())) {
       data.creationDate = d.toLocaleDateString("ja-JP-u-ca-japanese", {
+        timeZone: "Asia/Tokyo",
         era: "long",
         year: "numeric",
         month: "long",

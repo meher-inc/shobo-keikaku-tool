@@ -7,6 +7,7 @@ import {
   pageBreak,
   sectionHeading,
 } from "../shared/paragraph-helpers";
+import { equipmentRows, extinguishingDuty } from "../shared/equipment-rows";
 
 /**
  * 北九州市消防局（中・大規模用）別表ビルダ。
@@ -48,7 +49,7 @@ function buildAppendix2FireOrg(data: RenderData): (Paragraph | Table)[] {
   const rows: string[][] = [
     ["自衛消防隊長", data.leaderName ?? NAME, "自衛消防活動全般の指揮統括"],
     ["通報連絡班", data.tsuhouMember ?? NAME, "119番通報、館内放送、関係機関への連絡"],
-    ["初期消火班", data.shokaMember ?? NAME, "消火器・屋内消火栓設備等による初期消火"],
+    ["初期消火班", data.shokaMember ?? NAME, extinguishingDuty(data, "消火器・屋内消火栓設備等による初期消火", (n) => `${n}等による初期消火`)],
     ["避難誘導班", data.hinanMember ?? NAME, "在館者の避難誘導、避難経路の確保"],
     ["救護班", data.kyugoMember ?? NAME, "負傷者の応急救護、救護所の設置"],
     ["安全防護班", data.anzenMember ?? NAME, "防火戸の閉鎖、火気・電源の遮断、二次災害の防止"],
@@ -60,18 +61,22 @@ function buildAppendix2FireOrg(data: RenderData): (Paragraph | Table)[] {
   ];
 }
 
-function buildAppendix3InspectPlan(): (Paragraph | Table)[] {
+function buildAppendix3InspectPlan(data: RenderData): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("３", "消防用設備等点検計画表"),
     styledTable(
       ["設備名", "機器点検（6か月）", "総合点検（1年）", "点検者"],
-      [
-        ["消火器", B, B, NAME],
-        ["屋内消火栓設備", B, B, NAME],
-        ["自動火災報知設備", B, B, NAME],
-        ["避難器具・誘導灯", B, B, NAME],
-      ],
+      equipmentRows(
+        data,
+        [
+          ["消火器", B, B, NAME],
+          ["屋内消火栓設備", B, B, NAME],
+          ["自動火災報知設備", B, B, NAME],
+          ["避難器具・誘導灯", B, B, NAME],
+        ],
+        (n) => [n, B, B, NAME]
+      ),
       [2600, 2200, 2200, 2026],
       kitakyushuTheme
     ),
@@ -119,7 +124,7 @@ export function buildKitakyushuAppendices(data: RenderData): (Paragraph | Table)
   return [
     ...buildAppendix1Inspect(),
     ...buildAppendix2FireOrg(data),
-    ...buildAppendix3InspectPlan(),
+    ...buildAppendix3InspectPlan(data),
     ...buildAppendix4Outsource(),
   ];
 }

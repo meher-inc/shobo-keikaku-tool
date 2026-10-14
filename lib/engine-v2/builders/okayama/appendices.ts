@@ -7,6 +7,7 @@ import {
   pageBreak,
   sectionHeading,
 } from "../shared/paragraph-helpers";
+import { equipmentRows, extinguishingDuty } from "../shared/equipment-rows";
 
 /**
  * 岡山市消防局（中規模用）別表ビルダ。
@@ -51,7 +52,7 @@ function buildAppendix2FireOrg(data: RenderData): (Paragraph | Table)[] {
     ["自衛消防隊長", data.leaderName ?? NAME, "自衛消防隊の全般指揮"],
     ["副隊長", data.leaderName ?? NAME, "隊長の補佐、避難誘導の指揮"],
     ["通報連絡班", data.tsuhouMember ?? NAME, "“119”通報及び関係先への連絡"],
-    ["初期消火班", data.shokaMember ?? NAME, "消火器・屋内消火栓等による初期消火"],
+    ["初期消火班", data.shokaMember ?? NAME, extinguishingDuty(data, "消火器・屋内消火栓等による初期消火", (n) => `${n}等による初期消火`)],
     ["避難誘導班", data.hinanMember ?? NAME, "在館者の避難誘導"],
     ["安全班", data.anzenMember ?? NAME, "電気・ガス等の安全措置、防火戸の閉鎖"],
   ];
@@ -62,19 +63,23 @@ function buildAppendix2FireOrg(data: RenderData): (Paragraph | Table)[] {
   ];
 }
 
-function buildAppendix3Equip(): (Paragraph | Table)[] {
+function buildAppendix3Equip(data: RenderData): (Paragraph | Table)[] {
   return [
     pageBreak(),
     appendixHeading("３", "消防用設備等の担当者"),
     styledTable(
       ["設備名", "各階設置数", "担当（昼間）", "担当（夜間）"],
-      [
-        ["消火器", B, NAME, NAME],
-        ["自動火災報知設備", B, NAME, NAME],
-        ["屋内消火栓", B, NAME, NAME],
-        ["特殊消火設備", B, NAME, NAME],
-        ["避難器具", B, NAME, NAME],
-      ],
+      equipmentRows(
+        data,
+        [
+          ["消火器", B, NAME, NAME],
+          ["自動火災報知設備", B, NAME, NAME],
+          ["屋内消火栓", B, NAME, NAME],
+          ["特殊消火設備", B, NAME, NAME],
+          ["避難器具", B, NAME, NAME],
+        ],
+        (n) => [n, B, NAME, NAME]
+      ),
       [2600, 2200, 2226, 2000],
       okayamaTheme
     ),
@@ -121,7 +126,7 @@ export function buildOkayamaAppendices(data: RenderData): (Paragraph | Table)[] 
   return [
     ...buildAppendix1Org(),
     ...buildAppendix2FireOrg(data),
-    ...buildAppendix3Equip(),
+    ...buildAppendix3Equip(data),
     ...buildAppendix4InspectPlan(),
   ];
 }
