@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
   try {
     const sessionId = request.nextUrl.searchParams.get("session_id");
     const internalOrderId = request.nextUrl.searchParams.get("internal_order_id");
+    // part=guide で提出前チェックシート（提出しない案内用のWord）を返す。既定は提出用の消防計画。
+    const part = request.nextUrl.searchParams.get("part") === "guide" ? "guide" : "plan";
 
     if (!sessionId && !internalOrderId) {
       return NextResponse.json(
@@ -144,6 +146,27 @@ export async function GET(request: NextRequest) {
             };
     }
 
+    const buildingName =
+      (formData as Record<string, unknown>).building_name || meta.building_name || "消防計画";
+
+    if (part === "guide") {
+      const [{ buildPlanGuide }, { selectPackByLocation }] = await Promise.all([
+        import("../../../lib/engine-v2/adapters/generate-guide"),
+        import("../../../lib/engine-v2/city-dispatch"),
+      ]);
+      const pack = selectPackByLocation(
+        String(formData.prefecture || ""),
+        String(formData.city || "")
+      );
+      const guide = await buildPlanGuide(formData, pack);
+      return new NextResponse(new Uint8Array(guide), {
+        headers: {
+          "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(`提出前チェックシート_${buildingName}.docx`)}`,
+        },
+      });
+    }
+
     // Call the protected generate-plan API internally.
     const generateRes = await fetch(`${request.nextUrl.origin}/api/generate-plan`, {
       method: "POST",
@@ -161,8 +184,6 @@ export async function GET(request: NextRequest) {
     }
 
     const buffer = await generateRes.arrayBuffer();
-    const buildingName =
-      (formData as Record<string, unknown>).building_name || meta.building_name || "消防計画";
     const filename = encodeURIComponent(`消防計画_${buildingName}.docx`);
 
     // Best-effort download tracking. Failure must never block the DL.

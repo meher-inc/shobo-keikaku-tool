@@ -57,6 +57,11 @@ function SuccessContent() {
     }
   }
 
+  // 提出前チェックシート（提出しない案内用のWord）。提出用の消防計画とは別ファイルで配る。
+  const guideUrl = isInternal
+    ? `/api/download?internal_order_id=${encodeURIComponent(internalOrderId || "")}&part=guide`
+    : `/api/download?session_id=${encodeURIComponent(sessionId || "")}&part=guide`;
+
   async function handleDownload() {
     setStatus("downloading");
     try {
@@ -118,9 +123,9 @@ function SuccessContent() {
               </div>
               <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.6 }}>
                 {isInternal ? (
-                  <>決済は発生していません。<br />下のボタンから消防計画をダウンロードしてください。</>
+                  <>決済は発生していません。<br />下のボタンから消防計画（提出用）をダウンロードしてください。</>
                 ) : (
-                  <>ありがとうございます。<br />下のボタンから消防計画をダウンロードしてください。</>
+                  <>ありがとうございます。<br />下のボタンから消防計画（提出用）をダウンロードしてください。</>
                 )}
               </p>
               <button onClick={handleDownload} style={{
@@ -128,8 +133,18 @@ function SuccessContent() {
                 background: "var(--brand)", color: "#fff", fontSize: 17, fontWeight: 600,
                 cursor: "pointer", boxShadow: "0 4px 16px rgba(0,113,227,0.25)",
               }}>
-                📄 消防計画をダウンロード
+                📄 消防計画（提出用）をダウンロード
               </button>
+              <a href={guideUrl} style={{
+                display: "block", width: "100%", boxSizing: "border-box", padding: 14, borderRadius: 14, marginTop: 12,
+                background: "var(--surface-muted)", color: "var(--text)", fontSize: 15, fontWeight: 600,
+                textDecoration: "none", textAlign: "center",
+              }}>
+                提出前チェックシート（Word）をダウンロード
+              </a>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, lineHeight: 1.6 }}>
+                提出前チェックシートには、提出前の確認事項・提出のしかた・平面図の記入用テンプレートが入っています。消防署へは提出しません。
+              </p>
             </>
           )}
 
@@ -149,8 +164,18 @@ function SuccessContent() {
                 {planName}プラン
               </div>
               <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.6 }}>
-                消防計画のWordファイルがダウンロードされました。<br />
-                内容をご確認のうえ、所轄の消防署に届け出てください。
+                消防計画（提出用）のWordファイルがダウンロードされました。<br />
+                提出前チェックシートで提出前の確認事項と提出のしかたをご確認のうえ、所轄の消防署に届け出てください。
+              </p>
+
+              <a href={guideUrl} style={{
+                display: "block", width: "100%", boxSizing: "border-box", padding: 14, borderRadius: 14, background: "var(--brand)", color: "#fff", fontSize: 15, fontWeight: 600,
+                textDecoration: "none", marginBottom: 12, textAlign: "center",
+              }}>
+                提出前チェックシート（Word）をダウンロード
+              </a>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "-4px 0 16px", lineHeight: 1.6 }}>
+                提出前の確認事項・提出のしかた・平面図の記入用テンプレートが入っています。消防署へは提出しません。
               </p>
 
               {showGuide && (
@@ -216,7 +241,7 @@ function SuccessContent() {
                 background: "var(--surface-muted)", color: "var(--text)", fontSize: 15, fontWeight: 600,
                 cursor: "pointer", marginBottom: 12,
               }}>
-                もう一度ダウンロード
+                消防計画（提出用）をもう一度ダウンロード
               </button>
               {(sessionId || internalOrderId) && (
                 <a

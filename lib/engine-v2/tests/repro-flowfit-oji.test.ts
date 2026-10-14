@@ -109,9 +109,8 @@ describe("再現データ（FLOWFIT24 王子店・東京消防庁 中規模用�
 
   it("A4: 設置していない設備は第7・別表6・別表7に出さない", async () => {
     const t = await renderText(REPRO_FORM);
-    const body = t.slice(0, t.indexOf("作成後の提出のしかた")); // 平面図の記号凡例を除く
-    expect(body).not.toContain("屋内消火栓");
-    expect(body).not.toContain("スプリンクラー");
+    expect(t).not.toContain("屋内消火栓");
+    expect(t).not.toContain("スプリンクラー");
     const app6 = t.slice(t.lastIndexOf("別表６　"), t.lastIndexOf("別表７　"));
     expect(app6).toContain("消火器|");
     expect(app6).toContain("誘導灯|");
