@@ -1,7 +1,7 @@
 import { AlignmentType, PageBreak, Paragraph, Table, TextRun } from "docx";
 import type { RenderData } from "../../helpers/placeholder";
 import { styledTable, type TableTheme } from "../shared/table-helpers";
-import { sectionHeading, plainText, pageBreak } from "../shared/paragraph-helpers";
+import { sectionHeading, pageBreak } from "../shared/paragraph-helpers";
 import type { ConstructionDeptMeta } from "./dept-meta";
 
 const GOTHIC = "游ゴシック";

@@ -1,7 +1,7 @@
 import { AlignmentType, PageBreak, Paragraph, Table, TextRun } from "docx";
 import type { RenderData } from "../../helpers/placeholder";
 import { styledTable, type TableTheme } from "./table-helpers";
-import { sectionHeading, plainText, pageBreak } from "./paragraph-helpers";
+import { sectionHeading, pageBreak } from "./paragraph-helpers";
 
 const SUMMARY_THEME: TableTheme = { headerFill: "2E5F9E", altFill: "EEF4FA" };
 
