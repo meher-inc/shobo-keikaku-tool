@@ -108,7 +108,7 @@ export function managementScopePhrase(s: ScopeInput): string | undefined {
 
 /** 建物の一部の場合に置く条項（番号なし）。 */
 export const PART_SCOPE_CONFORM_CLAUSE =
-  "建物全体についての消防計画が作成されたときは、この計画をこれに適合させる。";
+  "建物全体についての消防計画が作成されている場合又は今後作成された場合は、この計画をこれに適合させるものとする。";
 
 // ── 火気使用設備 ───────────────────────────────────────────────
 

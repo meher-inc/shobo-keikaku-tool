@@ -86,7 +86,7 @@ describe("再現データ（FLOWFIT24 王子店・東京消防庁 中規模用�
     expect(t).toContain(
       "⑴　管理権原の及ぶ範囲は、セントラルビル1階のうち、FLOWFIT24 王子店として使用する部分（390㎡）とする。"
     );
-    expect(t).toContain("⑶　建物全体についての消防計画が作成されたときは、この計画をこれに適合させる。");
+    expect(t).toContain("⑶　建物全体についての消防計画が作成されている場合又は今後作成された場合は、この計画をこれに適合させるものとする。");
     expect(t).not.toContain("建物全体とする");
   });
 
@@ -213,7 +213,7 @@ describe("他の様式でも同じ不具合が出ない", () => {
     expect(t).toContain(
       "⑴　当該管理権原の及ぶ範囲はセントラルビル1階のうち、FLOWFIT24 王子店として使用する部分（390㎡）とする。"
     );
-    expect(t).toContain("⑶　建物全体についての消防計画が作成されたときは、この計画をこれに適合させる。");
+    expect(t).toContain("⑶　建物全体についての消防計画が作成されている場合又は今後作成された場合は、この計画をこれに適合させるものとする。");
     expect(t).toContain("初期消火担当は、消火器等の適切な消防用設備等を用いて消火する。");
     const whole = await renderText({ ...REPRO_FORM, prefecture: "静岡県", city: "浜松市", management_scope_type: "whole" });
     expect(whole).toContain("⑴　当該管理権原の及ぶ範囲はFLOWFIT24 王子店の建物全体とする。");
@@ -224,7 +224,7 @@ describe("他の様式でも同じ不具合が出ない", () => {
     expect(t).toContain(
       "管理権原範囲」という。）は、セントラルビル1階のうち、FLOWFIT24 王子店として使用する部分（390㎡）とする。"
     );
-    expect(t).toContain("　建物全体についての消防計画が作成されたときは、この計画をこれに適合させる。");
+    expect(t).toContain("　建物全体についての消防計画が作成されている場合又は今後作成された場合は、この計画をこれに適合させるものとする。");
     const whole = await renderText({ ...REPRO_FORM, management_scope_type: "whole" }, "osaka-full");
     expect(whole).toContain("）は、（建物全体）部分とする。");
   });
