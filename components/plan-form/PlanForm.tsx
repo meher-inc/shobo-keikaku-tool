@@ -983,8 +983,8 @@ const [selectedPlan, setSelectedPlan] = useState("standard");
 
               <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)", fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.7 }}>
                 {isConstruction
-                  ? "作成物には次を同梱します: 入力内容の概要 ／ 提出前チェックリスト ／ 別表（工事概要書・火気使用工事 事前承認書・危険物品持込届 等） ／ 各階平面図の記入テンプレート"
-                  : "作成物には次を同梱します: 入力内容の概要 ／ 提出前チェックリスト ／ 各階平面図の記入テンプレート ／ 作成後の提出のしかた"}
+                  ? "作成物は2つのWordファイルです。消防計画（提出用）: 防火対象物及び工事の概要 ／ 本文 ／ 別表（工事概要書・火気使用工事 事前承認書・危険物品持込届 等）。記入ガイド: 提出前チェックリスト ／ 各階平面図の記入テンプレート"
+                  : "作成物は2つのWordファイルです。消防計画（提出用）: 防火対象物の概要 ／ 本文 ／ 別表。記入ガイド: 提出前チェックリスト ／ 作成後の提出のしかた ／ 各階平面図の記入テンプレート"}
               </div>
 
               {missing.length > 0 && (
@@ -1148,8 +1148,20 @@ const [selectedPlan, setSelectedPlan] = useState("standard");
                   {editLoading ? (<><span className="spinner" aria-hidden="true" />保存して再生成中...</>) : "修正版を保存してダウンロード"}
                 </button>
                 <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", marginTop: 10 }}>
-                  {editable ? "追加料金はかかりません。修正内容で計画書を再生成します。" : "編集可能期間を過ぎているため保存できません。お手数ですがお問い合わせください。"}
+                  {editable ? "追加料金はかかりません。修正内容で消防計画（提出用）を再生成します。" : "編集可能期間を過ぎているため保存できません。お手数ですがお問い合わせください。"}
                 </p>
+                {editable && (
+                  <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center" }}>
+                    記入ガイドは修正内容を保存したあとに
+                    <a
+                      href={`/api/download?${editInternalOrderId ? `internal_order_id=${encodeURIComponent(editInternalOrderId)}` : `session_id=${encodeURIComponent(editSession || "")}`}&part=guide`}
+                      style={{ color: "var(--brand)", textDecoration: "underline" }}
+                    >
+                      こちら
+                    </a>
+                    からダウンロードできます。
+                  </p>
+                )}
                 {editExpiresAt && (
                   <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center" }}>
                     無料で作り直せる期限：{new Date(editExpiresAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}（日本時間）

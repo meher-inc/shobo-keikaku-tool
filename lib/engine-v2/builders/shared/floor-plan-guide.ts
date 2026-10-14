@@ -39,6 +39,8 @@ function blankGrid(): Table {
 }
 
 function floorsLabel(data: RenderData): string {
+  // 建物の一部（テナント等）の場合は、使用する階だけを作る。
+  if (data.usedFloors) return `${data.usedFloors}（使用する階ぶん作成してください）`;
   const n = parseInt(data.numFloors ?? "", 10);
   if (Number.isFinite(n) && n >= 1 && n <= 30) {
     return `1階〜${n}階（各階ぶん作成してください）`;
@@ -47,7 +49,7 @@ function floorsLabel(data: RenderData): string {
 }
 
 /**
- * 生成docの末尾に同梱する付録。Word上で提出準備が完結することを狙う。
+ * 記入ガイド（adapters/generate-guide.ts）に載せる提出準備の案内。
  * 1) 作成後の提出のしかた（届出書・窓口・部数の案内）
  * 2) 各階平面図・避難経路図の記入用テンプレート（手順＋記号凡例＋方眼）
  * 平面図画像のアップロード機能を持たず、手描き or 画像貼り付けで対応できる。
@@ -56,12 +58,12 @@ export function buildFloorPlanGuide(data: RenderData): (Paragraph | Table)[] {
   return [
     pageBreak(),
     sectionHeading("作成後の提出のしかた"),
-    plainText("本計画書は、作成後に所轄の消防署へ届け出ることで効力を持ちます。下記の手順でご提出ください。"),
+    plainText("消防計画は、作成後に所轄の消防署へ届け出ることで効力を持ちます。下記の手順でご提出ください。"),
     plainText(""),
-    plainText("1. 本計画書の内容を確認し、空欄や追記が必要な事項（前ページの概要・チェックリスト参照）を記入します。"),
-    plainText("2. 本計画書を印刷します（Wordから印刷、またはPDF化して印刷）。"),
+    plainText("1. 消防計画の内容を確認し、空欄や追記が必要な事項（このガイドの「ご提出前に追記・確認が必要な事項」参照）を記入します。"),
+    plainText("2. 消防計画（提出用のWordファイル）を印刷します（Wordから印刷、またはPDF化して印刷）。このガイドは提出しません。"),
     plainText("3. 「消防計画作成（変更）届出書」を用意します（所轄消防署の窓口、または各消防本部のウェブサイトで入手できます）。"),
-    plainText("4. 届出書と本計画書を正副2部ずつ用意し、所轄消防署の予防課窓口へ提出します。"),
+    plainText("4. 届出書と消防計画を正副2部ずつ用意し、所轄消防署の予防課窓口へ提出します。"),
     plainText("5. 受付印が押された副本は、事業所で保管してください。"),
     plainText(""),
     plainText("※ 提出方法・必要部数・窓口の受付時間は所轄消防署により異なる場合があります。事前にご確認ください。"),

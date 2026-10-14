@@ -5,8 +5,8 @@ import { sectionHeading, plainText, pageBreak } from "./paragraph-helpers";
 
 const SUMMARY_THEME: TableTheme = { headerFill: "2E5F9E", altFill: "EEF4FA" };
 
-// ご提出前に建物固有で追記・確認が必要な代表的事項。
-const CHECKLIST = [
+// ご提出前に建物固有で追記・確認が必要な代表的事項（記入ガイドに載せる）。
+export const PLAN_CHECKLIST = [
   "自衛消防組織の編成（各班の担当者・任務分担）— 規模により別表へ記入",
   "各階の平面図・避難経路図の添付",
   "別表（自主検査表・点検計画表・火元責任者の区域別割当 等）の具体的な記入",
@@ -16,7 +16,8 @@ const CHECKLIST = [
 ];
 
 // 入力した内容を文書冒頭に概要として載せる（様式にプレースホルダが無い項目も
-// 必ず文書へ反映されるようにし、入力の取りこぼしを防ぐ）。
+// 必ず文書へ反映されるようにし、入力の取りこぼしを防ぐ）。提出用の本文なので、
+// 案内文やチェックリストは記入ガイド（adapters/generate-guide.ts）に分ける。
 function buildFrontMatter(data: RenderData): (Paragraph | Table)[] {
   const v = (x?: string) => (x && x.trim() ? x : "（未入力）");
   const addr = [data.prefecture, data.city, data.ward, data.addressDetail].filter(Boolean).join("");
@@ -59,11 +60,8 @@ function buildFrontMatter(data: RenderData): (Paragraph | Table)[] {
   ];
 
   return [
-    sectionHeading("防火対象物の概要（ご入力内容）"),
-    plainText("本計画は所轄消防本部の様式に準拠した雛形です。下記の入力内容を反映しています。建物固有の事項は追記・確認のうえご提出ください。"),
-    styledTable(["項目", "ご入力内容"], rows, [3200, 6200], SUMMARY_THEME),
-    sectionHeading("ご提出前に追記・確認が必要な事項"),
-    ...CHECKLIST.map((c) => plainText(`・${c}`)),
+    sectionHeading("防火対象物の概要"),
+    styledTable(["項目", "内容"], rows, [3200, 6200], SUMMARY_THEME),
     pageBreak(),
   ];
 }

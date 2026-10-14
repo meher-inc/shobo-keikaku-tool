@@ -14,7 +14,7 @@ export const constructionTheme: TableTheme = {
 };
 
 // ご提出前に建物・工事固有で追記・確認が必要な代表的事項。
-const CHECKLIST = [
+export const CONSTRUCTION_CHECKLIST = [
   "工事工程表・工事範囲を示した平面図の添付",
   "別表（工事概要書・火気使用工事 事前承認書・危険物品持込届 等）の具体的な記入",
   "施工者（元請・下請）の体制と現場責任者の確定",
@@ -25,7 +25,7 @@ const CHECKLIST = [
 
 // 入力した内容を文書冒頭に概要として載せる（通常計画の front matter と
 // 同じ狙い。工事関連の入力を必ず文書へ反映し、取りこぼしを防ぐ）。
-function buildFrontMatter(data: RenderData, dept: ConstructionDeptMeta): (Paragraph | Table)[] {
+function buildFrontMatter(data: RenderData): (Paragraph | Table)[] {
   const v = (x?: string) => (x && x.trim() ? x : "（未入力）");
   const addr = [data.prefecture, data.city, data.ward, data.addressDetail].filter(Boolean).join("");
   const scale = [
@@ -59,22 +59,20 @@ function buildFrontMatter(data: RenderData, dept: ConstructionDeptMeta): (Paragr
     ["一時集合場所", v(data.temporaryAssemblyPoint)],
   ];
 
-  const submitNote = dept.deptName
+  return [
+    sectionHeading("防火対象物及び工事の概要"),
+    styledTable(["項目", "内容"], rows, [3200, 6200], constructionTheme),
+    pageBreak(),
+  ];
+}
+
+/** 工事中の消防計画の提出についての注意（記入ガイドに載せる）。 */
+export function constructionSubmitNote(dept: ConstructionDeptMeta): string {
+  return dept.deptName
     ? dept.hasDedicatedForm
       ? `${dept.deptName}管内では工事中の消防計画の届出様式が公表されています。所轄消防署の様式・提出方法をご確認のうえ、本計画を添付してご提出ください。`
       : `${dept.deptName}管内の様式・届出要否は所轄消防署にご確認のうえご提出ください（工事中の消防計画の運用は消防本部ごとに異なります）。`
     : "工事中の消防計画の様式・届出要否は消防本部ごとに異なります。所轄消防署に事前相談のうえご提出ください。";
-
-  return [
-    sectionHeading("防火対象物及び工事の概要（ご入力内容）"),
-    plainText("本計画は工事中の防火対象物向けの雛形です。下記の入力内容を反映しています。工事固有の事項は追記・確認のうえご提出ください。"),
-    styledTable(["項目", "ご入力内容"], rows, [3200, 6200], constructionTheme),
-    sectionHeading("ご提出前に追記・確認が必要な事項"),
-    ...CHECKLIST.map((c) => plainText(`・${c}`)),
-    plainText(""),
-    plainText(`※　${submitNote}`),
-    pageBreak(),
-  ];
 }
 
 /**
@@ -124,6 +122,6 @@ export function buildConstructionCoverPage(
       ],
     }),
     new Paragraph({ children: [new PageBreak()] }),
-    ...buildFrontMatter(data, dept),
+    ...buildFrontMatter(data),
   ];
 }

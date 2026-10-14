@@ -13,7 +13,6 @@ import type { RenderData } from "../helpers/placeholder";
 import type { TemplatePack, Chapter, Section } from "../types/template-pack";
 import { buildChildrenFromPack, type SectionOverride } from "../builders/document";
 import { buildCoverPage } from "../builders/shared/cover-page";
-import { buildFloorPlanGuide } from "../builders/shared/floor-plan-guide";
 import { toRenderData } from "./to-render-data";
 import tokyoTfdFull from "../templates/tokyo-tfd.full.json";
 
@@ -102,9 +101,6 @@ export async function buildTokyoFull(form: any): Promise<Buffer> {
     ...(includeAppendix ? buildTokyoAppendices(data) : []),
   ];
 
-  // 末尾に各階平面図・避難経路図の記入用テンプレートを同梱
-
-  allChildren.push(...buildFloorPlanGuide(data));
 
 
   const doc = new Document({

@@ -12,7 +12,6 @@ import { loadPack } from "../engine";
 import type { RenderData } from "../helpers/placeholder";
 import type { TemplatePack, Chapter, Section } from "../types/template-pack";
 import { buildChildrenFromPack } from "../builders/document";
-import { buildFloorPlanGuide } from "../builders/shared/floor-plan-guide";
 import { toRenderData } from "./to-render-data";
 import type { V2Pack } from "./generate-plan";
 import { constructionDeptMeta } from "../builders/construction/dept-meta";
@@ -78,7 +77,6 @@ export async function buildConstructionFull(form: any, basePack: V2Pack): Promis
   ];
 
   // 末尾に各階平面図（工事範囲記入用）テンプレートを同梱
-  allChildren.push(...buildFloorPlanGuide(data));
 
   const doc = new Document({
     sections: [
