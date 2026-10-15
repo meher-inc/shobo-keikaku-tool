@@ -1,12 +1,16 @@
 "use client";
+
+import Link from "next/link";
 import { useState } from "react";
 import PlanForm from "../components/plan-form/PlanForm";
-import { MarketingSections } from "../components/marketing-sections";
-import { NoteUpdates } from "../components/note-updates";
-import TodokedeSeriesNav from "../components/shared/TodokedeSeriesNav";
 import { FaqStructuredData } from "../components/StructuredData";
 import { FaqAnswer } from "../components/faq-answer";
 import { PLAN_SELECTION_FAQ, PREMIUM_FAQS, type FaqItem } from "../lib/premium-faqs";
+import TodokedeSeriesNav from "../components/shared/TodokedeSeriesNav";
+import IsoHero from "../components/illustrations/IsoHero";
+import MobileCta from "../components/lp/MobileCta";
+import ProductStructuredData from "../components/lp/ProductStructuredData";
+import { EvidenceBand, Concerns, Benefits, Reasons, Flow, Departments, Comparison, Testimonials, Pricing, FinalCta } from "../components/lp/Sections";
 
 const FAQ_ITEMS: FaqItem[] = [
   {
@@ -59,208 +63,19 @@ const FAQ_ITEMS: FaqItem[] = [
 ];
 
 export default function Home() {
-const [showSample, setShowSample] = useState(false);  // ← これを追加
-const [faqOpen, setFaqOpen] = useState<number | null>(null);
-
-  return (
-    <>
-    {/* FAQ 構造化データ（schema.org FAQPage）: AI・検索での引用を助ける */}
-    <FaqStructuredData items={FAQ_ITEMS} />
-    {/* Hero */}
-    <section style={{ textAlign: "center", padding: "clamp(56px,9vw,96px) clamp(16px,4vw,24px) clamp(40px,6vw,64px)", maxWidth: 760, margin: "0 auto" }}>
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--brand-tint)", color: "var(--brand)", fontSize: 13, fontWeight: 700, padding: "8px 16px", borderRadius: 999, marginBottom: 24 }}>
-        20の消防本部様式に準拠・1件 ¥4,980〜 の買い切り
-      </div>
-      <h1 style={{ fontSize: "clamp(30px,6vw,46px)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 16 }}>消防計画を、自動作成。</h1>
-      <p style={{ fontSize: "clamp(15px,2.5vw,18px)", color: "var(--text-muted)", fontWeight: 400, lineHeight: 1.7, maxWidth: 580, margin: "0 auto" }}>
-        開業前・立入検査・防火管理者の選任で「消防計画の提出」を求められた方へ。所在地と建物情報を入力するだけで、所轄の様式に沿った消防計画を約15分でWord作成。増改築・内装改修など「工事中の消防計画」にも対応。元消防士が設計・買い切り（月額・更新料なし）。
-      </p>
-      <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 32 }}>
-        <a href="#form" style={{ background: "var(--brand)", color: "#fff", padding: "15px 36px", borderRadius: 12, fontSize: 16, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.25)" }}>
-          作成をはじめる
-        </a>
-        <button
-          onClick={() => setShowSample(true)}
-          style={{ background: "var(--surface)", border: "2px solid var(--brand)", color: "var(--brand)", padding: "13px 32px", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer" }}
-        >
-          サンプルを見る
-        </button>
-      </div>
-      <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 14 }}>
-        実際に生成される消防計画（飲食店320㎡・別表付き）をご確認いただけます
-      </p>
-    </section>
-
-    <MarketingSections />
-
-    <PlanForm showSample={showSample} setShowSample={setShowSample} />
-
-    {/* FAQ Section */}
-    <section
-      style={{
-        maxWidth: 1080,
-        margin: "0 auto",
-        padding: "clamp(64px, 10vw, 96px) clamp(16px, 4vw, 24px)",
-      }}
-    >
-      <h2
-        style={{
-          fontSize: "clamp(24px, 5vw, 32px)",
-          fontWeight: 900,
-          textAlign: "center",
-          marginBottom: 48,
-          color: "var(--text)",
-        }}
-      >
-        よくあるご質問
-      </h2>
-      <div>
-        {FAQ_ITEMS.map((item, i) => {
-          const isOpen = faqOpen === i;
-          return (
-            <div
-              key={i}
-              style={{
-                borderBottom: "1px solid var(--border)",
-                padding: "20px 0",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setFaqOpen(isOpen ? null : i)}
-                aria-expanded={isOpen}
-                aria-controls={`faq-panel-${i}`}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 16,
-                  width: "100%",
-                  background: "transparent",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                  textAlign: "left",
-                  color: "inherit",
-                  font: "inherit",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    flex: 1,
-                    minWidth: 0,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 18,
-                      fontWeight: 900,
-                      color: "var(--brand)",
-                      flexShrink: 0,
-                    }}
-                  >
-                    Q.
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "clamp(14px, 3.5vw, 16px)",
-                      fontWeight: 700,
-                      color: "var(--text)",
-                    }}
-                  >
-                    {item.q}
-                  </span>
-                </div>
-                <span
-                  aria-hidden="true"
-                  style={{
-                    fontSize: 24,
-                    color: "var(--text-muted)",
-                    flexShrink: 0,
-                    lineHeight: 1,
-                  }}
-                >
-                  {isOpen ? "−" : "+"}
-                </span>
-              </button>
-              {isOpen && (
-                <div
-                  id={`faq-panel-${i}`}
-                  role="region"
-                  style={{
-                    marginTop: 16,
-                    padding: "clamp(14px, 4vw, 20px)",
-                    background: "var(--brand-tint)",
-                    borderRadius: 8,
-                    display: "flex",
-                    gap: 10,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontWeight: 900,
-                      color: "var(--text)",
-                      flexShrink: 0,
-                    }}
-                  >
-                    A.
-                  </span>
-                  <div
-                    style={{
-                      fontSize: "clamp(13px, 3.5vw, 15px)",
-                      lineHeight: 1.8,
-                      color: "var(--text)",
-                    }}
-                  >
-                    <FaqAnswer item={item} />
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </section>
-
-    {/* 区切りCTA（FAQのあと） */}
-    <div style={{ textAlign: "center", padding: "48px 20px 0" }}>
-      <a href="#form" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", padding: "16px 40px", borderRadius: 12, fontSize: 16, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(46,95,158,0.25)" }}>
-        準備ができたら、作成をはじめる →
-      </a>
-    </div>
-
-    {/* Plan comparison CTA */}
-    <section style={{ maxWidth: 720, margin: "0 auto", padding: "64px 20px 0" }}>
-      <div style={{
-        background: "linear-gradient(135deg, var(--brand-gradient) 0%, var(--surface) 100%)",
-        border: "1px solid var(--brand-tint)",
-        borderRadius: 20, padding: "40px 32px", textAlign: "center",
-      }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
-          プランをじっくり比較したい方へ
-        </h2>
-        <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 24 }}>
-          ライト・スタンダード・プレミアムの違いを一覧でご確認いただけます。料金は1件ごとの都度払い（買い切り）です。
-        </p>
-        <a
-          href="/pricing"
-          style={{
-            display: "inline-block", padding: "14px 36px", borderRadius: 12,
-            background: "var(--brand)", color: "#fff", fontSize: 15, fontWeight: 600,
-            textDecoration: "none",
-          }}
-        >
-          プランを比較する
-        </a>
-      </div>
-    </section>
-
-    {/* 更新情報（note.com マガジン連携） - ページ下部 */}
-    <NoteUpdates />
-    <TodokedeSeriesNav source="plan" currentId="shobo-keikaku" />
-    </>
-  );
+  const [showSample,setShowSample]=useState(false);
+  return <div className="lp-renewal">
+    <FaqStructuredData items={FAQ_ITEMS} /><ProductStructuredData />
+    <section className="lp-hero lp-section lp-white" data-lp-section="ファーストビュー"><div className="lp-container lp-hero-grid">
+      <div className="lp-hero-labels"><span>元消防士が設計</span><span>20の消防本部様式に準拠</span><span>1件 ¥4,980〜 の買い切り</span></div>
+      <h1>消防計画を、自動作成。</h1><div className="lp-hero-art"><IsoHero /></div>
+      <div className="lp-hero-copy"><p>開業前・立入検査・防火管理者の選任で「消防計画の提出」を求められた方へ。所在地と建物情報を入力するだけで、所轄の様式に沿った消防計画を約15分でWord作成。</p><div className="lp-hero-actions"><a className="lp-button lp-button-primary" href="#form">作成をはじめる</a><button className="lp-button lp-button-secondary" type="button" onClick={()=>setShowSample(true)}>サンプルを見る</button></div><p className="lp-fine-print">実際に生成される消防計画（飲食店320㎡・別表付き）をご確認いただけます</p>
+      <p className="lp-hero-scope">増改築・内装改修など「工事中の消防計画」にも対応。元消防士が設計・買い切り（月額・更新料なし）。</p></div>
+    </div></section>
+    <EvidenceBand /><Concerns /><Benefits /><Reasons /><Flow /><Departments /><Comparison /><Testimonials /><Pricing />
+    <section className="lp-section lp-white lp-form-section" data-lp-section="消防計画をつくる"><PlanForm showSample={showSample} setShowSample={setShowSample} /></section>
+    <section id="faq" className="lp-section lp-muted lp-faq" data-lp-section="よくある質問"><div className="lp-reading"><h2>よくあるご質問</h2><div className="lp-faq-list">{FAQ_ITEMS.map(item=><details key={item.q}><summary><span>Q.</span>{item.q}</summary><div className="lp-faq-answer"><span>A.</span><p><FaqAnswer item={item} /></p></div></details>)}</div></div></section>
+    <section className="lp-section lp-white lp-guide" data-lp-section="記事で学ぶ"><div className="lp-reading"><h2>記事で学ぶ｜消防計画の実務ガイド</h2><p>消防計画づくりの実務を、noteで詳しく解説しています。</p><div className="lp-guide-links"><a href="https://guide.plan.todokede.jp/" target="_blank" rel="noopener noreferrer">実務ガイド ↗</a><a href="https://note.com/shun_maruoka/m/m9f1348968657" target="_blank" rel="noopener noreferrer">全記事を見る →</a><Link href="/shobo-keikaku-no-kakikata">はじめての方へ：消防計画の書き方をわかりやすく解説 →</Link></div></div></section>
+    <FinalCta /><div className="lp-series" data-lp-section="トドケデシリーズ"><TodokedeSeriesNav source="plan" currentId="shobo-keikaku" /></div><MobileCta />
+  </div>;
 }

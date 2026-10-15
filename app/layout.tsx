@@ -3,8 +3,7 @@ import { Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
 import { FunnelPageView } from "../components/funnel-page-view";
 import { FUNNEL_MEASUREMENT_ID } from "../lib/analytics-schema";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import { SiteHeader, SiteFooter } from "../components/lp/SiteChrome";
 import { SiteStructuredData } from "../components/StructuredData";
 
 const noto = Noto_Sans_JP({
@@ -76,9 +75,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <FunnelPageView />
         <a href="#main-content" className="skip-link">本文へスキップ</a>
-        <Header />
+        <SiteHeader />
         <main id="main-content">{children}</main>
-        <Footer />
+        <SiteFooter />
         {/* トドケデAI相談員（共通ウィジェット） */}
         <Script
           src="https://chat.todokede.jp/widget.js"
