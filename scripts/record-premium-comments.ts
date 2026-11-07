@@ -28,6 +28,8 @@ async function main() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error("Supabaseの接続設定がありません");
   const client = createClient(url, key, {
+    // 統合先（todokede-care-prod）では plan スキーマ。未設定なら従来どおり public
+    db: { schema: process.env.SUPABASE_DB_SCHEMA || "public" },
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { data, error } = await client.rpc("record_premium_comments_sent", {
