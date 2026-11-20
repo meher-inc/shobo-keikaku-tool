@@ -28,9 +28,9 @@ export default function TokushoPage() {
 
       <Section heading="所在地">
         <p>
-          〒600-8223
+          〒450-0002
           <br />
-          京都府京都市下京区七条通油小路東入大黒町227番地 第2キョートビル402
+          愛知県名古屋市中村区名駅4丁目24番5号 第2森ビル401
         </p>
       </Section>
 
