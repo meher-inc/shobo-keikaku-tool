@@ -4,14 +4,10 @@ import Stripe from "stripe";
 import { sendPurchase } from "../../../../lib/analytics-purchase";
 import { Resend } from "resend";
 import { supabaseAdmin } from "../../../../lib/supabase";
-import { sendPremiumReview } from "../../../../lib/sendPremiumReview";
+import { fulfillPremiumReview } from "../../../../lib/premium-fulfillment";
 import { upsertSubscriptionFromStripe } from "../../../../lib/subscriptions";
 import { PLANS } from "../../../../lib/plans";
 import { FROM_EMAIL } from "../../../../lib/email";
-import {
-  GENERATE_AUTH_HEADER,
-  getGenerateAuthorizationSecret,
-} from "../../../../lib/generate-authorization";
 
 export const runtime = "nodejs";
 
@@ -145,35 +141,12 @@ async function handleOneTimePayment(session: Stripe.Checkout.Session, completedA
       console.warn("[webhook] premium order has no customer email:", orderId);
       return;
     }
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const generateRes = await fetch(`${baseUrl}/api/generate-plan`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        [GENERATE_AUTH_HEADER]: getGenerateAuthorizationSecret(),
-      },
-      body: JSON.stringify(order.form_data || {}),
-    });
-    if (!generateRes.ok) {
-      const errText = await generateRes.text().catch(() => "");
-      throw new Error(`generate-plan failed: ${generateRes.status} ${errText.slice(0, 200)}`);
-    }
-    const arrayBuffer = await generateRes.arrayBuffer();
-    const docxBuffer = Buffer.from(arrayBuffer);
-    await sendPremiumReview({
+    await fulfillPremiumReview({
+      order,
       customerEmail,
-      formData: order.form_data || {},
-      docxBuffer,
-      fileName: `消防計画_${(order.form_data && order.form_data.building_name) || "premium"}.docx`,
       sessionId: session.id,
+      logPrefix: "[webhook]",
     });
-    const { error: markError } = await supabaseAdmin
-      .from("orders")
-      .update({ premium_email_sent_at: new Date().toISOString() })
-      .eq("id", orderId);
-    if (markError) {
-      console.error("[webhook] failed to mark premium_email_sent_at:", markError);
-    }
   }
 }
 
