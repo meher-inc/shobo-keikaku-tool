@@ -24,30 +24,14 @@ function SuccessContent() {
     else setStatus("error");
   }, [sessionId, internalOrderId]);
 
-  async function sendPremiumReview(blob: Blob) {
+  // 送り先（決済時のメール）と添付する計画書はサーバー側で決める。ここからは sessionId だけを送る。
+  async function sendPremiumReview() {
     try {
       setReviewStatus("sending");
-      const sessionRes = await fetch(`/api/get-session?session_id=${sessionId}`);
-      const { customerEmail } = await sessionRes.json();
-      if (!customerEmail) throw new Error("顧客メールが取得できません");
-
-      const arrayBuffer = await blob.arrayBuffer();
-      const bytes = new Uint8Array(arrayBuffer);
-      let binary = "";
-      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-      const docxBase64 = btoa(binary);
-
       const res = await fetch("/api/premium-review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerEmail,
-          planId: "premium",
-          formData: { session_id: sessionId },
-          docxBase64,
-          fileName: "shobo_keikaku.docx",
-          sessionId,
-        }),
+        body: JSON.stringify({ sessionId }),
       });
       if (!res.ok) throw new Error("送信失敗");
       setReviewStatus("sent");
@@ -82,7 +66,7 @@ function SuccessContent() {
       setStatus("done");
 
       if (!isInternal && plan === "premium" && reviewStatus === "idle") {
-        sendPremiumReview(blob);
+        sendPremiumReview();
       }
     } catch {
       setStatus("error");
